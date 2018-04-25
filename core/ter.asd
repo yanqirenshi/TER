@@ -6,10 +6,16 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on (#:upanishad
+               #:shinrabanshou)
   :components ((:module "src"
                 :components
-                ((:file "ter"))))
+                ((:file "db")
+                 ;;
+                 (:file "package")
+                 (:file "class")
+                 (:file "attribute")
+                 (:file "entity"))))
   :description ""
   :long-description
   #.(read-file-string

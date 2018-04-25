@@ -6,3 +6,5 @@
 *.x86f
 *~
 .#*
+snapshot.xml
+transaction-log-*.xml

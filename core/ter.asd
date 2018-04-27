@@ -15,7 +15,9 @@
                  (:file "package")
                  (:file "class")
                  (:file "attribute")
-                 (:file "entity"))))
+                 (:file "entity")
+                 (:file "relationship")
+                 (:file "schema.rb"))))
   :description ""
   :long-description
   #.(read-file-string

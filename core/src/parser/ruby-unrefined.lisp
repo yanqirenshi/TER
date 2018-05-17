@@ -84,12 +84,15 @@
   (cond ((eq :table-start (getf line-plist :type))
          (values (list line-plist) tables))
         ((eq :block-end (getf line-plist :type))
-         (progn (push line-plist table)
-                (values nil
-                        (if tables
-                            (progn
-                              (push (reverse table) tables))
-                            (list (reverse table))))))
+         (progn (if (not table)
+                    (values nil tables)
+                    (progn
+                      (push line-plist table)
+                      (values nil
+                              (if tables
+                                  (progn
+                                    (push (reverse table) tables))
+                                  (list (reverse table))))))))
         ((eq :other (getf line-plist :type))
          (if table
              (progn (push (parse-attribute-line (getf line-plist :line)) table)

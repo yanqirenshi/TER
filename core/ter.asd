@@ -6,12 +6,17 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on (#:upanishad
+  :depends-on (#:cl-lex
+               #:yacc
+               #:upanishad
                #:shinrabanshou)
   :components ((:module "src"
                 :components
                 ((:file "db")
-                 ;;
+                 (:module "parser" :components ((:file "package")
+                                                (:file "json")
+                                                (:file "ruby")
+                                                (:file "ruby-unrefined.lisp")))
                  (:file "package")
                  (:file "class")
                  (:file "attribute")

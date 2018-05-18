@@ -36,7 +36,13 @@
   (make-code name "@" data-type))
 
 (defun make-attribute-entity-code (entity name data-type)
-  (make-code (symbol-name (code entity)) "."  (make-attribute-code name data-type)))
+  (make-code (symbol-name (code entity)) "." name "@" data-type))
+
+(defun make-data-type (data)
+  (let ((limit (getf data :limit)))
+    (concatenate 'string
+                 (getf data :data-type)
+                 (if (not limit) "" (format nil "(~a)" limit)))))
 
 
 ;;;;;
@@ -44,19 +50,13 @@
 ;;;;;
 (defun tx-import-attribute (graph data)
   (let* ((name (getf data :name))
-         (limit (getf data :limit))
-         (data-type (concatenate 'string
-                                 (getf data :data-type)
-                                 (if (not limit) "" (format nil "(~a)" limit))))
+         (data-type (make-data-type data))
          (code (make-attribute-code name data-type)))
     (tx-make-attribute graph code name data-type)))
 
 (defun tx-import-attribute-entity (graph entity data)
   (let* ((name (getf data :name))
-         (limit (getf data :limit))
-         (data-type (concatenate 'string
-                                 (getf data :data-type)
-                                 (if (not limit) "" (format nil "(~a)" limit))))
+         (data-type (make-data-type data))
          (code (make-attribute-entity-code entity name data-type)))
     (tx-make-attribute-entity graph code name data-type)))
 
@@ -76,10 +76,33 @@
                     (make-entity-code name)
                     name)))
 
+(defun xxx (graph from-attribute-entity to-attribute-entity)
+  (print (list from-attribute-entity to-attribute-entity)))
+
+(defun tx-import-foreign-key (graph from-entity fk)
+  (let ((from-attr-entity-code (make-attribute-entity-code from-entity (getf fk :name) (make-data-type fk)))
+        (to-entity (get-entity graph :code (make-entity-code (getf (getf fk :foreign-key) :references)))))
+    (xxx graph
+         (get-attribute-entity graph :code from-attr-entity-code)
+         (get-id-attribute-entity graph to-entity))))
+
+(defun tx-import-foreign-keys (graph entity plist)
+  (dolist (fka (find-foreign-key-plists plist))
+    (tx-import-foreign-key graph entity fka)))
+
+(defun get-id-attribute-entity (graph entity)
+  (find-if #'(lambda (attr)
+               (eq (code attr)
+                   (make-attribute-entity-code entity "id" "integer")))
+           (shinra:find-r-vertex graph 'shinra:ra
+                                 :from entity)))
+
 (defun tx-import-entity (graph plist)
   (let ((entity (tx-import-make-entity graph plist))
-        (attributes-data (find-attribute-plists plist)))
+        (attributes-data (cons '(:type :attribute :alias "t" :name "id" :data-type "integer")
+                               (find-attribute-plists plist))))
     (tx-import-attributes graph entity attributes-data)
+    (tx-import-foreign-keys graph entity plist)
     entity))
 
 ;;;;;

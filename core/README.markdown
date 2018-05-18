@@ -4,7 +4,7 @@ Ter のモデルになります。
 
 ## T字形ER図 のデータ構造
 
-![T字形ER図 のデータ構造](https://bitbucket.org/yanqirenshi/ter/raw/master/web/assets/images/ss-20180518-145815.png "T字形ER図 のデータ構造")
+![T字形ER図 のデータ構造](https://bitbucket.org/yanqirenshi/ter/raw/bfb75373a5c42c48e9d34ccb0d1f0bb8f203aaaf/web/assets/images/ss-20180518-145815.png "T字形ER図 のデータ構造")
 
 ## 普通のER図 のデータ構造
 

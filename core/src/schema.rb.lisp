@@ -1,7 +1,5 @@
 (in-package :ter)
 
-(defvar *schema.rb-pathname* nil)
-
 ;;;;;
 ;;;;; get / find
 ;;;;;
@@ -26,18 +24,31 @@
               (find-foreign-key-plists (cdr plists))))))
 
 ;;;;;
-;;;;; Import
+;;;;; Utility
 ;;;;;
 (defun make-code (&rest strs)
   (alexandria:make-keyword (string-upcase (apply #'concatenate 'string strs))))
 
+(defun make-entity-code (name)
+  (make-code name))
+
+(defun make-attribute-code (name data-type)
+  (make-code name "@" data-type))
+
+(defun make-attribute-entity-code (entity name data-type)
+  (make-code (symbol-name (code entity)) "."  (make-attribute-code name data-type)))
+
+
+;;;;;
+;;;;; Import
+;;;;;
 (defun tx-import-attribute (graph data)
   (let* ((name (getf data :name))
          (limit (getf data :limit))
          (data-type (concatenate 'string
                                  (getf data :data-type)
                                  (if (not limit) "" (format nil "(~a)" limit))))
-         (code (make-code name "@" data-type)))
+         (code (make-attribute-code name data-type)))
     (tx-make-attribute graph code name data-type)))
 
 (defun tx-import-attribute-entity (graph entity data)
@@ -46,7 +57,7 @@
          (data-type (concatenate 'string
                                  (getf data :data-type)
                                  (if (not limit) "" (format nil "(~a)" limit))))
-         (code (make-code (symbol-name (code entity)) "."  name "@" data-type)))
+         (code (make-attribute-entity-code entity name data-type)))
     (tx-make-attribute-entity graph code name data-type)))
 
 (defun tx-import-attributes (graph entity attributes-data)
@@ -62,7 +73,7 @@
   (let* ((data (get-table-plist plist))
          (name (getf data :name)))
     (tx-make-entity graph
-                    (make-code name)
+                    (make-entity-code name)
                     name)))
 
 (defun tx-import-entity (graph plist)

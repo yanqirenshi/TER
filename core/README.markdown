@@ -8,7 +8,7 @@ Ter のモデルになります。
 
 ## 普通のER図 のデータ構造
 
-![普通のER図のデータ構造](https://bitbucket.org/yanqirenshi/ter/raw/6aa34a68867c5f8038fe70c09f6870b826a980a1/web/assets/images/ss-20180518-144005.jpg "普通のER図のデータ構造")
+![普通のER図のデータ構造](https://bitbucket.org/yanqirenshi/ter/raw/0771b957c04be657958ca1896a11448b091a9823/web/assets/images/ss-20180518-144005.png "普通のER図のデータ構造")
 
 
 ## Usage

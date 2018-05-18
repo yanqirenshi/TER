@@ -5,10 +5,11 @@
 
 (defun get-entity (graph &key code (with-attributes t))
   (let ((entity (car (find-vertex graph 'entity :slot 'code :value code))))
-    (if (not with-attributes)
-        entity
-        (setf entity
-              (find-entity-attributes *graph* entity)))))
+    (when entity
+      (when with-attributes
+        (setf (attributes entity)
+              (find-entity-attributes *graph* entity)))
+      entity)))
 
 (defun tx-make-entity (graph code name)
   (or (get-entity graph :code code)

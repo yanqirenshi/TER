@@ -10,3 +10,4 @@ snapshot.xml
 snapshot-*.xml
 transaction-log.xml
 transaction-log-*.xml
+.DS_Store

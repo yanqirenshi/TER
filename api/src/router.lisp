@@ -17,8 +17,30 @@
 ;;;;;
 ;;;;; Routing rules
 ;;;;;
-(defroute "/" ()
-  (render-json (nobit@.api.controller::api-root)))
+(defroute "/er/entities" () (render-json (list :test "/entities")))
+
+(defroute "/er/identifiers"       () (render-json (list :test "/identifiers")))
+(defroute "/er/identifiers/:code" () (render-json (list :test "/identifiers/:code")))
+
+(defroute "/er/attributes"        () (render-json (list :test "/events")))
+(defroute "/er/attributes/:code"  () (render-json (list :test "/events/:code")))
+
+(defroute "/ter/resources"                   () (render-json (list :test "/resources")))
+(defroute "/ter/resources/:code"             () (render-json (list :test "/resources/:code")))
+(defroute "/ter/resources/:code/identifiers" () (render-json (list :test "/resources/:code/identifiers")))
+(defroute "/ter/resources/:code/attributes"  () (render-json (list :test "/resources/:code/attributes")))
+
+(defroute "/ter/events"                   ()  (render-json (list :test "/events")))
+(defroute "/ter/events/:code"             () (render-json (list :test "/events/:code")))
+(defroute "/ter/events/:code/identifiers" ()  (render-json (list :test "/events/:code/identifiers")))
+(defroute "/ter/events/:code/attributes"  ()  (render-json (list :test "/events/:code/identifiers")))
+
+(defroute "/ter/identifiers"       () (render-json (list :test "/identifiers")))
+(defroute "/ter/identifiers/:code" () (render-json (list :test "/identifiers/:code")))
+
+(defroute "/ter/attributes"        () (render-json (list :test "/events")))
+(defroute "/ter/attributes/:code"  () (render-json (list :test "/events/:code")))
+
 
 ;;;;;
 ;;;;; Error pages

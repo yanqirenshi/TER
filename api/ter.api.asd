@@ -9,7 +9,10 @@
   :depends-on ()
   :components ((:module "src"
                 :components
-                ((:file "ter.api"))))
+                ((:file "package")
+                 (:file "render")
+                 (:file "router")
+                 (:module "controller" :components ((:file "package"))))))
   :description ""
   :long-description
   #.(read-file-string

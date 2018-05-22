@@ -42,7 +42,7 @@
   (let ((limit (getf data :limit)))
     (concatenate 'string
                  (getf data :data-type)
-                 (if (not limit) "" (format nil "(~a)" limit)))))
+                 (if (not limit) "" (format nil "[~a]" limit)))))
 
 
 ;;;;;
@@ -65,7 +65,7 @@
     (let* ((attribute (tx-import-attribute graph data))
            (attribute-entity (tx-import-attribute-entity graph entity data)))
       (tx-make-r-attribute_attribute-entity graph attribute attribute-entity)
-      (tx-make-r-entity-attribute-entity graph entity attribute-entity)
+      (tx-make-r-entity_attribute-entity graph entity attribute-entity)
       (cons attribute-entity
             (tx-import-attributes graph entity (cdr attributes-data))))))
 

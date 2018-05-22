@@ -57,7 +57,7 @@
   (json object array string number true false null)
   (object         ({ }                #'parse-object-key)
                   ({ members }        #'pase-object-contents))
-  (array          ([ ]                #'parse-arr)
+  (array          ([ ]                #'parse-arr-key)
                   ([ sequence ]       #'parse-arr-contents))
   (sequence json  (json |,| sequence  #'parse-sequence))
   (member         (string |:| json    #'parse-member))

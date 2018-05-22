@@ -16,7 +16,7 @@
                  (:module "parser" :components ((:file "package")
                                                 (:file "json")
                                                 (:file "ruby")
-                                                (:file "ruby-unrefined.lisp")))
+                                                (:file "ruby-unrefined")))
                  (:file "package")
                  (:file "class")
                  (:file "attribute")

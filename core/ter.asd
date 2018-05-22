@@ -20,6 +20,7 @@
                  (:file "package")
                  (:file "class")
                  (:file "attribute")
+                 (:file "attribute-entity")
                  (:file "entity")
                  (:file "relationship")
                  (:file "schema.rb"))))

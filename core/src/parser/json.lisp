@@ -47,7 +47,7 @@
   (declare (ignore _lp _rp))
   (list :obj))
 
-(defun pase-object-contents (_lp members _rp)
+(defun parse-object-contents (_lp members _rp)
   (declare (ignore _lp _rp))
   (cons :obj members))
 
@@ -55,13 +55,13 @@
   (:start-symbol json)
   (:terminals ({ } [ ] |:| |,| |'| string number true false null))
   (json object array string number true false null)
-  (object         ({ }                #'parse-object-key)
-                  ({ members }        #'pase-object-contents))
-  (array          ([ ]                #'parse-arr-key)
-                  ([ sequence ]       #'parse-arr-contents))
-  (sequence json  (json |,| sequence  #'parse-sequence))
-  (member         (string |:| json    #'parse-member))
-  (members member (member |,| members #'parse-members)))
+  (object         ({ }                #'ter.parser::parse-object-key)
+                  ({ members }        #'ter.parser::parse-object-contents))
+  (array          ([ ]                #'ter.parser::parse-arr-key)
+                  ([ sequence ]       #'ter.parser::parse-arr-contents))
+  (sequence json  (json |,| sequence  #'ter.parser::parse-sequence))
+  (member         (string |:| json    #'ter.parser::parse-member))
+  (members member (member |,| members #'ter.parser::parse-members)))
 
 (defun test-json-1 ()
   (parse-with-lexer (json-lexer

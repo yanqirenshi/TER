@@ -35,6 +35,7 @@
                                              (:file "comparative")
                                              (:file "correspondence")
                                              (:file "recursion")))
+                 (:file "mapper")
                  (:module "importer" :components ((:file "schema.rb"))))))
   :description ""
   :long-description

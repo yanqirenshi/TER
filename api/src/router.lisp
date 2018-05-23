@@ -1,11 +1,11 @@
 (in-package :cl-user)
-(defpackage ter.api.api-v1
-  (:use :cl
-        :caveman2
-        :lack.middleware.validation
-        :ter.api.render)
+(defpackage ter.api.router
+  (:use #:cl
+        #:caveman2
+        #:lack.middleware.validation
+        #:ter.api.render)
   (:export #:*api-v1*))
-(in-package :ter.api.api-v1)
+(in-package :ter.api.router)
 
 ;;;;;
 ;;;;; Application
@@ -17,14 +17,34 @@
 ;;;;;
 ;;;;; Routing rules
 ;;;;;
-(defroute "/er/entities" () (render-json (list :test "/entities")))
 
-(defroute "/er/identifiers"       () (render-json (list :test "/identifiers")))
-(defroute "/er/identifiers/:code" () (render-json (list :test "/identifiers/:code")))
+;;;
+;;; er
+;;;
+(defroute "/er/entities" ()
+  (render-json (ter.api.controller:finder-er-entities)))
 
-(defroute "/er/attributes"        () (render-json (list :test "/events")))
-(defroute "/er/attributes/:code"  () (render-json (list :test "/events/:code")))
+(defroute "/er/entities/:code" ()
+  (render-json (list :test "/er/entities/:code")))
 
+(defroute "/er/attributes" ()
+  (render-json (ter.api.controller:finder-er-attributes)))
+
+(defroute "/er/attributes/:code"  ()
+  (render-json (list :test "/er/attributes/:code")))
+
+(defroute "/er/attribute-entitis"  ()
+  (render-json (ter.api.controller:finder-er-attribute-entitis)))
+
+(defroute "/er/attribute-entitis/:code"  ()
+  (render-json (list :test "/er/attribute-entitis/:code")))
+
+(defroute "/er/relashonships"  ()
+  (render-json (ter.api.controller:finder-er-relashonships)))
+
+;;;
+;;; ter
+;;;
 (defroute "/ter/resources"                   () (render-json (list :test "/resources")))
 (defroute "/ter/resources/:code"             () (render-json (list :test "/resources/:code")))
 (defroute "/ter/resources/:code/identifiers" () (render-json (list :test "/resources/:code/identifiers")))

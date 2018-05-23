@@ -5,17 +5,16 @@ class Actions extends Vanilla_Redux_Actions {
             data: data
         };
     }
-    fetchData () {
-        API.get('/', function (response) {
-            STORE.dispatch(this.fetchedData(response));
-        }.bind(this));
-    }
-    fetchedData (response) {
-        return {
-            type: 'FETCHED-DATA',
-            data: response,
-            target: 'stage'
-        };
+    /* **************************************************************** *
+       ER
+     * **************************************************************** */
+    makeGraphData (list) {
+        let ht = {};
+        for (var i in list) {
+            let data = list[i];
+            ht[data._id] = data;
+        }
+        return {ht: ht, list: list};
     }
     fetchErEntities () {
         API.get('/er/entities', function (response) {
@@ -23,10 +22,11 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErEntities (response) {
+        let state_er = STORE.state().get('er');
+        state_er.entities = this.makeGraphData(response);
         return {
             type: 'FETCHED-ER-ENTITIES',
-            data: response,
-            target: 'stage'
+            data: { er: state_er }
         };
     }
     fetchErAttributes () {
@@ -35,10 +35,11 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErAttributes (response) {
+        let state_er = STORE.state().get('er');
+        state_er.attributes = this.makeGraphData(response);
         return {
             type: 'FETCHED-ER-ATTRIBUTES',
-            data: response,
-            target: 'stage'
+            data: { er: state_er }
         };
     }
     fetchErAttributeEntitis () {
@@ -47,10 +48,11 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErAttributeEntitis (response) {
+        let state_er = STORE.state().get('er');
+        state_er.attribute_entitis = this.makeGraphData(response);
         return {
             type: 'FETCHED-ER-ATTRIBUTE-ENTITIS',
-            data: response,
-            target: 'stage'
+            data: { er: state_er }
         };
     }
     fetchErRelashonships () {
@@ -59,10 +61,11 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErRelashonships (response) {
+        let state_er = STORE.state().get('er');
+        state_er.relashonships = this.makeGraphData(response);
         return {
             type: 'FETCHED-ER-RELASHONSHIPS',
-            data: response,
-            target: 'stage'
+            data: { er: state_er }
         };
     }
 }

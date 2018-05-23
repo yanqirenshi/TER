@@ -21,23 +21,23 @@
 ;;;
 ;;; er
 ;;;
-(defroute "/er/entities" ()
-  (render-json (ter.api.controller:finder-er-entities)))
+(defroute "/er/tables" ()
+  (render-json (ter.api.controller:finder-er-tables)))
 
-(defroute "/er/entities/:code" ()
-  (render-json (list :test "/er/entities/:code")))
+(defroute "/er/tables/:code" ()
+  (render-json (list :test "/er/tables/:code")))
 
-(defroute "/er/attributes" ()
-  (render-json (ter.api.controller:finder-er-attributes)))
+(defroute "/er/columns" ()
+  (render-json (ter.api.controller:finder-er-columns)))
 
-(defroute "/er/attributes/:code"  ()
-  (render-json (list :test "/er/attributes/:code")))
+(defroute "/er/columns/:code"  ()
+  (render-json (list :test "/er/columns/:code")))
 
-(defroute "/er/attribute-entitis"  ()
-  (render-json (ter.api.controller:finder-er-attribute-entitis)))
+(defroute "/er/column-instances"  ()
+  (render-json (ter.api.controller:finder-er-column-instances)))
 
-(defroute "/er/attribute-entitis/:code"  ()
-  (render-json (list :test "/er/attribute-entitis/:code")))
+(defroute "/er/column-instances/:code"  ()
+  (render-json (list :test "/er/column-instances/:code")))
 
 (defroute "/er/relashonships"  ()
   (render-json (ter.api.controller:finder-er-relashonships)))

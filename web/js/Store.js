@@ -10,10 +10,10 @@ class Store extends Vanilla_Redux_Store {
                 page03: {}
             },
             er: {
-                entities:          {ht: {}, list: []},
-                attributes:        {ht: {}, list: []},
-                attribute_entitis: {ht: {}, list: []},
-                relashonships:     {ht: {}, list: []}
+                tables:           {ht: {}, list: []},
+                columns:          {ht: {}, list: []},
+                column_instances: {ht: {}, list: []},
+                relashonships:    {ht: {}, list: []}
             }
         });
         return this;

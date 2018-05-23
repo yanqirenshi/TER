@@ -1,10 +1,10 @@
 <app>
-    <page01></page01>
-    <page02></page02>
-    <page03></page03>
+    <page01 class="page"></page01>
+    <page02 class="page"></page02>
+    <page03 class="page"></page03>
 
     <style>
-     stage {
+     app > .page {
          width: 100vw;
          height: 100vh;
          overflow: hidden;

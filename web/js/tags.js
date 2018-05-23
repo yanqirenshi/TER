@@ -8,13 +8,13 @@ riot.tag2('app', '<page01 class="page"></page01> <page02 class="page"></page02> 
      });
 });
 
-riot.tag2('page01', '<svg ref="svg-tag"></svg>', '', 'ref="self"', function(opts) {
+riot.tag2('page01', '<svg></svg>', '', 'ref="self"', function(opts) {
      this.d3svg = null;
 
      this.on('mount', () => {
          this.d3svg = new D3Svg({
              d3: d3,
-             svg: d3.select("stage svg"),
+             svg: d3.select("page01 > svg"),
              x: 0,
              y: 0,
              w: this.refs.self.clientWidth,

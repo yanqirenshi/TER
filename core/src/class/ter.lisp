@@ -15,18 +15,18 @@
 ;;;;;
 ;; identifier
 ;; identifier-instance
-(defclass ter-identifier (shinra:shin) ())
-(defclass ter-identifier-instance (shinra:shin) ())
+(defclass identifier (shinra:shin) ())
+(defclass identifier-instance (shinra:shin) ())
 
 
 ;;;;;
 ;;;;; Attribute
 ;;;;;
-(defclass ter-attribute (shinra:shin) ())
-(defclass ter-attribute-instance (shinra:shin) ())
+(defclass attribute (shinra:shin) ())
+(defclass attribute-instance (shinra:shin) ())
 
 
 ;;;;;
 ;;;;; Relationship
 ;;;;;
-(defclass ter-edge (shinra:ra) ())
+(defclass edge-ter (shinra:ra) ())

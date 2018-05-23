@@ -94,7 +94,7 @@
   (find-if #'(lambda (attr)
                (eq (code attr)
                    (make-column-instance-code table "id" "integer")))
-           (shinra:find-r-vertex graph 'shinra:ra
+           (shinra:find-r-vertex graph 'edge-er
                                  :from table)))
 
 (defun tx-import-table (graph plist)

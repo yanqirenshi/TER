@@ -19,7 +19,7 @@
                         (name ,name)))))
 
 (defun find-table-columns (graph table)
-  (shinra:find-r-vertex graph 'shinra:ra
+  (shinra:find-r-vertex graph 'edge-er
                         :from table
                         :vertex-class 'column
                         :edge-type :have))

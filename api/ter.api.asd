@@ -10,9 +10,11 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
+                 (:module "controller" :components ((:file "package")
+                                                    (:file "er")
+                                                    (:file "ter")))
                  (:file "render")
-                 (:file "router")
-                 (:module "controller" :components ((:file "package"))))))
+                 (:file "router"))))
   :description ""
   :long-description
   #.(read-file-string

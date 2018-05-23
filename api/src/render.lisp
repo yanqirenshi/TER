@@ -4,9 +4,8 @@
   (:import-from #:caveman2
                 #:*response*
                 #:response-headers)
-  (:export #:render
-           #:render-json))
-(in-package :nobit@.api.render)
+  (:export #:render-json))
+(in-package :ter.api.render)
 
 (defun render-json (object)
   (setf (getf (response-headers *response*) :content-type) "application/json")

@@ -30,9 +30,9 @@ let Metronome = new Vanilla_metronome({
     interval: 1000 * 10,
     tick: function (count) {
          // ACTIONS.fetchData();
-        ACTIONS.fetchErEntities();
-        ACTIONS.fetchErAttributes();
-        ACTIONS.fetchErAttributeEntitis();
+        ACTIONS.fetchedErTables();
+        ACTIONS.fetchErColumns();
+        ACTIONS.fetchedErColumnInstances();
         ACTIONS.fetchErRelashonships();
     }
 });

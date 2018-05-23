@@ -16,42 +16,42 @@ class Actions extends Vanilla_Redux_Actions {
         }
         return {ht: ht, list: list};
     }
-    fetchErEntities () {
+    fetchErTables () {
         API.get('/er/entities', function (response) {
-            STORE.dispatch(this.fetchedErEntities(response));
+            STORE.dispatch(this.fetchedErTables(response));
         }.bind(this));
     }
-    fetchedErEntities (response) {
+    fetchedErTables (response) {
         let state_er = STORE.state().get('er');
-        state_er.entities = this.makeGraphData(response);
+        state_er.tables = this.makeGraphData(response);
         return {
-            type: 'FETCHED-ER-ENTITIES',
+            type: 'FETCHED-ER-TABLES',
             data: { er: state_er }
         };
     }
-    fetchErAttributes () {
-        API.get('/er/attributes', function (response) {
-            STORE.dispatch(this.fetchedErAttributes(response));
+    fetchErColumns () {
+        API.get('/er/columns', function (response) {
+            STORE.dispatch(this.fetchedErColumns(response));
         }.bind(this));
     }
-    fetchedErAttributes (response) {
+    fetchedErColumns (response) {
         let state_er = STORE.state().get('er');
-        state_er.attributes = this.makeGraphData(response);
+        state_er.columns = this.makeGraphData(response);
         return {
-            type: 'FETCHED-ER-ATTRIBUTES',
+            type: 'FETCHED-ER-COLUMNS',
             data: { er: state_er }
         };
     }
-    fetchErAttributeEntitis () {
-        API.get('/er/attribute-entitis', function (response) {
-            STORE.dispatch(this.fetchedErAttributeEntitis(response));
+    fetchErColumnInstances () {
+        API.get('/er/column-instances', function (response) {
+            STORE.dispatch(this.fetchedErColumnInstances(response));
         }.bind(this));
     }
-    fetchedErAttributeEntitis (response) {
+    fetchedErColumnInstances (response) {
         let state_er = STORE.state().get('er');
-        state_er.attribute_entitis = this.makeGraphData(response);
+        state_er.column_instances = this.makeGraphData(response);
         return {
-            type: 'FETCHED-ER-ATTRIBUTE-ENTITIS',
+            type: 'FETCHED-ER-COLUMN-INSTANCES',
             data: { er: state_er }
         };
     }

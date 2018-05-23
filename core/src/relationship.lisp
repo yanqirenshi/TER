@@ -23,40 +23,40 @@
 
 
 ;;;;;
-;;;;; attribute ⇒ attribute-entity
+;;;;; column ⇒ column-instance
 ;;;;;
-(defun find-r-attribute_attribute-entity (graph &key attribute)
-  (when attribute
+(defun find-r-column_column-instance (graph &key column)
+  (when column
     (shinra:find-r-vertex graph 'shinra:ra
-                          :from attribute
-                          :vertex-class 'attribute-entity
+                          :from column
+                          :vertex-class 'column-instance
                           :edge-type :instance-of)))
 
-(defun get-r-attribute_attribute-entity (graph attribute attribute-entity)
+(defun get-r-column_column-instance (graph column column-instance)
   (find-if #'(lambda (r)
-               (string= (code r) (code attribute-entity)))
-           (find-r-attribute_attribute-entity graph :attribute attribute)))
+               (string= (code r) (code column-instance)))
+           (find-r-column_column-instance graph :column column)))
 
-(defun tx-make-r-attribute_attribute-entity (graph attribute attribute-entity)
-  (or (get-r-attribute_attribute-entity graph attribute attribute-entity)
-      (tx-make-edge graph 'shinra:ra attribute attribute-entity :instance-of)))
+(defun tx-make-r-column_column-instance (graph column column-instance)
+  (or (get-r-column_column-instance graph column column-instance)
+      (tx-make-edge graph 'shinra:ra column column-instance :instance-of)))
 
 
 ;;;;;
-;;;;; entity ⇒ attribute-entity
+;;;;; table ⇒ column-instance
 ;;;;;
-(defun find-r-entity_attribute-entity (graph &key entity)
-  (when entity
+(defun find-r-table_column-instance (graph &key table)
+  (when table
     (shinra:find-r-vertex graph 'shinra:ra
-                          :from entity
-                          :vertex-class 'attribute-entity
+                          :from table
+                          :vertex-class 'column-instance
                           :edge-type :have)))
 
-(defun get-r-entity_attribute-entity (graph entity attribute-entity)
+(defun get-r-table_column-instance (graph table column-instance)
   (find-if #'(lambda (r)
-               (string= (code r) (code attribute-entity)))
-           (find-r-entity_attribute-entity graph :entity entity)))
+               (string= (code r) (code column-instance)))
+           (find-r-table_column-instance graph :table table)))
 
-(defun tx-make-r-entity_attribute-entity (graph entity attribute-entity)
-  (or (get-r-entity_attribute-entity graph entity attribute-entity)
-      (tx-make-edge graph 'shinra:ra entity attribute-entity :have)))
+(defun tx-make-r-table_column-instance (graph table column-instance)
+  (or (get-r-table_column-instance graph table column-instance)
+      (tx-make-edge graph 'shinra:ra table column-instance :have)))

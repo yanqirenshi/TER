@@ -16,14 +16,14 @@
 ;; identifier
 ;; identifier-instance
 (defclass ter-identifier (shinra:shin) ())
-(defclass ter-identifier-instance)
+(defclass ter-identifier-instance (shinra:shin) ())
 
 
 ;;;;;
 ;;;;; Attribute
 ;;;;;
 (defclass ter-attribute (shinra:shin) ())
-(defclass ter-attribute-instance)
+(defclass ter-attribute-instance (shinra:shin) ())
 
 
 ;;;;;

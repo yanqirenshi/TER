@@ -9,8 +9,8 @@
                 #:tx-make-vertex
                 #:tx-make-edge)
   ;; er
-  (:export #:find-entitiy
-           #:find-attribute
-           #:find-attribute-entity
+  (:export #:find-table
+           #:find-column
+           #:find-column-instance
            #:find-all-edges))
 (in-package :ter)

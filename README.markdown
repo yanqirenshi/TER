@@ -2,22 +2,14 @@
 
 T字形ER図を作成したり、普通の ER図を作成したり
 
-## Usage
+TER は以下のような構成になっています。
+詳細はそれぞれの README を参照してください。
 
-以下を参照してください。
-
-- [core](https://bitbucket.org/yanqirenshi/ter/src/master/core/README.markdown#markdown-header-usage)
-- [api](https://bitbucket.org/yanqirenshi/ter/src/master/api/README.markdown#markdown-header-usage)
-- [web](https://bitbucket.org/yanqirenshi/ter/src/master/web/README.markdown#markdown-header-usage)
-
-
-## Installation
-
-以下を参照してください。
-
-- [core](https://bitbucket.org/yanqirenshi/ter/src/master/core/README.markdown#markdown-header-installation)
-- [api](https://bitbucket.org/yanqirenshi/ter/src/master/api/README.markdown#markdown-header-installation)
-- [web](https://bitbucket.org/yanqirenshi/ter/src/master/web/README.markdown#markdown-header-installation)
+|                                                                               | Description |
+|-------------------------------------------------------------------------------|-------------|
+| [core](https://bitbucket.org/yanqirenshi/ter/src/master/core/README.markdown) | モデル      |
+| [api](https://bitbucket.org/yanqirenshi/ter/src/master/api/README.markdown)   | WEB-API     |
+| [web](https://bitbucket.org/yanqirenshi/ter/src/master/web/README.markdown)   | WEB         |
 
 ## Author
 

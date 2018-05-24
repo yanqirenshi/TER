@@ -50,6 +50,13 @@ class Table {
             .attr('width',  (d) => { return this.headerWidth(d); })
             .attr('height', (d) => { return this.headerContentsHight(d); })
             .attr('fill', '#fefefe');
+
+        g.append('text')
+            .attr('class', 'header')
+            .attr('x', function (d) { return d.x + padding + 6; })
+            .attr('y', function (d) { return d.y + padding + 16; })
+            .attr('font-size', 16 + 'px')
+            .text((d) => { return d.name; });
     }
     drawColumns (g) {
         let padding = this._padding;

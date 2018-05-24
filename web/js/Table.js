@@ -23,9 +23,9 @@ class Table {
     }
     columnsContentsHeight (d) {
         let column_len = d.columns.length;
-        let contents_h = column_len==0 ? 22 : column_len * 22; 
+        let contents_h = column_len==0 ? 22 : column_len * 22;
         let padding = this._padding;
-        return contents_h - padding * 2 - 22;
+        return contents_h;
     }
     columnsHeight (d) {
         let padding_top = 3;
@@ -54,12 +54,26 @@ class Table {
     drawColumns (g) {
         let padding = this._padding;
         g.append('rect')
-            .attr('class', 'columns')
+            .attr('class', 'column')
             .attr('x', (d) => { return d.x + padding; })
             .attr('y', (d) => { return d.y + this.headerHight(d); })
             .attr('width',  (d) => { return this.columnsWidth(d); })
             .attr('height', (d) => { return this.columnsContentsHeight(d); })
             .attr('fill', '#fefefe');
+
+        g.selectAll('text.column')
+            .data((d) => { return d.columns; })
+            .enter()
+            .append('text')
+            .attr('class', 'column')
+            .attr('x', (d) => {
+                return d.table.x + padding + 6;
+            })
+            .attr('y', (d, i) => {
+                return d.table.y + this.headerHight(d.table) + (i+1) * 22;
+            })
+            .attr('font-size', 16 + 'px')
+            .text((d) => { return d.name; });
     }
     drawBase (g) {
         g.append('rect')

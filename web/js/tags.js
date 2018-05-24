@@ -25,16 +25,34 @@ riot.tag2('page01', '<svg></svg>', '', 'ref="self"', function(opts) {
          }
          return Math.floor( Math.random() * (max + 1 - min) ) + min ;
      }
+     this.findColumnInstances = (table, r_list, column_instances_ht) => {
+         let rs = r_list;
+         let cis = column_instances_ht;
+         let out = [];
 
+         for (var i in rs) {
+             let r = rs[i];
+             if (r['from-id']==table._id && r['to-class']=='COLUMN-INSTANCE')
+                 out.push(cis[r['to-id']]);
+         }
+
+         return out;
+     }
      this.drawTables = () => {
          let table = new Table();
+         let state = STORE.state().get('er');
+         let tables = state.tables.list;
 
-         let data = STORE.state().get('er').tables.list;
-         table.draw(this.d3svg, data);
+         for (var i in tables)
+             tables[i].columns = this.findColumnInstances(tables[i],
+                                                          state.relashonships.list,
+                                                          state.column_instances.ht);
+
+         table.draw(this.d3svg, tables);
      };
 
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-ER-TABLES')
+         if(action.type=='FETCHED-ER')
              this.drawTables();
      });
 

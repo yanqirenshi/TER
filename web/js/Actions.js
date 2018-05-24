@@ -17,7 +17,7 @@ class Actions extends Vanilla_Redux_Actions {
         return {ht: ht, list: list};
     }
     fetchErTables () {
-        API.get('/er/entities', function (response) {
+        API.get('/er/tables', function (response) {
             STORE.dispatch(this.fetchedErTables(response));
         }.bind(this));
     }

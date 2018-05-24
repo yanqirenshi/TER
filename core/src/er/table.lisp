@@ -16,7 +16,11 @@
       (tx-make-vertex graph
                       'table
                       `((code ,code)
-                        (name ,name)))))
+                        (name ,name)
+                        (x ,(random (* 1920 2)))
+                        (y ,(random (* 1080 2)))
+                        (w 222)
+                        (h 333)))))
 
 (defun find-table-columns (graph table)
   (shinra:find-r-vertex graph 'edge-er

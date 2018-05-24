@@ -3,10 +3,8 @@
 ;;;;;
 ;;;;; column
 ;;;;;
-(defclass column (shinra:shin)
-  ((code :accessor code :initarg :code :initform nil)
-   (name :accessor name :initarg :name :initform nil)
-   (data-type :accessor data-type :initarg :data-type :initform nil)))
+(defclass column (shinra:shin rsc)
+  ((data-type :accessor data-type :initarg :data-type :initform nil)))
 
 (defmethod jojo:%to-json ((obj column))
   (jojo:with-object
@@ -19,10 +17,8 @@
 ;;;;;
 ;;;;; column-instance
 ;;;;;
-(defclass column-instance (shinra:shin)
-  ((code :accessor code :initarg :code :initform nil)
-   (name :accessor name :initarg :name :initform nil)
-   (data-type :accessor data-type :initarg :data-type :initform nil)))
+(defclass column-instance (shinra:shin rsc)
+  ((data-type :accessor data-type :initarg :data-type :initform nil)))
 
 (defmethod jojo:%to-json ((obj column-instance))
   (jojo:with-object
@@ -35,10 +31,8 @@
 ;;;;;
 ;;;;; table
 ;;;;;
-(defclass table (shinra:shin)
-  ((code       :accessor code       :initarg :code       :initform nil)
-   (name       :accessor name       :initarg :name       :initform nil)
-   (columns :accessor columns :initarg :columns :initform nil)))
+(defclass table (shinra:shin rsc point rect)
+  ((columns :accessor columns :initarg :columns :initform nil)))
 
 (defmethod jojo:%to-json ((obj table))
   (jojo:with-object
@@ -47,7 +41,14 @@
     (jojo:write-key-value "name" (slot-value obj 'name))
     (when-let (slot-value obj'columns)
       (jojo:write-key-value "columns" (slot-value obj'columns)))
-    (jojo:write-key-value "_class" 'table)))
+    (jojo:write-key-value "_class" 'table)
+    ;; point
+    (jojo:write-key-value "x" (slot-value obj 'x))
+    (jojo:write-key-value "y" (slot-value obj 'y))
+    (jojo:write-key-value "z" (slot-value obj 'z))
+    ;; rect
+    (jojo:write-key-value "w" (slot-value obj 'w))
+    (jojo:write-key-value "h" (slot-value obj 'h))))
 
 ;;;;;
 ;;;;; Relationship

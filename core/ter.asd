@@ -19,7 +19,8 @@
                                                 (:file "ruby")
                                                 (:file "ruby-unrefined")))
                  (:file "package")
-                 (:module "class" :components ((:file "er")
+                 (:module "class" :components ((:file "common")
+                                               (:file "er")
                                                (:file "ter")))
                  ;; er
                  (:module "er" :components ((:file "column")

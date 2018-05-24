@@ -32,8 +32,11 @@ riot.tag2('page01', '<svg></svg>', '', 'ref="self"', function(opts) {
 
          for (var i in rs) {
              let r = rs[i];
-             if (r['from-id']==table._id && r['to-class']=='COLUMN-INSTANCE')
-                 out.push(cis[r['to-id']]);
+             if (r['from-id']==table._id && r['to-class']=='COLUMN-INSTANCE') {
+                 let column = cis[r['to-id']];
+                 column.table = table
+                 out.push(column);
+             }
          }
 
          return out;

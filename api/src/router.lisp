@@ -21,6 +21,12 @@
 ;;;
 ;;; er
 ;;;
+(defroute "/er" ()
+  (render-json (list :tables (ter.api.controller:finder-er-tables)
+                     :columns (ter.api.controller:finder-er-columns)
+                     :column_instances (ter.api.controller:finder-er-column-instances)
+                     :relashonships (ter.api.controller:finder-er-relashonships))))
+
 (defroute "/er/tables" ()
   (render-json (ter.api.controller:finder-er-tables)))
 

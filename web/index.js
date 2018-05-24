@@ -29,11 +29,11 @@ var STORE = new Store(REDUCER).init();
 let Metronome = new Vanilla_metronome({
     interval: 1000 * 10,
     tick: function (count) {
-         // ACTIONS.fetchData();
-        ACTIONS.fetchErTables();
-        ACTIONS.fetchErColumns();
-        ACTIONS.fetchErColumnInstances();
-        ACTIONS.fetchErRelashonships();
+        ACTIONS.fetchEr();
+        // ACTIONS.fetchErTables();
+        // ACTIONS.fetchErColumns();
+        // ACTIONS.fetchErColumnInstances();
+        // ACTIONS.fetchErRelashonships();
     }
 });
 

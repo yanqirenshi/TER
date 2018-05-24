@@ -16,6 +16,24 @@ class Actions extends Vanilla_Redux_Actions {
         }
         return {ht: ht, list: list};
     }
+    fetchEr () {
+        API.get('/er', function (response) {
+            STORE.dispatch(this.fetchedEr(response));
+        }.bind(this));
+    }
+    fetchedEr (response) {
+        return {
+            type: 'FETCHED-ER',
+            data: {
+                er: {
+                    tables:           this.makeGraphData(response.TABLES),
+                    columns:          this.makeGraphData(response.COLUMNS),
+                    column_instances: this.makeGraphData(response.COLUMN_INSTANCES),
+                    relashonships:    this.makeGraphData(response.RELASHONSHIPS)
+                }
+            }
+        };
+    }
     fetchErTables () {
         API.get('/er/tables', function (response) {
             STORE.dispatch(this.fetchedErTables(response));

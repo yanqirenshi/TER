@@ -2,17 +2,17 @@ class Graph {
     constructor (reducer) {
     }
     // Common
-    random (parent, type) {
+    random (v, type) {
         let min;
         let max;
 
         if (type=='x') {
             min = 11;
-            max = parent.clientWidth - 11;
+            max = v - 11;
         }
         if (type=='y') {
             min = 11;
-            max = parent.clientHeight - 11;
+            max = v * 2 - 11;
         }
         return Math.floor( Math.random() * (max + 1 - min) ) + min ;
     }

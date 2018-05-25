@@ -4,7 +4,8 @@
   (:export #:finder-er-tables
            #:finder-er-columns
            #:finder-er-column-instances
-           #:finder-er-relashonships)
+           #:finder-er-relashonships
+           #:find-er)
   (:export #:find-ter)
   (:export #:find-graph))
 (in-package :ter.api.controller)

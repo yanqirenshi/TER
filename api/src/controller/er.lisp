@@ -10,4 +10,4 @@
   (ter:find-column-instance ter.db:*graph*))
 
 (defun finder-er-relashonships ()
-  (ter:find-all-edges ter.db:*graph*))
+  (ter:find-er-all-edges ter.db:*graph*))

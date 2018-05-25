@@ -30,6 +30,7 @@
                                             (:file "relationship")))
                  ;; ter
                  (:module "ter" :components ((:file "identifier")
+                                             (:file "identifier-instance")
                                              (:file "attribute")
                                              (:file "attribute-instance")
                                              (:file "resource")

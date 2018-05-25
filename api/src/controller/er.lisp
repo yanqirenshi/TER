@@ -11,3 +11,9 @@
 
 (defun finder-er-relashonships ()
   (ter:find-er-all-edges ter.db:*graph*))
+
+(defun find-er ()
+  (list :tables (finder-er-tables)
+        :columns (finder-er-columns)
+        :column_instances (finder-er-column-instances)
+        :relashonships (finder-er-relashonships)))

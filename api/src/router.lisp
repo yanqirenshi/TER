@@ -51,6 +51,9 @@
 ;;;
 ;;; ter
 ;;;
+(defroute "/ter" ()
+  (render-json (ter.api.controller:find-ter)))
+
 (defroute "/ter/resources"                   () (render-json (list :test "/resources")))
 (defroute "/ter/resources/:code"             () (render-json (list :test "/resources/:code")))
 (defroute "/ter/resources/:code/identifiers" () (render-json (list :test "/resources/:code/identifiers")))
@@ -66,6 +69,13 @@
 
 (defroute "/ter/attributes"        () (render-json (list :test "/events")))
 (defroute "/ter/attributes/:code"  () (render-json (list :test "/events/:code")))
+
+
+;;;
+;;; Graph
+;;;
+(defroute "/graph" ()
+  (render-json (ter.api.controller:find-graph)))
 
 
 ;;;;;

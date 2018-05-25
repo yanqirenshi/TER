@@ -3,7 +3,7 @@
 
     <script>
      this.d3svg = null;
-     this.graph = new Graph();
+     this.ter = new Ter();
 
      this.drawNods = ()=>{
          let state = STORE.state().get('graph');
@@ -49,8 +49,8 @@
              let h = window.innerHeight * 3;
 
              for (var i in nodes.list) {
-                 nodes.list[i].x = this.graph.random(w, 'x');
-                 nodes.list[i].y = this.graph.random(h, 'y');
+                 nodes.list[i].x = this.ter.random(w, 'x');
+                 nodes.list[i].y = this.ter.random(h, 'y');
              }
 
              this.drawEdges();
@@ -59,7 +59,7 @@
      });
 
      this.on('mount', () => {
-         this.d3svg = this.graph.makeD3svg('page01 > svg');
+         this.d3svg = this.ter.makeD3svg('page01 > svg');
      });
 
      ACTIONS.fetchGraph();

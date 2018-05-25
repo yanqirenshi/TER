@@ -10,17 +10,20 @@
          border-radius: 55px;
          width: 55px;
          height: 55px;
-         background: #eeeeee;
+         background: rgba(255, 255, 255, 0.9);
          z-index: 99999999;
-         opacity: 0.9;
 
          text-align: center;
-         padding-top: 15px;
+         padding-top: 12px;
+
+         border: 3px solid rgb(238, 238, 238);
 
          box-shadow: 0 0 8px gray;
      }
      menu > .menu-item.active {
-         background: rgba(236, 109, 113, 0.8);
+         background: rgba(236, 109, 113, 0.9);
+         color: #ffffff;
+         border: 3px solid rgba(236, 109, 113);
      }
     </style>
 

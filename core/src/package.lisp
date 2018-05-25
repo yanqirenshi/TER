@@ -12,5 +12,16 @@
   (:export #:find-table
            #:find-column
            #:find-column-instance
-           #:find-all-edges))
+           #:find-er-all-edges)
+  ;; ter
+  (:export #:find-resource
+           #:find-event
+           #:find-correspondence
+           #:find-comparative
+           #:find-recursion
+           #:find-attribute
+           #:find-attribute-instance
+           #:find-identifier
+           #:find-identifier-instance
+           #:find-ter-all-edges))
 (in-package :ter)

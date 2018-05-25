@@ -30,6 +30,7 @@ let Metronome = new Vanilla_metronome({
     interval: 1000 * 10,
     tick: function (count) {
         ACTIONS.fetchEr();
+        ACTIONS.fetchTer();
         // ACTIONS.fetchErTables();
         // ACTIONS.fetchErColumns();
         // ACTIONS.fetchErColumnInstances();

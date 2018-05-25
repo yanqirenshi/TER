@@ -34,6 +34,22 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    fetchTer () {
+        API.get('/ter', function (response) {
+            STORE.dispatch(this.fetchedTer(response));
+        }.bind(this));
+    }
+    fetchedTer (response) {
+        return {
+            type: 'FETCHED-TER',
+            data: {
+                ter: {
+                    nodes: response.NODES,
+                    edges: response.EDGES
+                }
+            }
+        };
+    }
     fetchErTables () {
         API.get('/er/tables', function (response) {
             STORE.dispatch(this.fetchedErTables(response));

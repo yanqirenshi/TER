@@ -44,8 +44,8 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'FETCHED-TER',
             data: {
                 ter: {
-                    nodes: response.NODES,
-                    edges: response.EDGES
+                    nodes: this.makeGraphData(response.NODES),
+                    edges: this.makeGraphData(response.EDGES)
                 }
             }
         };
@@ -60,8 +60,8 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'FETCHED-GRAPH',
             data: {
                 graph: {
-                    nodes: response.NODES,
-                    edges: response.EDGES
+                    nodes: this.makeGraphData(response.NODES),
+                    edges: this.makeGraphData(response.EDGES)
                 }
             }
         };

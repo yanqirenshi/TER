@@ -17,5 +17,7 @@
      this.on('mount', () => {
          this.d3svg = this.graph.makeD3svg('page03 > svg');
      });
+
+     ACTIONS.fetchEr();
     </script>
 </page03>

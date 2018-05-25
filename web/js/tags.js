@@ -34,10 +34,30 @@ riot.tag2('menu', '<div class="menu-item {active(\'ER\')}" code="ER" onclick="{c
      };
 });
 
-riot.tag2('page01', '<h1>Graph</h1>', '', '', function(opts) {
+riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
+     this.d3svg = null;
+     this.graph = new Graph();
+
+     STORE.subscribe((action) => {
+
+     });
+
+     this.on('mount', () => {
+         this.d3svg = this.graph.makeD3svg('page01 > svg');
+     });
 });
 
-riot.tag2('page02', '<h1>TER</h1>', '', '', function(opts) {
+riot.tag2('page02', '<svg></svg>', '', '', function(opts) {
+     this.d3svg = null;
+     this.graph = new Graph();
+
+     STORE.subscribe((action) => {
+
+     });
+
+     this.on('mount', () => {
+         this.d3svg = this.graph.makeD3svg('page02 > svg');
+     });
 });
 
 riot.tag2('page03', '<svg></svg>', '', '', function(opts) {

@@ -36,7 +36,7 @@ riot.tag2('menu', '<div class="menu-item {active(\'ER\')}" code="ER" onclick="{c
 
 riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
      this.d3svg = null;
-     this.graph = new Graph();
+     this.ter = new Ter();
 
      this.drawNods = ()=>{
          let state = STORE.state().get('graph');
@@ -82,8 +82,8 @@ riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
              let h = window.innerHeight * 3;
 
              for (var i in nodes.list) {
-                 nodes.list[i].x = this.graph.random(w, 'x');
-                 nodes.list[i].y = this.graph.random(h, 'y');
+                 nodes.list[i].x = this.ter.random(w, 'x');
+                 nodes.list[i].y = this.ter.random(h, 'y');
              }
 
              this.drawEdges();
@@ -92,7 +92,7 @@ riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
      });
 
      this.on('mount', () => {
-         this.d3svg = this.graph.makeD3svg('page01 > svg');
+         this.d3svg = this.ter.makeD3svg('page01 > svg');
      });
 
      ACTIONS.fetchGraph();
@@ -100,14 +100,14 @@ riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
 
 riot.tag2('page02', '<svg></svg>', '', '', function(opts) {
      this.d3svg = null;
-     this.graph = new Graph();
+     this.ter = new Ter();
 
      STORE.subscribe((action) => {
 
      });
 
      this.on('mount', () => {
-         this.d3svg = this.graph.makeD3svg('page02 > svg');
+         this.d3svg = this.ter.makeD3svg('page02 > svg');
      });
 
      ACTIONS.fetchTer();

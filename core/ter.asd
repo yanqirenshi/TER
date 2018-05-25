@@ -21,7 +21,8 @@
                  (:file "package")
                  (:module "class" :components ((:file "common")
                                                (:file "er")
-                                               (:file "ter")))
+                                               (:file "ter")
+                                               (:file "mapper")))
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

@@ -33,8 +33,6 @@ class Table {
         return this.columnsContentsHeight(d) + padding_top + padding_bottm;
     }
     baseHeight (d) {
-        dump(this.headerHight(d));
-        dump(this.columnsHeight(d));
         return this.headerHight(d) + this.columnsHeight(d);
     }
     /// ////////////////////////////////////////
@@ -106,5 +104,17 @@ class Table {
         this.drawBase(g);
         this.drawColumns(g);
         this.drawHeader(g);
+
+        let base = g.selectAll('rect.base');
+        base.call(d3.drag()
+               .on("drag", function (d, i) {
+                   d.x += d3.event.dx;
+                   d.y += d3.event.dy;
+                   dump(d);
+               })
+               .on('start', function () {
+               })
+               .on('end', function (d, i) {
+               }));
     }
 }

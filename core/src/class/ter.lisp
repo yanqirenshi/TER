@@ -3,11 +3,11 @@
 ;;;;;
 ;;;;; Entity
 ;;;;;
-(defclass resource (shinra:shin) ())
-(defclass event (shinra:shin) ())
-(defclass correspondence (shinra:shin) ())
-(defclass comparative (shinra:shin) ())
-(defclass recursion (shinra:shin) ())
+(defclass resource (shinra:shin rsc point rect) ())
+(defclass event (shinra:shin rsc point rect) ())
+(defclass correspondence (shinra:shin rsc point rect) ())
+(defclass comparative (shinra:shin rsc point rect) ())
+(defclass recursion (shinra:shin rsc point rect) ())
 
 
 ;;;;;

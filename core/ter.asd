@@ -37,7 +37,8 @@
                                              (:file "event")
                                              (:file "comparative")
                                              (:file "correspondence")
-                                             (:file "recursion")))
+                                             (:file "recursion")
+                                             (:file "relationship")))
                  (:file "mapper")
                  (:module "importer" :components ((:file "schema.rb"))))))
   :description ""

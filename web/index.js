@@ -31,10 +31,7 @@ let Metronome = new Vanilla_metronome({
     tick: function (count) {
         ACTIONS.fetchEr();
         ACTIONS.fetchTer();
-        // ACTIONS.fetchErTables();
-        // ACTIONS.fetchErColumns();
-        // ACTIONS.fetchErColumnInstances();
-        // ACTIONS.fetchErRelashonships();
+        ACTIONS.fetchGraph();
     }
 });
 

@@ -43,7 +43,9 @@ let Metronome = new Vanilla_metronome({
 route.start(function () {
     let hash = location.hash;
     let len = hash.length;
+
     if (len==0)
-        return '/';
+        location.hash = '#GRAPH';
+
     return hash.substring(1);
 }());

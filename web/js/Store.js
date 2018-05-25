@@ -5,9 +5,18 @@ class Store extends Vanilla_Redux_Store {
     init () {
         this._contents = Immutable.Map({
             pages: {
-                page01: {},
-                page02: {},
-                page03: {}
+                'GRAPH': {
+                    code: 'GRAPH',
+                    active: true
+                },
+                'TER': {
+                    code: 'TER',
+                    active: false
+                },
+                'ER': {
+                    code: 'ER',
+                    active: false
+                }
             },
             er: {
                 tables:           {ht: {}, list: []},

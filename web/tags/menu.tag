@@ -15,7 +15,9 @@
          opacity: 0.9;
 
          text-align: center;
-         padding-top: 15px
+         padding-top: 15px;
+
+         box-shadow: 0 0 8px gray;
      }
      menu > .menu-item.active {
          background: rgba(236, 109, 113, 0.8);

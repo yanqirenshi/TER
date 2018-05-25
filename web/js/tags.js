@@ -19,7 +19,7 @@ riot.tag2('app', '<page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> 
      };
 });
 
-riot.tag2('menu', '<div class="menu-item {active(\'ER\')}" code="ER" onclick="{click}">ER</div> <div class="menu-item {active(\'TER\')}" code="TER" onclick="{click}">TER</div> <div class="menu-item {active(\'GRAPH\')}" code="GRAPH" onclick="{click}">Graph</div>', 'menu > .menu-item { float: right; margin-left: 11px; border-radius: 55px; width: 55px; height: 55px; background: #eeeeee; z-index: 99999999; opacity: 0.9; text-align: center; padding-top: 15px } menu > .menu-item.active { background: rgba(236, 109, 113, 0.8); }', '', function(opts) {
+riot.tag2('menu', '<div class="menu-item {active(\'ER\')}" code="ER" onclick="{click}">ER</div> <div class="menu-item {active(\'TER\')}" code="TER" onclick="{click}">TER</div> <div class="menu-item {active(\'GRAPH\')}" code="GRAPH" onclick="{click}">Graph</div>', 'menu > .menu-item { float: right; margin-left: 11px; border-radius: 55px; width: 55px; height: 55px; background: #eeeeee; z-index: 99999999; opacity: 0.9; text-align: center; padding-top: 15px; box-shadow: 0 0 8px gray; } menu > .menu-item.active { background: rgba(236, 109, 113, 0.8); }', '', function(opts) {
      this.active = (code) => {
          let page = this.opts.data[code];
 

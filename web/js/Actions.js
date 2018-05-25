@@ -50,6 +50,22 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    fetchGraph () {
+        API.get('/graph', function (response) {
+            STORE.dispatch(this.fetchedGraph(response));
+        }.bind(this));
+    }
+    fetchedGraph (response) {
+        return {
+            type: 'FETCHED-GRAPH',
+            data: {
+                graph: {
+                    nodes: response.NODES,
+                    edges: response.EDGES
+                }
+            }
+        };
+    }
     fetchErTables () {
         API.get('/er/tables', function (response) {
             STORE.dispatch(this.fetchedErTables(response));

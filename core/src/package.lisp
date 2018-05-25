@@ -23,5 +23,6 @@
            #:find-attribute-instance
            #:find-identifier
            #:find-identifier-instance
-           #:find-ter-all-edges))
+           #:find-ter-all-edges)
+  (:export #:find-mapping-all-edges))
 (in-package :ter)

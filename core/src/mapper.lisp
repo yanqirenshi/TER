@@ -24,6 +24,12 @@
 (defun tx-mapping (graph from to)
   (assert-mapping from to))
 
+
+(defun find-mapping-all-edges (graph &key (class 'edge-map))
+  (gethash (pool-key-ra class)
+           (up::root-objects graph)))
+
+
 (defun find-mapping (graph &key from)
   (when from
     (shinra:find-r-vertex graph 'edge-map

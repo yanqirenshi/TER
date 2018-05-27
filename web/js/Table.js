@@ -2,9 +2,10 @@ class Table {
     constructor(reducer) {
         this._padding = 11;
     }
-    /// ////////////////////////////////////////
-    /// Sizing
-    /// ////////////////////////////////////////
+    ///// ////////////////////////////////////////
+    /////  Sizing
+    ///// ////////////////////////////////////////
+    /// header
     headerWidth (d) {
         let padding = this._padding;
         return d.w - padding * 2;
@@ -17,6 +18,7 @@ class Table {
         let padding_bottm = 3;
         return 22 + padding_top + padding_bottm;
     }
+    /// columns
     columnsWidth (d) {
         let padding = this._padding;
         return d.w - padding * 2;
@@ -32,12 +34,13 @@ class Table {
         let padding_bottm = this._padding;
         return this.columnsContentsHeight(d) + padding_top + padding_bottm;
     }
+    /// base
     baseHeight (d) {
         return this.headerHight(d) + this.columnsHeight(d);
     }
-    /// ////////////////////////////////////////
-    /// Draw
-    /// ////////////////////////////////////////
+    ///// ////////////////////////////////////////
+    /////  Draw
+    ///// ////////////////////////////////////////
     drawHeader (g) {
         let padding = this._padding;
         let self = this;

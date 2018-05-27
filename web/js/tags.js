@@ -101,32 +101,45 @@ riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
 riot.tag2('page02', '<svg></svg>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
+     this.entity = new Entity();
+
+     this.drawNodes = (d3svg, state)=>{
+         let svg = d3svg._svg;
+         let nodes = state.nodes.list;
+     };
+     this.drawEdges = (d3svg, state)=>{
+         let svg = d3svg._svg;
+         let nodes = state.nodes.ht;
+         let edges = state.edges.list;
+     };
 
      STORE.subscribe((action) => {
-
+         if(action.type=='FETCHED-TER')
+             this.entity.draw(this.d3svg, STORE.state().get('ter'))
      });
 
      this.on('mount', () => {
          this.d3svg = this.ter.makeD3svg('page02 > svg');
+
+         ACTIONS.fetchTer();
      });
 
-     ACTIONS.fetchTer();
 });
 
 riot.tag2('page03', '<svg></svg>', '', '', function(opts) {
      this.d3svg = null;
-     this.graph = new Graph();
+     this.ter = new Ter();
 
      STORE.subscribe((action) => {
          if(action.type=='FETCHED-ER')
-             this.graph.drawTables(
+             this.ter.drawTables(
                  this.d3svg,
                  STORE.state().get('er')
              );
      });
 
      this.on('mount', () => {
-         this.d3svg = this.graph.makeD3svg('page03 > svg');
+         this.d3svg = this.ter.makeD3svg('page03 > svg');
      });
 
      ACTIONS.fetchEr();

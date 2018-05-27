@@ -23,6 +23,14 @@ class Store extends Vanilla_Redux_Store {
                 columns:          {ht: {}, list: []},
                 column_instances: {ht: {}, list: []},
                 relashonships:    {ht: {}, list: []}
+            },
+            ter: {
+                nodes: {ht: {}, list: []},
+                edges: {ht: {}, list: []}
+            },
+            graph: {
+                nodes: {ht: {}, list: []},
+                edges: {ht: {}, list: []}
             }
         });
         return this;

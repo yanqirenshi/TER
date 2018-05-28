@@ -6,8 +6,8 @@
    (z :accessor z :initarg :z :initform 0)))
 
 (defclass rect ()
-  ((w :accessor w :initarg :w :initform 0)
-   (h :accessor h :initarg :h :initform 0)))
+  ((w :accessor w :initarg :w :initform 333)
+   (h :accessor h :initarg :h :initform 222)))
 
 (defclass rsc ()
   ((code :accessor code :initarg :code :initform nil)

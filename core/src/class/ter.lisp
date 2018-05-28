@@ -47,7 +47,8 @@
     (jojo:write-key-value "h" (slot-value obj 'h))
     (jojo:write-key-value "_class" "EVENT")))
 
-(defclass correspondence (shinra:shin rsc point rect) ())
+(defclass correspondence (shinra:shin rsc point rect) ()
+  (:documentation "対応表"))
 
 (defmethod jojo:%to-json ((obj correspondence))
   (jojo:with-object
@@ -63,7 +64,8 @@
     (jojo:write-key-value "h" (slot-value obj 'h))
     (jojo:write-key-value "_class" "CORRESPONDENCE")))
 
-(defclass comparative (shinra:shin rsc point rect) ())
+(defclass comparative (shinra:shin rsc point rect) ()
+  (:documentation "対照表"))
 
 (defmethod jojo:%to-json ((obj comparative))
   (jojo:with-object

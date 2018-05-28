@@ -67,7 +67,8 @@ class Entity {
         let padding = this._conf.base.padding;
         let padding_left = this._conf.body.padding.center;
 
-        return Math.floor(this.bodyContetnsWidth(d)/2)
+        return d.x
+            + Math.floor(this.bodyContetnsWidth(d)/2)
             + padding // base の
             + padding_left; // body-right の padding
     }
@@ -79,10 +80,10 @@ class Entity {
     }
     /// base
     baseWidth (d) {
-        return 333;
+        return d.w;
     }
     baseHeight (d) {
-        return 222;
+        return d.h;
     }
     ///// ////////////////////////////////////////
     /////  Draw
@@ -94,8 +95,8 @@ class Entity {
             .attr('class', 'header')
             .attr('x', function (d) { return d.x + padding; })
             .attr('y', function (d) { return d.y + padding; })
-            .attr('width',  (d) => { return this.headerWidth(d); })
-            .attr('height', (d) => { return this.headerContentsHight(d); })
+            .attr('width',  (d)=>{ return this.headerWidth(d); })
+            .attr('height', (d)=>{ return this.headerContentsHight(d); })
             .attr('fill', '#fefefe')
             .attr('stroke-width', 0.3)
             .attr('stroke', '#eeeeee');
@@ -105,7 +106,9 @@ class Entity {
             .attr('x', function (d) { return d.x + padding + 6; })
             .attr('y', function (d) { return d.y + padding + 16; })
             .attr('font-size', 16 + 'px')
-            .text((d) => { return d.name; });
+            .text((d)=>{
+                return d.name;
+            });
     }
     drawLeftArea (g) {
         let self = this;
@@ -134,11 +137,24 @@ class Entity {
     drawBase (g) {
         g.append('rect')
             .attr('class', 'base')
-            .attr('x', (d) => { return d.x; })
-            .attr('y', (d) => { return d.y; })
-            .attr('width', (d) => { return this.baseWidth(); })
-            .attr('height', (d) => { return this.baseHeight(); })
-            .attr('fill', '#f8f8f8')
+            .attr('x', (d)=>{ return d.x; })
+            .attr('y', (d)=>{ return d.y; })
+            .attr('width', (d)=>{ return this.baseWidth(d); })
+            .attr('height', (d)=>{ return this.baseHeight(d); })
+            .attr('fill', (d)=>{
+                if (d._class=='RESOURCE')
+                    return 'rgba(137, 195, 235, 0.9)';
+                if (d._class=='EVENT')
+                    return 'rgba(238, 187, 203, 0.9)';
+                if (d._class=='TH')
+                    return 'rgba(255, 219, 79, 0.9)';
+                if (d._class=='TO')
+                    return 'rgba(248, 184, 98, 0.9)';
+                if (d._class=='REC')
+                    return 'rgba(192, 162, 199, 0.9)';
+
+                return '#f8f8f8';
+            })
             .attr('stroke-width', 0.3)
             .attr('stroke', '#eeeeee')
 ;

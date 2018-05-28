@@ -38,6 +38,7 @@
                                              (:file "comparative")
                                              (:file "correspondence")
                                              (:file "recursion")
+                                             (:file "port")
                                              (:file "relationship-common")
                                              (:file "relationship-rsc2rsc")
                                              (:file "relationship-rsc2evt")

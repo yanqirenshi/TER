@@ -80,7 +80,9 @@
   (print (list from-column-instance to-column-instance)))
 
 (defun tx-import-foreign-key (graph from-table fk)
-  (let ((from-attr-table-code (make-column-instance-code from-table (getf fk :name) (make-data-type fk)))
+  (let ((from-attr-table-code (make-column-instance-code from-table
+                                                         (getf fk :name)
+                                                         (make-data-type fk)))
         (to-table (get-table graph :code (make-table-code (getf (getf fk :foreign-key) :references)))))
     (xxx graph
          (get-column-instance graph :code from-attr-table-code)
@@ -102,7 +104,7 @@
         (columns-data (cons '(:type :column :alias "t" :name "id" :data-type "integer")
                                (find-column-plists plist))))
     (tx-import-columns graph table columns-data)
-    (tx-import-foreign-keys graph table plist)
+    ;; (tx-import-foreign-keys graph table plist)
     table))
 
 ;;;;;

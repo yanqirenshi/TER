@@ -16,7 +16,7 @@
 ;;;;;
 (defun find-r-column_column-instance (graph &key column)
   (when column
-    (shinra:find-r-vertex graph 'edge-er
+    (shinra:find-r-vertex graph 'edge-ter
                           :from column
                           :vertex-class 'column-instance
                           :edge-type :instance-of)))
@@ -36,7 +36,7 @@
 ;;;;;
 (defun find-r-table_column-instance (graph &key table)
   (when table
-    (shinra:find-r-vertex graph 'edge-er
+    (shinra:find-r-vertex graph 'edge-ter
                           :from table
                           :vertex-class 'column-instance
                           :edge-type :have)))

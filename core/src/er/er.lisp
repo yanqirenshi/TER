@@ -1,5 +1,28 @@
 (in-package :ter)
 
+(defun sum-table-col-types (columns &optional (ht (make-hash-table)))
+  (if (null columns)
+      (alexandria:hash-table-plist ht)
+      (let* ((col (car columns))
+             (key (or (column-type col) :null)))
+        (if (not (gethash key ht))
+            (setf (gethash key ht) 1)
+            (setf (gethash key ht)
+                  (+ (gethash key ht) 1)))
+        (sum-table-col-types (cdr columns) ht))))
+
+(defun print-tables (graph)
+  (plist-printer:pprints
+   (mapcar #'(lambda (d)
+               (list :%id (up:%id d)
+                     :code (code d)
+                     :name (name d)
+                     :description (description d)
+                     :col-types (format nil "~S" (sum-table-col-types (columns d)))))
+           (sort (find-table graph)
+                 #'(lambda (a b) (string< (name a) (name b)))))
+   (list :%id :code :name :description :col-types)))
+
 (defun print-table (graph code)
   (let ((table (get-table graph :code code)))
     (format t "CODE: ~S~%" (code table))
@@ -17,6 +40,6 @@
      (list :%id :name :type :col-type :description))))
 
 
-(defun set-column-type (%id column-type)
-  (setf (column-type (get-column-instance *graph* :%id %id))
+(defun set-column-type (graph %id column-type)
+  (setf (column-type (get-column-instance graph :%id %id))
         column-type))

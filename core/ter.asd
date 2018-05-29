@@ -24,6 +24,7 @@
                                                (:file "er")
                                                (:file "ter")
                                                (:file "mapper")))
+                 (:file "point")
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

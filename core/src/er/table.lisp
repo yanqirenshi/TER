@@ -8,7 +8,7 @@
     (when table
       (when with-columns
         (setf (columns table)
-              (find-table-columns *graph* table)))
+              (find-table-columns graph table)))
       table)))
 
 (defun tx-make-table (graph code name)

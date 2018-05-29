@@ -60,6 +60,28 @@ class Table {
             .attr('font-size', 16 + 'px')
             .text((d) => { return d.name; });
     }
+    sortColumns (data) {
+        let ids = [];
+        let attributes = [];
+        let timestamps = [];
+        let others = [];
+        for (var i in data) {
+            if (data[i].column_type=='ID')
+                ids.push(data[i]);
+            else if (data[i].column_type=='ATTRIBUTE')
+                attributes.push(data[i]);
+            else if (data[i].column_type=='TIMESTAMP')
+                timestamps.push(data[i]);
+            else
+                others.push(data[i]);
+        }
+        ids = ids.sort((a,b)=>{ return a._id - b._id; });
+        attributes = attributes.sort((a,b)=>{ return a._id - b._id; });
+        timestamps = timestamps.sort((a,b)=>{ return a._id - b._id; });
+        others = others.sort((a,b)=>{ return a._id - b._id; });
+
+        return [].concat(ids, attributes, timestamps, others);
+    }
     drawColumns (g) {
         let padding = this._padding;
 
@@ -72,7 +94,9 @@ class Table {
             .attr('fill', '#fefefe');
 
         g.selectAll('text.column')
-            .data((d) => { return d.columns; })
+            .data((d) => {
+                return this.sortColumns(d.columns);
+            })
             .enter()
             .append('text')
             .attr('class', 'column')

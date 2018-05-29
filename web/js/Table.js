@@ -75,10 +75,11 @@ class Table {
             else
                 others.push(data[i]);
         }
-        ids = ids.sort((a,b)=>{ return a._id - b._id; });
-        attributes = attributes.sort((a,b)=>{ return a._id - b._id; });
-        timestamps = timestamps.sort((a,b)=>{ return a._id - b._id; });
-        others = others.sort((a,b)=>{ return a._id - b._id; });
+        let sorter = (a,b)=>{ return a._id - b._id; };
+        ids = ids.sort(sorter);
+        attributes = attributes.sort(sorter);
+        timestamps = timestamps.sort(sorter);
+        others = others.sort(sorter);
 
         return [].concat(ids, attributes, timestamps, others);
     }

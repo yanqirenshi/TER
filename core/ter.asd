@@ -29,6 +29,7 @@
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")
                                             (:file "table")
+                                            (:file "port")
                                             (:file "relationship")
                                             (:file "er")))
                  ;; ter

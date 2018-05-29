@@ -1,18 +1,5 @@
 (in-package :ter)
 
-(defun %add-port (graph from)
-  (let ((port (tx-make-port graph)))
-    (shinra:tx-make-edge graph 'edge-ter from port :have)
-    port))
-
-(defgeneric add-port (graph from)
-  (:method (graph (from resource))       (%add-port graph from))
-  (:method (graph (from event))          (%add-port graph from))
-  (:method (graph (from comparative))    (%add-port graph from))
-  (:method (graph (from correspondence)) (%add-port graph from))
-  (:method (graph (from recursion))      (%add-port graph from))
-  (:method (graph (from recursion))      (%add-port graph from)))
-
 (defun find-ter-all-edges (graph &key (class 'edge-ter))
   (gethash (pool-key-ra class)
            (up::root-objects graph)))
@@ -28,8 +15,8 @@
   (:method ((obj recursion)) t)
   (:method (obj) nil))
 
-(defgeneric port-p (obj)
-  (:method ((obj port)) t)
+(defgeneric port-ter-p (obj)
+  (:method ((obj port-ter)) t)
   (:method (obj) nil))
 
 (defun parse-make-r-statemnts (statements)
@@ -47,7 +34,7 @@
     ;; from
     (let ((from (first statement)))
       (assert (or (entity-p from)
-                  (port-p from))))
+                  (port-ter-p from))))
     ;; center
     (let ((center (second statement)))
       (assert (listp center))
@@ -58,7 +45,7 @@
     ;; to
     (let ((to (first statement)))
       (assert (or (entity-p to)
-                  (port-p to))))
+                  (port-ter-p to))))
     (assert-make-r-statemnts (cdr statements))))
 
 (defun splist-center-pos (center &optional (operators '(:<- :->)))

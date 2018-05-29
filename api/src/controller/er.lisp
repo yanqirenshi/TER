@@ -22,7 +22,9 @@
   (list :tables (finder-er-tables)
         :columns (finder-er-columns)
         :column_instances (finder-er-column-instances)
-        :relashonships (finder-er-relashonships)))
+        :relashonships (finder-er-relashonships)
+        :ports (ter::find-port-er ter.db:*graph*)
+        :edges (ter:find-er-all-edges ter.db:*graph*)))
 
 (defun save-er-position (code position)
   (let ((table (ter::get-table ter.db:*graph* :code code)))

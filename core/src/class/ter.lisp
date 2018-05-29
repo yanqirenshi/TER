@@ -1,8 +1,8 @@
 (in-package :ter)
 
-(defclass port (shinra:shin rsc point) ())
+(defclass port-ter (shinra:shin rsc point) ())
 
-(defmethod jojo:%to-json ((obj port))
+(defmethod jojo:%to-json ((obj port-ter))
   (jojo:with-object
     (jojo:write-key-value "_id"  (slot-value obj 'up:%id))
     ;; point

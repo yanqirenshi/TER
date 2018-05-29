@@ -28,11 +28,12 @@
                         :vertex-class 'column-instance
                         :edge-type :have))
 
-(defun get-table-column-instance (graph table data)
-  (when (and graph table data)
+(defun get-table-column-instance (graph table &key data code)
+  (when (and graph table (or data code))
     (find-if #'(lambda (d)
                  (eq (code d)
-                     (make-column-instance-code table
-                                                (getf data :name)
-                                                (make-data-type data))))
+                     (cond (data (make-column-instance-code table
+                                                            (getf data :name)
+                                                            (make-data-type data)))
+                           (code code))))
              (find-table-columns graph table))))

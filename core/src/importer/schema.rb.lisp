@@ -71,7 +71,7 @@
 
 (defun tx-import-columns (graph table columns-data)
   (when-let ((data (car columns-data)))
-    (cons (or (get-table-column-instance graph table data)
+    (cons (or (get-table-column-instance graph table :data data)
               (let* ((column (tx-import-column graph data))
                      (column-instance (tx-import-column-instance graph table data)))
                 (tx-make-r-column_column-instance graph column column-instance)
@@ -86,17 +86,19 @@
                     (make-table-code name)
                     name)))
 
-(defun xxx (graph from-column-instance to-column-instance)
-  (print (list from-column-instance to-column-instance)))
+(defun %tx-import-foreign-key (graph from-table plist)
+  (let* ((to-table-code (make-table-code (getf (getf plist :foreign-key) :references)))
+         (to-table (get-table graph :code to-table-code))
+         (to-code (make-column-instance-code to-table "id" "integer")))
+    (values (get-table-column-instance graph from-table :data plist)
+            (get-table-column-instance graph to-table :code to-code))))
 
-(defun tx-import-foreign-key (graph from-table fk)
-  (let ((from-attr-table-code (make-column-instance-code from-table
-                                                         (getf fk :name)
-                                                         (make-data-type fk)))
-        (to-table (get-table graph :code (make-table-code (getf (getf fk :foreign-key) :references)))))
-    (xxx graph
-         (get-column-instance graph :code from-attr-table-code)
-         (get-id-column-instance graph to-table))))
+(defun tx-import-foreign-key (graph from-table plist)
+  (multiple-value-bind (from-column-instance to-column-instance)
+      (%tx-import-foreign-key graph from-table plist)
+    (let ((from-port (add-port-er graph from-column-instance))
+          (to-port (add-port-er graph to-column-instance)))
+      (shinra:tx-make-edge graph 'edge-er from-port to-port :r))))
 
 (defun tx-import-foreign-keys (graph table plist)
   (dolist (fka (find-foreign-key-plists plist))
@@ -109,21 +111,30 @@
            (shinra:find-r-vertex graph 'edge-er
                                  :from table)))
 
-(defun tx-import-table (graph plist)
+(defun tx-import-tables (graph plist)
   (let ((table (tx-import-make-table graph plist))
         (columns-data (cons '(:type :column :alias "t" :name "id" :data-type "integer")
                                (find-column-plists plist))))
     (tx-import-columns graph table columns-data)
-    ;; (tx-import-foreign-keys graph table plist)
     table))
+
+(defun tx-import-all-foreign-keys (graph plist)
+  (when-let ((data (car plist)))
+    (let* ((table-name (getf (get-table-plist data) :name))
+           (table-code (make-table-code table-name))
+           (table (get-table graph :code table-code)))
+      (tx-import-foreign-keys graph table data))
+    (tx-import-all-foreign-keys graph (cdr plist))))
 
 ;;;;;
 ;;;;; Main
 ;;;;;
 (defun %import-schema.rb (graph plists)
   (when-let ((plist (car plists)))
-    (cons (up:execute-transaction (tx-import-table graph plist))
-          (%import-schema.rb graph (cdr plists)))))
+    (let ((tables (cons (up:execute-transaction (tx-import-tables graph plist))
+                        (%import-schema.rb graph (cdr plists)))))
+      (tx-import-all-foreign-keys graph plists)
+      tables)))
 
 (defun import-schema.rb (graph pathname)
   (%import-schema.rb graph (ter.parser:parse-schema.rb pathname)))

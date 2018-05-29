@@ -118,4 +118,9 @@ class Actions extends Vanilla_Redux_Actions {
             data: { er: state_er }
         };
     }
+    savePosition (table) {
+        let path = '/er/tables/' + table.code + '/position';
+        let data = {x: table.x, y:table.y, z:0};
+        API.post(path, data, ()=>{});
+    }
 }

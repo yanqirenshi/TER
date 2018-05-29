@@ -30,6 +30,11 @@
 (defroute "/er/tables/:code" ()
   (render-json (list :test "/er/tables/:code")))
 
+(defroute ("/er/tables/:code/position" :method :POST) (&key code _parsed)
+  (let ((position (jojo:parse (car (first _parsed))))
+        (code (alexandria:make-keyword code)))
+    (render-json (ter.api.controller::save-er-position code position))))
+
 (defroute "/er/columns" ()
   (render-json (ter.api.controller:finder-er-columns)))
 

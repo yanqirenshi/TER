@@ -45,7 +45,7 @@ class Ter {
          return out;
     }
     drawTables (d3svg, state) {
-        let table = new Table();
+        let table = new Table({ d3svg:d3svg });
         let tables = state.tables.list;
 
         for (var i in tables)
@@ -54,6 +54,6 @@ class Ter {
                 state.relashonships.list,
                 state.column_instances.ht);
 
-        table.draw(d3svg, tables);
+        table.draw(tables);
     }
 }

@@ -25,5 +25,5 @@
 (defun find-table-columns (graph table)
   (shinra:find-r-vertex graph 'edge-er
                         :from table
-                        :vertex-class 'column
+                        :vertex-class 'column-instance
                         :edge-type :have))

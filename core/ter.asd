@@ -9,7 +9,8 @@
   :depends-on (#:cl-lex
                #:yacc
                #:upanishad
-               #:shinrabanshou)
+               #:shinrabanshou
+               #:plist-printer)
   :components ((:module "src"
                 :components
                 ((:file "db")
@@ -27,7 +28,8 @@
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")
                                             (:file "table")
-                                            (:file "relationship")))
+                                            (:file "relationship")
+                                            (:file "er")))
                  ;; ter
                  (:module "ter" :components ((:file "identifier")
                                              (:file "identifier-instance")

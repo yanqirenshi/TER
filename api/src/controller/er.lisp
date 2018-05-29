@@ -23,3 +23,8 @@
         :columns (finder-er-columns)
         :column_instances (finder-er-column-instances)
         :relashonships (finder-er-relashonships)))
+
+(defun save-er-position (code position)
+  (let ((table (ter::get-table ter.db:*graph* :code code)))
+    (unless table (caveman2:throw-code 404))
+    (ter::save-position ter.db:*graph* table position)))

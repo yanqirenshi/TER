@@ -1,5 +1,6 @@
 class Table {
-    constructor(reducer) {
+    constructor(param) {
+        this._d3svg = param.d3svg;
         this._padding = 11;
     }
     ///// ////////////////////////////////////////
@@ -46,25 +47,26 @@ class Table {
         let self = this;
         g.append('rect')
             .attr('class', 'header')
-            .attr('x', function (d) { return d.x + padding; })
-            .attr('y', function (d) { return d.y + padding; })
+            .attr('x', function (d) { return padding; })
+            .attr('y', function (d) { return padding; })
             .attr('width',  (d) => { return this.headerWidth(d); })
             .attr('height', (d) => { return this.headerContentsHight(d); })
             .attr('fill', '#fefefe');
 
         g.append('text')
             .attr('class', 'header')
-            .attr('x', function (d) { return d.x + padding + 6; })
-            .attr('y', function (d) { return d.y + padding + 16; })
+            .attr('x', function (d) { return padding + 6; })
+            .attr('y', function (d) { return padding + 16; })
             .attr('font-size', 16 + 'px')
             .text((d) => { return d.name; });
     }
     drawColumns (g) {
         let padding = this._padding;
+
         g.append('rect')
-            .attr('class', 'column')
-            .attr('x', (d) => { return d.x + padding; })
-            .attr('y', (d) => { return d.y + this.headerHight(d); })
+            .attr('class', 'columns')
+            .attr('x', (d) => { return padding; })
+            .attr('y', (d) => { return this.headerHight(d); })
             .attr('width',  (d) => { return this.columnsWidth(d); })
             .attr('height', (d) => { return this.columnsContentsHeight(d); })
             .attr('fill', '#fefefe');
@@ -75,10 +77,10 @@ class Table {
             .append('text')
             .attr('class', 'column')
             .attr('x', (d) => {
-                return d.table.x + padding + 6;
+                return padding + 6;
             })
             .attr('y', (d, i) => {
-                return d.table.y + this.headerHight(d.table) + (i+1) * 22;
+                return this.headerHight(d.table) + (i+1) * 22;
             })
             .attr('font-size', 16 + 'px')
             .text((d) => { return d.name; });
@@ -86,22 +88,47 @@ class Table {
     drawBase (g) {
         g.append('rect')
             .attr('class', 'base')
-            .attr('x', (d) => { return d.x; })
-            .attr('y', (d) => { return d.y; })
             .attr('width', (d) => { return d.w; })
             .attr('height', (d) => { return this.baseHeight(d); })
             .attr('fill', '#f8f8f8');
-
     }
     drawG (svg, data) {
         return svg.selectAll('g.table')
             .data(data)
             .enter()
             .append('g')
-            .attr('class', 'table');
+            .attr('class', 'table')
+            .attr('transform', (d)=>{ return 'translate('+d.x+','+d.y+')'; })
+            .attr('x', (d) => { return d.x; })
+            .attr('y', (d) => { return d.y; })
+            .call(d3.drag()
+                  .on("start", (d,i,arr)=>{
+                      d.drag = {
+                          start: {x: d.x, y:d.y}
+                      };
+                  })
+                  .on("drag",  (d,i,arr)=>{
+                      d.x = Math.floor(d.x + d3.event.dx);
+                      d.y = Math.floor(d.y + d3.event.dy);
+                      this.move([d]);
+                  })
+                  .on("end",   (d,i,arr)=>{
+                      ACTIONS.savePosition(d);
+                      delete d.drag;
+                  }));
     }
-    draw (d3svg, data) {
-        let svg = d3svg._svg;
+    move(data) {
+        let svg = this._d3svg._svg;
+
+        let selection = svg.selectAll('g.table')
+            .data(data, (d)=>{ return d._id; })
+            .attr('transform', (d)=>{
+                return 'translate('+d.x+','+d.y+')';
+            });
+
+    }
+    draw (data) {
+        let svg = this._d3svg._svg;
         let g = this.drawG(svg, data);
 
         this.drawBase(g);
@@ -109,15 +136,5 @@ class Table {
         this.drawHeader(g);
 
         let base = g.selectAll('rect.base');
-        base.call(d3.drag()
-               .on("drag", function (d, i) {
-                   d.x += d3.event.dx;
-                   d.y += d3.event.dy;
-                   dump(d);
-               })
-               .on('start', function () {
-               })
-               .on('end', function (d, i) {
-               }));
     }
 }

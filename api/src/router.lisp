@@ -22,7 +22,7 @@
 ;;; er
 ;;;
 (defroute "/er" ()
-  (render-json (ter.api.controller:find-er)))
+  (render-json (ter.api.controller:find-er ter.db:*graph*)))
 
 (defroute "/er/tables" ()
   (render-json (ter.api.controller:finder-er-tables)))
@@ -77,7 +77,7 @@
 ;;; Graph
 ;;;
 (defroute "/graph" ()
-  (render-json (ter.api.controller:find-graph)))
+  (render-json (ter.api.controller:find-graph ter.db:*graph*)))
 
 
 ;;;;;

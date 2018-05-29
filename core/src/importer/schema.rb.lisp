@@ -38,6 +38,13 @@
 (defun make-column-instance-code (table name data-type)
   (make-code (symbol-name (code table)) "." name "@" data-type))
 
+(defun make-column-column-type (name)
+  (let ((attribute-names '("created_at" "creator_id" "updated_at" "updater_id")))
+    (cond ((or (find name attribute-names :test 'string=)) :timestamp)
+          ((string= "id" name) :id)
+          ((cl-ppcre:scan "^.*_id$" name) :id)
+          (t :attribute))))
+
 (defun make-data-type (data)
   (let ((limit (getf data :limit)))
     (concatenate 'string
@@ -58,7 +65,9 @@
   (let* ((name (getf data :name))
          (data-type (make-data-type data))
          (code (make-column-instance-code table name data-type)))
-    (tx-make-column-instance graph code name data-type)))
+    (tx-make-column-instance graph code name
+                             data-type
+                             (make-column-column-type name))))
 
 (defun tx-import-columns (graph table columns-data)
   (when-let ((data (car columns-data)))

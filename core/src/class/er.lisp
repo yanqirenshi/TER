@@ -18,7 +18,7 @@
 ;;;;; column-instance
 ;;;;;
 (defclass column-instance (shinra:shin rsc)
-  ((data-type :accessor data-type :initarg :data-type :initform nil)
+  ((data-type   :accessor data-type   :initarg :data-type   :initform nil)
    (column-type :accessor column-type :initarg :column-type :initform nil)))
 
 (defmethod jojo:%to-json ((obj column-instance))

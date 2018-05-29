@@ -52,8 +52,6 @@
     (jojo:write-key-value "_id"  (slot-value obj 'up:%id))
     (jojo:write-key-value "code" (slot-value obj 'code))
     (jojo:write-key-value "name" (slot-value obj 'name))
-    (when-let (slot-value obj'columns)
-      (jojo:write-key-value "columns" (slot-value obj'columns)))
     (jojo:write-key-value "_class" 'table)
     ;; point
     (jojo:write-key-value "x" (slot-value obj 'x))

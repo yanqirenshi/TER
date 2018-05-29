@@ -71,12 +71,13 @@
 
 (defun tx-import-columns (graph table columns-data)
   (when-let ((data (car columns-data)))
-    (let* ((column (tx-import-column graph data))
-           (column-instance (tx-import-column-instance graph table data)))
-      (tx-make-r-column_column-instance graph column column-instance)
-      (tx-make-r-table_column-instance graph table column-instance)
-      (cons column-instance
-            (tx-import-columns graph table (cdr columns-data))))))
+    (cons (or (get-table-column-instance graph table data)
+              (let* ((column (tx-import-column graph data))
+                     (column-instance (tx-import-column-instance graph table data)))
+                (tx-make-r-column_column-instance graph column column-instance)
+                (tx-make-r-table_column-instance graph table column-instance)
+                column-instance))
+          (tx-import-columns graph table (cdr columns-data)))))
 
 (defun tx-import-make-table (graph plist)
   (let* ((data (get-table-plist plist))

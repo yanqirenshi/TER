@@ -1,10 +1,5 @@
 (in-package :ter.api.controller)
 
 (defun find-graph (graph)
-  (list :nodes (nconc '()
-                      (find-ter-all-nodes graph)
-                      (find-er-all-nodes graph))
-        :edges (nconc '()
-                      (ter:find-ter-all-edges graph)
-                      (ter:find-er-all-edges graph)
-                      (ter:find-mapping-all-edges graph))))
+  (list :nodes ()
+        :edges (ter:find-mapping-all-edges graph)))

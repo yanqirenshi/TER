@@ -1,5 +1,7 @@
 (in-package :ter)
 
+(in-package :ter)
+
 ;;;;;
 ;;;;; get / find
 ;;;;;
@@ -127,7 +129,7 @@
     (tx-import-all-foreign-keys graph (cdr plist))))
 
 ;;;;;
-;;;;; Main
+;;;;; main
 ;;;;;
 (defun %import-schema.rb (graph plists)
   (when-let ((plist (car plists)))

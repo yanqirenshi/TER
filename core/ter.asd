@@ -23,8 +23,10 @@
                  (:module "class" :components ((:file "common")
                                                (:file "er")
                                                (:file "ter")
-                                               (:file "mapper")))
+                                               (:file "mapper")
+                                               (:file "schema")))
                  (:file "point")
+                 (:file "schema")
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

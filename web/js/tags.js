@@ -2,6 +2,12 @@ riot.tag2('app', '<page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> 
      STORE.subscribe((action)=>{
          if (action.type=='MOVE-PAGE')
              this.update();
+
+         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
+             ACTIONS.fetchEr(action.mode);
+
+         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+             ACTIONS.fetchTer(action.mode);
      });
      window.addEventListener('resize', (event) => {
          this.update();
@@ -9,6 +15,7 @@ riot.tag2('app', '<page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> 
 
      this.on('mount', function () {
          Metronome.start();
+         ACTIONS.fetchGraph('FIRST');
      });
 
      this.hide = (code) => {
@@ -94,8 +101,6 @@ riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
      this.on('mount', () => {
          this.d3svg = this.ter.makeD3svg('page01 > svg');
      });
-
-     ACTIONS.fetchGraph();
 });
 
 riot.tag2('page02', '<svg></svg>', '', '', function(opts) {
@@ -122,8 +127,6 @@ riot.tag2('page02', '<svg></svg>', '', '', function(opts) {
          this.d3svg = this.ter.makeD3svg('page02 > svg');
 
          new Grid().draw(this.d3svg);
-
-         ACTIONS.fetchTer();
      });
 
 });
@@ -143,6 +146,4 @@ riot.tag2('page03', '<svg></svg>', '', '', function(opts) {
      this.on('mount', () => {
          this.d3svg = this.ter.makeD3svg('page03 > svg');
      });
-
-     ACTIONS.fetchEr();
 });

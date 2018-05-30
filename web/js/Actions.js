@@ -16,14 +16,33 @@ class Actions extends Vanilla_Redux_Actions {
         }
         return {ht: ht, list: list};
     }
-    fetchEr () {
-        API.get('/er', function (response) {
-            STORE.dispatch(this.fetchedEr(response));
+    fetchGraph (mode) {
+        API.get('/graph', function (response) {
+            STORE.dispatch(this.fetchedGraph(mode, response));
         }.bind(this));
     }
-    fetchedEr (response) {
+    fetchedGraph (mode, response) {
+        return {
+            type: 'FETCHED-GRAPH',
+            mode: mode,
+            data: {
+                graph: {
+                    nodes: this.makeGraphData(response.NODES),
+                    edges: this.makeGraphData(response.EDGES)
+
+                }
+            }
+        };
+    }
+    fetchEr (mode) {
+        API.get('/er', function (response) {
+            STORE.dispatch(this.fetchedEr(mode, response));
+        }.bind(this));
+    }
+    fetchedEr (mode, response) {
         return {
             type: 'FETCHED-ER',
+            mode: mode,
             data: {
                 er: {
                     tables:           this.makeGraphData(response.TABLES),
@@ -34,32 +53,17 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    fetchTer () {
+    fetchTer (mode) {
         API.get('/ter', function (response) {
-            STORE.dispatch(this.fetchedTer(response));
+            STORE.dispatch(this.fetchedTer(mode, response));
         }.bind(this));
     }
-    fetchedTer (response) {
+    fetchedTer (mode, response) {
         return {
             type: 'FETCHED-TER',
+            mode: mode,
             data: {
                 ter: {
-                    nodes: this.makeGraphData(response.NODES),
-                    edges: this.makeGraphData(response.EDGES)
-                }
-            }
-        };
-    }
-    fetchGraph () {
-        API.get('/graph', function (response) {
-            STORE.dispatch(this.fetchedGraph(response));
-        }.bind(this));
-    }
-    fetchedGraph (response) {
-        return {
-            type: 'FETCHED-GRAPH',
-            data: {
-                graph: {
                     nodes: this.makeGraphData(response.NODES),
                     edges: this.makeGraphData(response.EDGES)
                 }

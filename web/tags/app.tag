@@ -20,6 +20,12 @@
      STORE.subscribe((action)=>{
          if (action.type=='MOVE-PAGE')
              this.update();
+
+         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
+             ACTIONS.fetchEr(action.mode);
+
+         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+             ACTIONS.fetchTer(action.mode);
      });
      window.addEventListener('resize', (event) => {
          this.update();
@@ -27,6 +33,7 @@
 
      this.on('mount', function () {
          Metronome.start();
+         ACTIONS.fetchGraph('FIRST');
      });
 
      this.hide = (code) => {

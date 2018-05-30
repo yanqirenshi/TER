@@ -10,6 +10,7 @@
   (:export #:*graph*
            #:start
            #:stop
+           #:snapshot
            #:reboot))
 (in-package :ter.db)
 

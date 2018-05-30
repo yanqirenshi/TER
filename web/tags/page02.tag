@@ -25,8 +25,6 @@
          this.d3svg = this.ter.makeD3svg('page02 > svg');
 
          new Grid().draw(this.d3svg);
-
-         ACTIONS.fetchTer();
      });
 
     </script>

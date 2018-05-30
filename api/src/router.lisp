@@ -19,10 +19,11 @@
 ;;;;;
 
 ;;;
-;;; schema
+;;; Environment
 ;;;
-(defroute "/schema" ()
-  (render-json (ter::get-schema ter.db:*graph*)))
+(defroute "/environment" ()
+  (render-json (list :schema (ter::get-schema ter.db:*graph*)
+                     :camera (ter::get-camera ter.db:*graph* :code :default))))
 
 ;;;
 ;;; er

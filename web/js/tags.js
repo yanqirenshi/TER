@@ -3,7 +3,7 @@ riot.tag2('app', '<schema></schema> <page01 code="GRAPH" class="page {hide(\'GRA
          if (action.type=='MOVE-PAGE')
              this.update();
 
-         if (action.type=='FETCHED-SCHEMA' && action.mode=='FIRST')
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              ACTIONS.fetchGraph('FIRST');
 
          if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
@@ -18,7 +18,7 @@ riot.tag2('app', '<schema></schema> <page01 code="GRAPH" class="page {hide(\'GRA
 
      this.on('mount', function () {
          Metronome.start();
-         ACTIONS.fetchSchema('FIRST');
+         ACTIONS.fetchEnvironment('FIRST');
      });
 
      this.hide = (code) => {
@@ -111,10 +111,9 @@ riot.tag2('page01', '<svg></svg>', '', '', function(opts) {
              this.drawEdges();
              this.drawNods();
          }
-     });
 
-     this.on('mount', () => {
-         this.d3svg = this.ter.makeD3svg('page01 > svg');
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
+             this.d3svg = this.ter.makeD3svg('page01 > svg');
      });
 });
 
@@ -136,14 +135,12 @@ riot.tag2('page02', '<svg></svg>', '', '', function(opts) {
      STORE.subscribe((action) => {
          if(action.type=='FETCHED-TER')
              this.entity.draw(this.d3svg, STORE.state().get('ter'))
+
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+             this.d3svg = this.ter.makeD3svg('page02 > svg');
+             new Grid().draw(this.d3svg);
+         }
      });
-
-     this.on('mount', () => {
-         this.d3svg = this.ter.makeD3svg('page02 > svg');
-
-         new Grid().draw(this.d3svg);
-     });
-
 });
 
 riot.tag2('page03', '<svg></svg>', '', '', function(opts) {
@@ -151,14 +148,13 @@ riot.tag2('page03', '<svg></svg>', '', '', function(opts) {
      this.ter = new Ter();
 
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-ER')
+         if (action.type=='FETCHED-ER')
              this.ter.drawTables(
                  this.d3svg,
                  STORE.state().get('er')
              );
-     });
 
-     this.on('mount', () => {
-         this.d3svg = this.ter.makeD3svg('page03 > svg');
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
+             this.d3svg = this.ter.makeD3svg('page03 > svg');
      });
 });

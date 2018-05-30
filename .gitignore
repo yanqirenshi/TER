@@ -12,3 +12,4 @@ transaction-log.xml
 transaction-log-*.xml
 .DS_Store
 web/config.js
+*slime-repl sbcl*

@@ -1,4 +1,4 @@
-riot.tag2('app', '<page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> <page02 code="TER" class="page {hide(\'TER\')}"></page02> <page03 code="ER" class="page {hide(\'ER\')}"></page03> <menu data="{STORE.state().get(\'pages\')}"></menu>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app > .page.hide { display: none; } app > menu { position:fixed; right:11px; bottom:11px; }', '', function(opts) {
+riot.tag2('app', '<schema></schema> <page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> <page02 code="TER" class="page {hide(\'TER\')}"></page02> <page03 code="ER" class="page {hide(\'ER\')}"></page03> <menu data="{STORE.state().get(\'pages\')}"></menu>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app > .page.hide { display: none; } app > menu { position:fixed; right:11px; bottom:11px; }', '', function(opts) {
      STORE.subscribe((action)=>{
          if (action.type=='MOVE-PAGE')
              this.update();
@@ -42,6 +42,18 @@ riot.tag2('menu', '<div class="menu-item {active(\'ER\')}" code="ER" onclick="{c
          if (hash!=location.hash)
              location.hash = hash;
      };
+});
+
+riot.tag2('schema', '<div class="contents"> <p>{name()}</p> </div>', 'schema.container { display: block; position: fixed; top: 11px; left: 11px; width: auto; padding: 8px; border-radius: 3px; color: #fff; background: rgba(44, 169, 225, 0.8); text-shadow: 0px 0px 3px #88888888; box-shadow: 0px 0px 3px #88888888; }', 'class="container"', function(opts) {
+     this.name = ()=>{
+         let schema = STORE.state().get('schema')
+         return schema ? schema.name : '????????';
+     };
+
+     STORE.subscribe((action)=>{
+         if (action.type=='FETCHED-SCHEMA')
+             this.update();
+     });
 });
 
 riot.tag2('page01', '<svg></svg>', '', '', function(opts) {

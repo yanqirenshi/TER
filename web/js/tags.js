@@ -3,6 +3,9 @@ riot.tag2('app', '<page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> 
          if (action.type=='MOVE-PAGE')
              this.update();
 
+         if (action.type=='FETCHED-SCHEMA' && action.mode=='FIRST')
+             ACTIONS.fetchGraph('FIRST');
+
          if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
              ACTIONS.fetchEr(action.mode);
 
@@ -15,7 +18,7 @@ riot.tag2('app', '<page01 code="GRAPH" class="page {hide(\'GRAPH\')}"></page01> 
 
      this.on('mount', function () {
          Metronome.start();
-         ACTIONS.fetchGraph('FIRST');
+         ACTIONS.fetchSchema('FIRST');
      });
 
      this.hide = (code) => {

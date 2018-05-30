@@ -1,4 +1,6 @@
 <app>
+    <schema></schema>
+
     <page01 code="GRAPH" class="page {hide('GRAPH')}"></page01>
     <page02 code="TER"   class="page {hide('TER')}"></page02>
     <page03 code="ER"    class="page {hide('ER')}"></page03>

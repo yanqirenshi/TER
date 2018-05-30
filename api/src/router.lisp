@@ -19,6 +19,12 @@
 ;;;;;
 
 ;;;
+;;; schema
+;;;
+(defroute "/schema" ()
+  (render-json (ter::get-schema ter.db:*graph*)))
+
+;;;
 ;;; er
 ;;;
 (defroute "/er" ()

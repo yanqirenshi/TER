@@ -21,6 +21,9 @@
          if (action.type=='MOVE-PAGE')
              this.update();
 
+         if (action.type=='FETCHED-SCHEMA' && action.mode=='FIRST')
+             ACTIONS.fetchGraph('FIRST');
+
          if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
              ACTIONS.fetchEr(action.mode);
 
@@ -33,7 +36,7 @@
 
      this.on('mount', function () {
          Metronome.start();
-         ACTIONS.fetchGraph('FIRST');
+         ACTIONS.fetchSchema('FIRST');
      });
 
      this.hide = (code) => {

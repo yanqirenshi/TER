@@ -5,9 +5,20 @@ class Actions extends Vanilla_Redux_Actions {
             data: data
         };
     }
-    /* **************************************************************** *
-       ER
-     * **************************************************************** */
+    fetchSchema (mode) {
+        API.get('/schema', function (response) {
+            STORE.dispatch(this.fetchedSchema(mode, response));
+        }.bind(this));
+    }
+    fetchedSchema (mode, response) {
+        return {
+            type: 'FETCHED-SCHEMA',
+            mode: mode,
+            data: {
+                schema: response
+            }
+        };
+    }
     makeGraphData (list) {
         let ht = {};
         for (var i in list) {

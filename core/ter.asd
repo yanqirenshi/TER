@@ -24,9 +24,11 @@
                                                (:file "er")
                                                (:file "ter")
                                                (:file "mapper")
-                                               (:file "schema")))
+                                               (:file "schema")
+                                               (:file "camera")))
                  (:file "point")
                  (:file "schema")
+                 (:file "camera")
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

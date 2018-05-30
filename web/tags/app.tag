@@ -23,7 +23,7 @@
          if (action.type=='MOVE-PAGE')
              this.update();
 
-         if (action.type=='FETCHED-SCHEMA' && action.mode=='FIRST')
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              ACTIONS.fetchGraph('FIRST');
 
          if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
@@ -38,7 +38,7 @@
 
      this.on('mount', function () {
          Metronome.start();
-         ACTIONS.fetchSchema('FIRST');
+         ACTIONS.fetchEnvironment('FIRST');
      });
 
      this.hide = (code) => {

@@ -56,10 +56,9 @@
              this.drawEdges();
              this.drawNods();
          }
-     });
 
-     this.on('mount', () => {
-         this.d3svg = this.ter.makeD3svg('page01 > svg');
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
+             this.d3svg = this.ter.makeD3svg('page01 > svg');
      });
     </script>
 </page01>

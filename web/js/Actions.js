@@ -5,17 +5,18 @@ class Actions extends Vanilla_Redux_Actions {
             data: data
         };
     }
-    fetchSchema (mode) {
-        API.get('/schema', function (response) {
-            STORE.dispatch(this.fetchedSchema(mode, response));
+    fetchEnvironment (mode) {
+        API.get('/environment', function (response) {
+            STORE.dispatch(this.fetchedEnvironment(mode, response));
         }.bind(this));
     }
-    fetchedSchema (mode, response) {
+    fetchedEnvironment (mode, response) {
         return {
-            type: 'FETCHED-SCHEMA',
+            type: 'FETCHED-ENVIRONMENT',
             mode: mode,
             data: {
-                schema: response
+                schema: response.SCHEMA,
+                camera: response.CAMERA
             }
         };
     }

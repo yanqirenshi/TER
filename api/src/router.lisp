@@ -57,6 +57,14 @@
 (defroute "/er/relashonships"  ()
   (render-json (ter.api.controller:finder-er-relashonships)))
 
+;; plus schema
+(defroute "/shemas" ()
+  (render-json nil))
+
+(defroute "/er/:schema_id" ()
+  (render-json nil))
+
+
 ;;;
 ;;; ter
 ;;;

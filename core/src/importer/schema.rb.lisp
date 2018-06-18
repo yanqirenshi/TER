@@ -1,7 +1,5 @@
 (in-package :ter)
 
-(in-package :ter)
-
 ;;;;;
 ;;;;; get / find
 ;;;;;

@@ -1,4 +1,4 @@
-<page01>
+<page01-sec_root>
     <svg></svg>
 
     <script>
@@ -58,7 +58,7 @@
          }
 
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
-             this.d3svg = this.ter.makeD3svg('page01 > svg');
+             this.d3svg = this.ter.makeD3svg('page01-sec_root > svg');
      });
     </script>
-</page01>
+</page01-sec_root>

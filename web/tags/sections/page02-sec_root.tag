@@ -1,4 +1,4 @@
-<page02>
+<page02-sec_root>
     <svg></svg>
 
     <script>
@@ -21,9 +21,9 @@
              this.entity.draw(this.d3svg, STORE.state().get('ter'))
 
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
-             this.d3svg = this.ter.makeD3svg('page02 > svg');
+             this.d3svg = this.ter.makeD3svg('page02-sec_root > svg');
              new Grid().draw(this.d3svg);
          }
      });
     </script>
-</page02>
+</page02-sec_root>

@@ -1,11 +1,9 @@
 <app>
+    <menu-bar brand={{label:'RT'}} site={site()} moves={[]}></menu-bar>
+
     <schema></schema>
 
-    <page01 code="GRAPH" class="page {hide('GRAPH')}"></page01>
-    <page02 code="TER"   class="page {hide('TER')}"></page02>
-    <page03 code="ER"    class="page {hide('ER')}"></page03>
-
-    <menu data={STORE.state().get('pages')}></menu>
+    <div ref="page-area"></div>
 
     <style>
      app > .page {
@@ -14,14 +12,26 @@
          overflow: hidden;
          display: block;
      }
-     app > .page.hide { display: none; }
-     app > menu { position:fixed; right:11px; bottom:11px; }
+     .hide { display: none; }
     </style>
 
     <script>
+     this.site = () => {
+         return STORE.state().get('site');
+     };
+
+     this.on('mount', function () {
+         Metronome.start();
+         ACTIONS.fetchEnvironment('FIRST');
+     });
+
      STORE.subscribe((action)=>{
-         if (action.type=='MOVE-PAGE')
-             this.update();
+         if (action.type=='MOVE-PAGE') {
+             let tags= this.tags;
+
+             tags['menu-bar'].update();
+             ROUTER.switchPage(this, this.refs['page-area'], this.site());
+         }
 
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              ACTIONS.fetchGraph('FIRST');
@@ -31,21 +41,14 @@
 
          if (action.type=='FETCHED-ER' && action.mode=='FIRST')
              ACTIONS.fetchTer(action.mode);
-     });
+
+     })
+
      window.addEventListener('resize', (event) => {
          this.update();
      });
 
-     this.on('mount', function () {
-         Metronome.start();
-         ACTIONS.fetchEnvironment('FIRST');
-     });
-
-     this.hide = (code) => {
-         let pages = STORE.state().get('pages');
-         let page = pages[code];
-
-         return page.active ? '' : 'hide';
-     };
+     if (location.hash=='')
+         location.hash='#page01'
     </script>
 </app>

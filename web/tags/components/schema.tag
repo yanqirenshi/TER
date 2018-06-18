@@ -9,7 +9,7 @@
 
          position: fixed;
          top: 11px;
-         left: 11px;
+         left: 66px;
          width: auto;
 
          padding: 8px;

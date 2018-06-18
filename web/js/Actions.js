@@ -47,7 +47,7 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     fetchEr (mode) {
-        API.get('/er', function (response) {
+        API.get('/er/rbp', function (response) {
             STORE.dispatch(this.fetchedEr(mode, response));
         }.bind(this));
     }

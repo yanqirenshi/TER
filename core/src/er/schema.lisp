@@ -16,12 +16,18 @@
 
 (defvar *er-schema-graphs* (make-hash-table))
 
+(defgeneric get-schema-graph (schema)
+  (:method ((schema schema))
+    (let ((graph (gethash (code schema) *er-schema-graphs*)))
+      (or graph
+          (start-schema-graph schema)))))
+
 (defgeneric start-schema-graph (schema)
   (:method ((schema schema))
     (let ((code (code schema))
           (store-dir (store-directory schema)))
       (when (gethash code *er-schema-graphs*)
-        (error "xxx"))
+        (error "この schema の graph は既に開始しています。"))
       (setf (gethash code *er-schema-graphs*)
             (shinra:make-banshou 'shinra:banshou store-dir)))))
 
@@ -29,5 +35,5 @@
   (:method ((schema schema))
     (let ((code (code schema)))
       (unless (gethash code *er-schema-graphs*)
-        (error "xxx"))
+        (error "この schema には graph が存在しません。"))
       (up:snapshot (gethash code *er-schema-graphs*)))))

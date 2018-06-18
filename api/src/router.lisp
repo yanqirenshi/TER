@@ -61,8 +61,9 @@
 (defroute "/shemas" ()
   (render-json nil))
 
-(defroute "/er/:schema_id" ()
-  (render-json nil))
+(defroute "/er/:schema_code" (&key schema_code)
+  (let ((schema (ter::get-schema ter.db:*graph* :code (alexandria:make-keyword (string-upcase schema_code)))))
+    (render-json (ter.api.controller::find-er schema))))
 
 
 ;;;

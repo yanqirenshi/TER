@@ -1,5 +1,5 @@
 <app>
-    <menu-bar brand={{label:'RT'}} site={site()} moves={[]}></menu-bar>
+    <menu-bar brand={{label:'TER'}} site={site()} moves={[]}></menu-bar>
 
     <schema></schema>
 

@@ -24,7 +24,7 @@
     <style>
      menu-bar .move-page-menu {
          z-index: 666665;
-         background: #fdeff2;
+         background: rgba(255,255,255,1);
          position: fixed;
          left: 55px;
          top: 0px;
@@ -47,7 +47,7 @@
          position: fixed;
          left: 0px;
          top: 0px;
-         background: #e198b4;
+         background: rgba(44, 169, 225, 0.8);
      }
 
      menu-bar .menu-label, menu-bar .menu-list a {
@@ -59,19 +59,20 @@
          border-radius: 3px;
          background: none;
          color: #ffffff;
+
+         font-size: 12px;
          font-weight: bold;
 
          padding-top: 7px;
-         font-size: 14px;
 
      }
      .menu-label {
-         background: #fdeff2;
-         color: #e198b4;
+         background: rgba(255,255,255,1);
+         color: rgba(44, 169, 225, 0.8);
      }
      .menu-label.open {
-         background: #fdeff2;
-         color: #e198b4;
+         background: rgba(255,255,255,1);
+         color: rgba(44, 169, 225, 0.8);
          width: 44px;
          border-radius: 3px 0px 0px 3px;
          text-shadow: 0px 0px 1px #eee;

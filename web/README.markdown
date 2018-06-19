@@ -1,4 +1,4 @@
-# Ter.Api
+# Ter.Wpi
 
 ## Usage
 

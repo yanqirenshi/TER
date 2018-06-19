@@ -17,7 +17,7 @@
 
     <div class="move-page-menu hide" ref="move-panel">
         <p each={opts.moves}>
-            <a href={href}>{label}</a>
+            <a href={href} code={code} onclick={opts.callback}>{label}</a>
         </p>
     </div>
 

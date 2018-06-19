@@ -138,7 +138,11 @@ class Table {
                       this.move([d]);
                   })
                   .on("end",   (d,i,arr)=>{
-                      ACTIONS.savePosition(d);
+                      let state = STORE.state().get('schemas');
+                      let _id = state.active;
+                      let schema = state.list.find((d) => { return d._id = _id; });
+
+                      ACTIONS.savePosition(schema, d);
                       delete d.drag;
                   }));
     }

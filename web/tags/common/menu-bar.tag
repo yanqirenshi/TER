@@ -16,7 +16,7 @@
     </aside>
 
     <div class="move-page-menu hide" ref="move-panel">
-        <p each={moves()}>
+        <p each={opts.moves}>
             <a href={href}>{label}</a>
         </p>
     </div>
@@ -88,21 +88,6 @@
     </style>
 
     <script>
-     this.moves = () => {
-         let moves = [
-             { code: 'RBP',    href: '/rb/rbp/',    label: 'RBP: RUN PASSPORT' },
-             { code: 'RBR',    href: '/rb/rbr/',    label: 'RBR: TATTA' },
-             { code: 'GEMS',   href: '/rb/gems/',   label: 'Ruby Gems' },
-             { code: 'RUBY',   href: '/rb/Ruby/',   label: 'Ruby' },
-             { code: 'GITLAB', href: '/rb/gitlab/', label: 'Gitlab' },
-             { code: 'SCRUM',  href: '/rb/Scrum/',  label: 'Scrum' },
-             { code: 'HELP',   href: '/rb/help/',   label: 'Help' }
-         ]
-         return moves.filter((d)=>{
-             return d.code != this.opts.current;
-         });
-     };
-
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
          let classes = brand.getAttribute('class').trim().split(' ');

@@ -1,4 +1,10 @@
-riot.tag2('app', '<menu-bar brand="{{label:\'TER\'}}" site="{site()}" moves="{[]}"></menu-bar> <schema></schema> <div ref="page-area"></div>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<menu-bar brand="{{label:\'TER\'}}" site="{site()}" moves="{moves()}"></menu-bar> <div ref="page-area"></div>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+     this.moves = () => {
+         let schemas = STORE.state().get('schemas').list;
+         return schemas.map((d) => {
+             return { code: d.code, href: '', label: d.code }
+         });
+     };
      this.site = () => {
          return STORE.state().get('site');
      };
@@ -19,11 +25,17 @@ riot.tag2('app', '<menu-bar brand="{{label:\'TER\'}}" site="{site()}" moves="{[]
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              ACTIONS.fetchGraph('FIRST');
 
-         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
-             ACTIONS.fetchEr(action.mode);
+         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST') {
+             let state = STORE.state().get('schemas');
+             let _id = state.active;
+             let schema = state.list.find((d) => { return d._id = _id; });
 
-         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+             ACTIONS.fetchEr(schema, action.mode);
+         }
+
+         if (action.type=='FETCHED-ER' && action.mode=='FIRST') {
              ACTIONS.fetchTer(action.mode);
+         }
 
      })
 
@@ -35,22 +47,7 @@ riot.tag2('app', '<menu-bar brand="{{label:\'TER\'}}" site="{site()}" moves="{[]
          location.hash='#page01'
 });
 
-riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu hide" ref="move-panel"> <p each="{moves()}"> <a href="{href}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
-     this.moves = () => {
-         let moves = [
-             { code: 'RBP',    href: '/rb/rbp/',    label: 'RBP: RUN PASSPORT' },
-             { code: 'RBR',    href: '/rb/rbr/',    label: 'RBR: TATTA' },
-             { code: 'GEMS',   href: '/rb/gems/',   label: 'Ruby Gems' },
-             { code: 'RUBY',   href: '/rb/Ruby/',   label: 'Ruby' },
-             { code: 'GITLAB', href: '/rb/gitlab/', label: 'Gitlab' },
-             { code: 'SCRUM',  href: '/rb/Scrum/',  label: 'Scrum' },
-             { code: 'HELP',   href: '/rb/help/',   label: 'Help' }
-         ]
-         return moves.filter((d)=>{
-             return d.code != this.opts.current;
-         });
-     };
-
+riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu hide" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
          let classes = brand.getAttribute('class').trim().split(' ');
@@ -140,18 +137,6 @@ riot.tag2('section-list', '<table class="table is-bordered is-striped is-narrow 
              return true;
          });
      };
-});
-
-riot.tag2('schema', '<div class="contents"> <p>{name()}</p> </div>', 'schema.container { display: block; position: fixed; top: 11px; left: 66px; width: auto; padding: 8px; border-radius: 3px; color: #fff; background: rgba(44, 169, 225, 0.8); text-shadow: 0px 0px 3px #88888888; box-shadow: 0px 0px 3px #88888888; }', 'class="container"', function(opts) {
-     this.name = ()=>{
-         let schema = STORE.state().get('schema')
-         return schema ? schema.name : '????????';
-     };
-
-     STORE.subscribe((action)=>{
-         if (action.type=='FETCHED-SCHEMA')
-             this.update();
-     });
 });
 
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
@@ -255,12 +240,11 @@ riot.tag2('page02-sec_root', '<svg></svg>', '', '', function(opts) {
      };
 
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-TER')
-             this.entity.draw(this.d3svg, STORE.state().get('ter'))
-
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+         if(action.type=='FETCHED-TER' && action.mode=='FIRST') {
              this.d3svg = this.ter.makeD3svg('page02-sec_root > svg');
              new Grid().draw(this.d3svg);
+
+             this.entity.draw(this.d3svg, STORE.state().get('ter'))
          }
      });
 });
@@ -269,14 +253,17 @@ riot.tag2('page03-sec_root', '<svg></svg>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
 
-     STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ER')
-             this.ter.drawTables(
-                 this.d3svg,
-                 STORE.state().get('er')
-             );
+     this.draw = () => {
+         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg');
 
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
-             this.d3svg = this.ter.makeD3svg('page03-sec_root > svg');
+         this.ter.drawTables(
+             this.d3svg,
+             STORE.state().get('er')
+         );
+     }
+
+     STORE.subscribe((action) => {
+         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+             this.draw();
      });
 });

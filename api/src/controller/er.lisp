@@ -27,7 +27,8 @@
           :ports            (ter::find-port-er graph)
           :edges            (ter:find-er-all-edges graph))))
 
-(defun save-er-position (code position)
-  (let ((table (ter::get-table ter.db:*graph* :code code)))
+(defun save-er-position (schema code position)
+  (let* ((graph (ter::get-schema-graph schema))
+         (table (ter::get-table graph :code code)))
     (unless table (caveman2:throw-code 404))
-    (ter::save-position ter.db:*graph* table position)))
+    (ter::save-position graph table position)))

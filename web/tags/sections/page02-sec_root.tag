@@ -17,12 +17,11 @@
      };
 
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-TER')
-             this.entity.draw(this.d3svg, STORE.state().get('ter'))
-
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+         if(action.type=='FETCHED-TER' && action.mode=='FIRST') {
              this.d3svg = this.ter.makeD3svg('page02-sec_root > svg');
              new Grid().draw(this.d3svg);
+
+             this.entity.draw(this.d3svg, STORE.state().get('ter'))
          }
      });
     </script>

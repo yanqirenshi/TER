@@ -4,6 +4,11 @@ class Store extends Vanilla_Redux_Store {
     }
     init () {
         let data = {
+            schemas: {
+                active: null,
+                list: []
+            },
+            camera: null,
             site: {
                 active_page: 'page01',
                 home_page: 'page01',

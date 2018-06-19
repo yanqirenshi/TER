@@ -1,7 +1,5 @@
 <app>
-    <menu-bar brand={{label:'TER'}} site={site()} moves={[]}></menu-bar>
-
-    <schema></schema>
+    <menu-bar brand={{label:'TER'}} site={site()} moves={moves()}></menu-bar>
 
     <div ref="page-area"></div>
 
@@ -16,6 +14,12 @@
     </style>
 
     <script>
+     this.moves = () => {
+         let schemas = STORE.state().get('schemas').list;
+         return schemas.map((d) => {
+             return { code: d.code, href: '', label: d.code }
+         });
+     };
      this.site = () => {
          return STORE.state().get('site');
      };
@@ -36,11 +40,17 @@
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              ACTIONS.fetchGraph('FIRST');
 
-         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
-             ACTIONS.fetchEr(action.mode);
+         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST') {
+             let state = STORE.state().get('schemas');
+             let _id = state.active;
+             let schema = state.list.find((d) => { return d._id = _id; });
 
-         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+             ACTIONS.fetchEr(schema, action.mode);
+         }
+
+         if (action.type=='FETCHED-ER' && action.mode=='FIRST') {
              ACTIONS.fetchTer(action.mode);
+         }
 
      })
 

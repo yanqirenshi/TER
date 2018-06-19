@@ -15,7 +15,10 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'FETCHED-ENVIRONMENT',
             mode: mode,
             data: {
-                schema: response.SCHEMA,
+                schemas: {
+                    active: response.SCHEMAS[1]._id,
+                    list: response.SCHEMAS
+                },
                 camera: response.CAMERA
             }
         };
@@ -46,8 +49,10 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    fetchEr (mode) {
-        API.get('/er/rbr', function (response) {
+    fetchEr (schema, mode) {
+        let scheme_code = schema.code.toLowerCase();
+
+        API.get('/er/' + scheme_code, function (response) {
             STORE.dispatch(this.fetchedEr(mode, response));
         }.bind(this));
     }
@@ -134,8 +139,10 @@ class Actions extends Vanilla_Redux_Actions {
             data: { er: state_er }
         };
     }
-    savePosition (table) {
-        let path = '/er/tables/' + table.code + '/position';
+    savePosition (schema, table) {
+        let scheme_code = schema.code.toLowerCase();
+
+        let path = '/er/' + scheme_code + '/tables/' + table.code + '/position';
         let data = {x: table.x, y:table.y, z:0};
         API.post(path, data, ()=>{});
     }

@@ -22,44 +22,17 @@
 ;;; Environment
 ;;;
 (defroute "/environment" ()
-  (render-json (list :schema (ter::get-schema ter.db:*graph*)
+  (render-json (list :schemas (ter::find-schema ter.db:*graph*)
                      :camera (ter::get-camera ter.db:*graph* :code :default))))
 
 ;;;
 ;;; er
 ;;;
-(defroute "/er" ()
-  (render-json (ter.api.controller:find-er ter.db:*graph*)))
-
-(defroute "/er/tables" ()
-  (render-json (ter.api.controller:finder-er-tables)))
-
-(defroute "/er/tables/:code" ()
-  (render-json (list :test "/er/tables/:code")))
-
-(defroute ("/er/tables/:code/position" :method :POST) (&key code _parsed)
+(defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code _parsed)
   (let ((position (jojo:parse (car (first _parsed))))
-        (code (alexandria:make-keyword code)))
-    (render-json (ter.api.controller::save-er-position code position))))
-
-(defroute "/er/columns" ()
-  (render-json (ter.api.controller:finder-er-columns)))
-
-(defroute "/er/columns/:code"  ()
-  (render-json (list :test "/er/columns/:code")))
-
-(defroute "/er/column-instances"  ()
-  (render-json (ter.api.controller:finder-er-column-instances)))
-
-(defroute "/er/column-instances/:code"  ()
-  (render-json (list :test "/er/column-instances/:code")))
-
-(defroute "/er/relashonships"  ()
-  (render-json (ter.api.controller:finder-er-relashonships)))
-
-;; plus schema
-(defroute "/shemas" ()
-  (render-json nil))
+        (code (alexandria:make-keyword code))
+        (schema (ter::get-schema ter.db:*graph* :code (alexandria:make-keyword (string-upcase schema_code)))))
+    (render-json (ter.api.controller::save-er-position schema code position))))
 
 (defroute "/er/:schema_code" (&key schema_code)
   (let ((schema (ter::get-schema ter.db:*graph* :code (alexandria:make-keyword (string-upcase schema_code)))))

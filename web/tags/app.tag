@@ -1,5 +1,5 @@
 <app>
-    <menu-bar brand={{label:'TER'}} site={site()} moves={moves()}></menu-bar>
+    <menu-bar brand={{label:'TER'}} site={site()} moves={moves()} callback={clickSchema}></menu-bar>
 
     <div ref="page-area"></div>
 
@@ -14,6 +14,9 @@
     </style>
 
     <script>
+     this.clickSchema = (e) => {
+         dump(e.target.getAttribute('CODE'));
+     };
      this.moves = () => {
          let schemas = STORE.state().get('schemas').list;
          return schemas.map((d) => {

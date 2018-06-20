@@ -24,12 +24,23 @@
 (defroute "/environment" ()
   (render-json (list :schemas (ter::find-schema ter.db:*graph*))))
 
+(defun str2keyword (str)
+  (when str
+    (alexandria:make-keyword (string-upcase str))))
 
 (defroute ("/camera/:camera_code/look-at" :method :POST) (&key camera_code _parsed)
-  (render-json (list :code camera_code :parsed (jojo:parse (caar _parsed)))))
+  (let* ((look-at (jojo:parse (caar _parsed)))
+         (graph ter.db:*graph*)
+         (camera (ter::get-camera graph :code (str2keyword camera_code))))
+    (unless camera (throw-code 404))
+    (render-json (ter.api.controller::save-camera-look-at graph camera look-at))))
 
 (defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code _parsed)
-  (render-json (list :code camera_code :parsed (jojo:parse (caar _parsed)))))
+  (let* ((val (getf (jojo:parse (caar _parsed)) :|magnification|))
+         (graph ter.db:*graph*)
+         (camera (ter::get-camera graph :code (str2keyword camera_code))))
+    (unless camera (throw-code 404))
+    (render-json (ter.api.controller::save-camera-magnification graph camera val))))
 
 
 ;;;
@@ -38,7 +49,7 @@
 (defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code _parsed)
   (let ((position (jojo:parse (car (first _parsed))))
         (code (alexandria:make-keyword code))
-        (schema (ter::get-schema ter.db:*graph* :code (alexandria:make-keyword (string-upcase schema_code)))))
+        (schema (ter::get-schema ter.db:*graph* :code (str2keyword schema_code))))
     (render-json (ter.api.controller::save-er-position schema code position))))
 
 (defroute "/er/:schema_code" (&key schema_code)

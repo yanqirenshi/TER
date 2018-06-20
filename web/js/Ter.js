@@ -16,7 +16,7 @@ class Ter {
         }
         return Math.floor( Math.random() * (max + 1 - min) ) + min ;
     }
-    makeD3svg (selector) {
+    makeD3svg (selector, callbacks) {
         return new D3Svg({
             d3: d3,
             svg: d3.select(selector),
@@ -24,7 +24,8 @@ class Ter {
             y: 0,
             w: window.innerHeight,
             h: window.innerWidth,
-            scale: 1
+            scale: 1,
+            callbacks: callbacks
         });
     }
     // ER

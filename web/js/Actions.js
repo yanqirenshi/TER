@@ -65,7 +65,8 @@ class Actions extends Vanilla_Redux_Actions {
                     tables:           this.makeGraphData(response.TABLES),
                     columns:          this.makeGraphData(response.COLUMNS),
                     column_instances: this.makeGraphData(response.COLUMN_INSTANCES),
-                    relashonships:    this.makeGraphData(response.RELASHONSHIPS)
+                    relashonships:    this.makeGraphData(response.RELASHONSHIPS),
+                    cameras:          response.CAMERAS
                 }
             }
         };

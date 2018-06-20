@@ -8,7 +8,6 @@ class Store extends Vanilla_Redux_Store {
                 active: null,
                 list: []
             },
-            camera: null,
             site: {
                 active_page: 'page01',
                 home_page: 'page01',
@@ -54,15 +53,18 @@ class Store extends Vanilla_Redux_Store {
                 tables:           {ht: {}, list: []},
                 columns:          {ht: {}, list: []},
                 column_instances: {ht: {}, list: []},
-                relashonships:    {ht: {}, list: []}
+                relashonships:    {ht: {}, list: []},
+                cameras: []
             },
             ter: {
                 nodes: {ht: {}, list: []},
-                edges: {ht: {}, list: []}
+                edges: {ht: {}, list: []},
+                cameras: []
             },
             graph: {
                 nodes: {ht: {}, list: []},
-                edges: {ht: {}, list: []}
+                edges: {ht: {}, list: []},
+                cameras: []
             }
         };
 

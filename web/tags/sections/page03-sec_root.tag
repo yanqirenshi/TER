@@ -6,7 +6,17 @@
      this.ter = new Ter();
 
      this.draw = () => {
-         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg');
+         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', {
+             moveEndSvg: (point) => {
+                 dump(point);
+             },
+             zoomSvg: (scale) => {
+                 dump(scale);
+             },
+             clickSvg: () => {
+                 dump('clickSvg')
+             }
+         });
 
          this.ter.drawTables(
              this.d3svg,

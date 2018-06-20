@@ -22,8 +22,8 @@
 ;;; Environment
 ;;;
 (defroute "/environment" ()
-  (render-json (list :schemas (ter::find-schema ter.db:*graph*)
-                     :camera (ter::get-camera ter.db:*graph* :code :default))))
+  (render-json (list :schemas (ter::find-schema ter.db:*graph*))))
+
 
 ;;;
 ;;; er
@@ -35,8 +35,11 @@
     (render-json (ter.api.controller::save-er-position schema code position))))
 
 (defroute "/er/:schema_code" (&key schema_code)
-  (let ((schema (ter::get-schema ter.db:*graph* :code (alexandria:make-keyword (string-upcase schema_code)))))
-    (render-json (ter.api.controller::find-er schema))))
+  (let* ((graph ter.db:*graph*)
+         (schema_code (alexandria:make-keyword (string-upcase schema_code)))
+         (schema (ter::get-schema graph :code schema_code)))
+    (render-json (nconc (ter.api.controller::find-er schema)
+                        (list :cameras (ter::find-schema-camera graph schema))))))
 
 
 ;;;

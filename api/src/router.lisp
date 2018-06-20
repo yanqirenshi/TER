@@ -25,6 +25,13 @@
   (render-json (list :schemas (ter::find-schema ter.db:*graph*))))
 
 
+(defroute ("/camera/:camera_code/look-at" :method :POST) (&key camera_code _parsed)
+  (render-json (list :code camera_code :parsed (jojo:parse (caar _parsed)))))
+
+(defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code _parsed)
+  (render-json (list :code camera_code :parsed (jojo:parse (caar _parsed)))))
+
+
 ;;;
 ;;; er
 ;;;

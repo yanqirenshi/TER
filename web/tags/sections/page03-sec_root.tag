@@ -6,17 +6,20 @@
      this.ter = new Ter();
 
      this.draw = () => {
-         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', {
+         let camera = STORE.state().get('er').cameras[0];
+         let callbacks = {
              moveEndSvg: (point) => {
-                 dump(point);
+                 let camera = STORE.state().get('er').cameras[0];
+                 ACTIONS.saveCameraLookAt(camera, point);
              },
              zoomSvg: (scale) => {
-                 dump(scale);
+                 let camera = STORE.state().get('er').cameras[0];
+                 ACTIONS.saveCameraLookMagnification(camera, scale);
              },
-             clickSvg: () => {
-                 dump('clickSvg')
-             }
-         });
+             clickSvg: () => {}
+         };
+
+         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
 
          this.ter.drawTables(
              this.d3svg,

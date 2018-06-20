@@ -16,15 +16,17 @@ class Ter {
         }
         return Math.floor( Math.random() * (max + 1 - min) ) + min ;
     }
-    makeD3svg (selector, callbacks) {
+    makeD3svg (selector, camera, callbacks) {
+        let _camera = Object.assign({}, camera);
+
         return new D3Svg({
             d3: d3,
             svg: d3.select(selector),
-            x: 0,
-            y: 0,
+            x: _camera.look_at.X || 0,
+            y: _camera.look_at.Y || 0,
             w: window.innerHeight,
             h: window.innerWidth,
-            scale: 1,
+            scale: _camera.magnification || 1,
             callbacks: callbacks
         });
     }

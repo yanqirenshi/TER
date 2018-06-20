@@ -14,6 +14,10 @@
                              (name ,name )
                              (description ,description)))))
 
+
+;;;;;
+;;;;; Schema graph
+;;;;;
 (defvar *er-schema-graphs* (make-hash-table))
 
 (defgeneric get-schema-graph (schema)

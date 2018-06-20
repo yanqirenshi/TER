@@ -1,5 +1,5 @@
 #|
-  This file is a part of ter project.
+This file is a part of ter project.
 |#
 
 (defsystem "ter"
@@ -21,8 +21,10 @@
                                                 (:file "ruby-unrefined")))
                  (:file "package")
                  (:module "class" :components ((:file "common")
-                                               (:module "er" :components ((:file "schema")
-                                                                          (:file "column")
+                                               (:module "base" :components ((:file "drawing")
+                                                                            (:file "schema")
+                                                                            (:file "camera")))
+                                               (:module "er" :components ((:file "column")
                                                                           (:file "table")
                                                                           (:file "edge-er")
                                                                           (:file "port-er")))
@@ -36,13 +38,15 @@
                                                                            (:file "recursion")
                                                                            (:file "edge-ter")
                                                                            (:file "port-ter")))
-                                               (:file "mapper")
-                                               (:file "camera")))
+                                               (:file "mapper")))
                  (:file "point")
-                 (:file "camera")
+                 ;; base
+                 (:module "base" :components ((:file "schema")
+                                              (:file "drawing")
+                                              (:file "camera")
+                                              (:file "common")))
                  ;; er
-                 (:module "er" :components ((:file "schema")
-                                            (:file "column")
+                 (:module "er" :components ((:file "column")
                                             (:file "column-instance")
                                             (:file "table")
                                             (:file "port")

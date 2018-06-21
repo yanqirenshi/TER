@@ -13,3 +13,6 @@
   ((code :accessor code :initarg :code :initform nil)
    (name :accessor name :initarg :name :initform nil)
    (description :accessor description :initarg :description :initform nil)))
+
+(defclass port ()
+  ((degree :accessor degree :initarg :degree :initform 0)))

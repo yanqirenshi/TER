@@ -13,7 +13,8 @@
                  (:module "controller" :components ((:file "package")
                                                     (:file "er")
                                                     (:file "ter")
-                                                    (:file "graph")))
+                                                    (:file "graph")
+                                                    (:file "common")))
                  (:file "render")
                  (:file "router"))))
   :description ""

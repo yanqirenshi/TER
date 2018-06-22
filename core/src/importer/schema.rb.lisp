@@ -83,8 +83,8 @@
   (let* ((data (get-table-plist plist))
          (name (getf data :name)))
     (tx-make-table graph
-                    (make-table-code name)
-                    name)))
+                   (make-table-code name)
+                   name)))
 
 (defun %tx-import-foreign-key (graph from-table plist)
   (let* ((to-table-code (make-table-code (getf (getf plist :foreign-key) :references)))
@@ -114,7 +114,7 @@
 (defun tx-import-tables (graph plist)
   (let ((table (tx-import-make-table graph plist))
         (columns-data (cons '(:type :column :alias "t" :name "id" :data-type "integer")
-                               (find-column-plists plist))))
+                            (find-column-plists plist))))
     (tx-import-columns graph table columns-data)
     table))
 
@@ -137,4 +137,7 @@
       tables)))
 
 (defun import-schema.rb (graph pathname)
-  (%import-schema.rb graph (ter.parser:parse-schema.rb pathname)))
+  (multiple-value-bind (tables keys)
+      (ter.parser:parse-schema.rb pathname)
+    (print keys)
+    (%import-schema.rb graph tables)))

@@ -1,5 +1,7 @@
 (defpackage ter.parser
   (:use #:cl)
+  (:import-from :alexandria
+                #:when-let)
   (:import-from :cl-lex
                 #:define-string-lexer
                 #:stream-lexer)

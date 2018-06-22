@@ -118,6 +118,11 @@ class Table {
             .attr('fill', '#f8f8f8');
     }
     drawG (svg, data) {
+        svg.selectAll('g.table')
+            .data(data, (d) => { return d._id; })
+            .exit()
+            .remove();
+
         return svg.selectAll('g.table')
             .data(data)
             .enter()

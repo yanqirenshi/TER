@@ -10,7 +10,8 @@ This file is a part of ter project.
                #:yacc
                #:upanishad
                #:shinrabanshou
-               #:plist-printer)
+               #:plist-printer
+               #:parser.schema.rb)
   :components ((:module "src"
                 :components
                 ((:file "db")

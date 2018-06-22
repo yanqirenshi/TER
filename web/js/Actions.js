@@ -16,7 +16,7 @@ class Actions extends Vanilla_Redux_Actions {
             mode: mode,
             data: {
                 schemas: {
-                    active: response.SCHEMAS[1]._id,
+                    active: response.SCHEMAS[0].code,
                     list: response.SCHEMAS
                 },
                 camera: response.CAMERA
@@ -111,5 +111,17 @@ class Actions extends Vanilla_Redux_Actions {
             magnification: magnification || 1
         };
         API.post(path, data, ()=>{});
+    }
+    changeSchema (schema_code) {
+        let schemas = STORE.state().get('schemas');
+
+        schemas.active = schema_code;
+
+        return {
+            type: 'CHANGE-SCHEMA',
+            data: {
+                schemas: schemas
+            }
+        };
     }
 }

@@ -28,7 +28,8 @@
      }
 
      STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+
+         if (action.type=='FETCHED-ER')
              this.draw();
      });
     </script>

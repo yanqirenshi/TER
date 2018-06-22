@@ -23,6 +23,14 @@ Schema --------- r ---------> Camera
 (ter.db:start)
 ```
 
+### schema.rb
+
+```
+(in-package :ter)
+(import-schema.rb (get-schema-graph (get-schema *graph* :code :your-schema-code))
+                  "/your/schema.rb/path/schema.rb")
+```
+
 ## Installation
 
 ```lisp

@@ -75,9 +75,30 @@
   (when (cl-ppcre:scan "^end$" (trim line))
     (list :type :block-end)))
 
+(defun add-index-line-p (line)
+  (when (cl-ppcre:scan "^add_index.*$" (trim line))
+    (list :type :add-index :line line)))
+
+(defun add-foreign-key-line-p (line)
+  (when (cl-ppcre:scan "^add_foreign_key.*$" (trim line))
+    (list :type :add-foreign-key :line line)))
+
+(defun add-comment-line-p (line)
+  (when (cl-ppcre:scan "^#.*$" (trim line))
+    (list :type :comment :line line)))
+
+(defun add-empty-line-p (line)
+  (when (string= "" (trim line))
+    (list :type :empty :line line)))
+
+
 (defun parse-shcema.rb-line (line)
   (or (table-line-start-p line)
       (table-line-end-p line)
+      (add-index-line-p line)
+      (add-foreign-key-line-p line)
+      (add-comment-line-p line)
+      (add-empty-line-p line)
       (list :type :other :line line)))
 
 (defun %split-lines-by-table (line-plist table tables)
@@ -99,24 +120,46 @@
                     (values table tables))
              (values table tables)))))
 
-(defun split-lines-by-table (s &optional table tables)
-  "ラインをテーブルごとに分割する。
-分割するときにラインを plist に置き換える。"
+(defun stream2line-plists (s)
   (let ((line (read-line s nil :end-of-file)))
-    (if (eq line :end-of-file)
-        tables
+    (unless (eq line :end-of-file)
+      (cons (parse-shcema.rb-line line)
+            (stream2line-plists s)))))
+
+(defun split-line-plists (line-plists &optional tables keys)
+  (if (null line-plists)
+      (values (reverse tables) (reverse keys))
+      (let* ((line-plist (car line-plists))
+             (line-type (getf line-plist :type)))
+        (cond ((or (eq line-type :add-foreign-key)
+                   (eq line-type :add-index))
+               (push line-plist keys))
+              ((or (eq line-type :table-start)
+                   (eq line-type :block-end)
+                   (eq line-type :other))
+               (push line-plist tables)))
+        (split-line-plists (cdr line-plists) tables keys))))
+
+(defun split-lines-by-table (line-plists &optional table tables)
+  (if (null line-plists)
+      tables
+      (let ((line-plist (car line-plists)))
         (multiple-value-bind (next-table next-tables)
-            (%split-lines-by-table (parse-shcema.rb-line line)
+            (%split-lines-by-table line-plist
                                    table
                                    tables)
-          (split-lines-by-table s next-table next-tables)))))
+          (split-lines-by-table (cdr line-plists) next-table next-tables)))))
 
 ;;;
 ;;; main
 ;;;
 (defun parse-schema.rb (pathname)
   (with-open-file (s pathname)
-    (split-lines-by-table s)))
+    (multiple-value-bind (table-plists key-plists)
+        (split-line-plists (stream2line-plists s))
+      (values (split-lines-by-table table-plists)
+              key-plists))))
+
 
 ;;(parse-schema.rb "~/prj/cw-rbr_cms/db/schema.rb")
 

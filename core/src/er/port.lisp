@@ -11,8 +11,9 @@
 
 (defun %add-port-er (graph from)
   (let ((port (tx-make-port-er graph)))
-    (shinra:tx-make-edge graph 'edge-ter from port :have)
+    (shinra:tx-make-edge graph 'edge-er from port :have)
     port))
 
 (defgeneric add-port-er (graph from)
-  (:method (graph (from column-instance)) (%add-port-er graph from)))
+  (:method (graph (from column-instance))
+    (%add-port-er graph from)))

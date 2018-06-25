@@ -8,6 +8,7 @@ This file is a part of ter project.
   :license ""
   :depends-on (#:cl-lex
                #:yacc
+               #:cl-inflector
                #:upanishad
                #:shinrabanshou
                #:plist-printer

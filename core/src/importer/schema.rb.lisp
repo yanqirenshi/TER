@@ -182,13 +182,9 @@
            (table-to (get-table graph :code (str2keyword table-name-to)))
            (column-code-from (make-column-instance-code table-from (parse-foreign-key-line-column-code :from table-name-from options)))
            (column-code-to   (make-column-instance-code table-to   (parse-foreign-key-line-column-code :to   table-name-from options))))
-      ;;
-      ;; TODO: これで関係をさくせいする。
-      ;;
-      (list :table-from      table-from
-            :table-to        table-to
-            :table-from-port (get-table-column-instances-port graph table-from column-code-from)
-            :table-to-port   (get-table-column-instances-port graph table-to   column-code-to)))))
+      (tx-make-r-port-er-to-port-er graph
+                                    (get-table-column-instances-port graph table-from column-code-from)
+                                    (get-table-column-instances-port graph table-to   column-code-to)))))
 
 (defun import-keys (graph plists)
   (when-let ((plist (car plists)))
@@ -200,6 +196,5 @@
 (defun import-schema.rb (graph pathname)
   (multiple-value-bind (tables keys)
       (ter.parser:parse-schema.rb pathname)
-    (plist-printer:pprints (import-keys graph keys)
-                           '( :table-from :table-to :table-from-port :table-to-port :options))
+    (import-keys graph keys)
     (%import-schema.rb graph tables)))

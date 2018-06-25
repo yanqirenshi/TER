@@ -49,3 +49,20 @@
 (defun tx-make-r-table_column-instance (graph table column-instance)
   (or (get-r-table_column-instance graph table column-instance)
       (tx-make-edge graph 'edge-er table column-instance :have)))
+
+;;;;;
+;;;;; port-er ⇒ port-er
+;;;;;
+(defgeneric get-r-port-er-to-port-er (graph from to)
+  (:method (graph (from port-er) (to port-er))
+    (find-if #'(lambda (d)
+                 (= (up:%id d) (up:%id to)))
+             (shinra:find-r-vertex graph 'edge-er
+                                   :from from
+                                   :edge-type :fk
+                                   :vertex-class 'port-er))))
+
+(defgeneric tx-make-r-port-er-to-port-er (graph from to)
+  (:method (graph (from port-er) (to port-er))
+    (or (get-r-port-er-to-port-er graph from to)
+        (tx-make-edge graph 'edge-er from to :fk))))

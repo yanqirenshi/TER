@@ -1,3 +1,4 @@
+
 class Store extends Vanilla_Redux_Store {
     constructor(reducer) {
         super(reducer, Immutable.Map({}));
@@ -53,6 +54,7 @@ class Store extends Vanilla_Redux_Store {
                 tables:           {ht: {}, list: []},
                 columns:          {ht: {}, list: []},
                 column_instances: {ht: {}, list: []},
+                ports:            {ht: {}, list: []},
                 relashonships:    {ht: {}, list: []},
                 cameras: []
             },

@@ -22,8 +22,8 @@ class Ter {
         return new D3Svg({
             d3: d3,
             svg: d3.select(selector),
-            x: _camera.look_at.X || 0,
-            y: _camera.look_at.Y || 0,
+            x: _camera.look_at.x || 0,
+            y: _camera.look_at.y || 0,
             w: window.innerHeight,
             h: window.innerWidth,
             scale: _camera.magnification || 1,
@@ -47,15 +47,42 @@ class Ter {
 
          return out;
     }
+    findColumnInstancesPorts (table, r_froms, ports_ht) {
+        let out = [];
+        for (var i in table.columns) {
+            let column = table.columns[i];
+
+            if (r_froms[column._id]) {
+                for (var k in r_froms[column._id]){
+                    let r = r_froms[column._id][k];
+                    if (r['to-class']=='PORT-ER') {
+                        let port = ports_ht[r['to-id']];
+                        port.column_id = column.id;
+                        out.push(port);
+                    }
+                }
+            }
+        }
+
+        return out;
+    }
     drawTables (d3svg, state) {
         let table = new Table({ d3svg:d3svg });
         let tables = state.tables.list;
 
-        for (var i in tables)
-            tables[i].columns = this.findColumnInstances(
+        for (var i in tables) {
+            let table = tables[i];
+
+            table.columns = this.findColumnInstances(
                 tables[i],
                 state.relashonships.list,
                 state.column_instances.ht);
+
+            table.ports = this.findColumnInstancesPorts(
+                table,
+                state.relashonships.from,
+                state.ports.ht);
+        }
 
         table.draw(tables);
     }

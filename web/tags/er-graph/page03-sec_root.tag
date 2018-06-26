@@ -28,7 +28,6 @@
      }
 
      STORE.subscribe((action) => {
-
          if (action.type=='FETCHED-ER')
              this.draw();
      });

@@ -42,6 +42,8 @@ class Table {
     ///// ////////////////////////////////////////
     /////  Draw
     ///// ////////////////////////////////////////
+    drawPorts (g) {
+    }
     drawHeader (g) {
         let padding = this._padding;
         let self = this;

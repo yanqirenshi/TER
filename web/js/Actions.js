@@ -31,6 +31,37 @@ class Actions extends Vanilla_Redux_Actions {
         }
         return {ht: ht, list: list};
     }
+    makeGraphRData (list) {
+        let ht = {};
+        let ht_from = {};
+        let ht_to = {};
+        for (var i in list) {
+            let data = list[i];
+            let _id = data._id;
+            let from_id = data['from-id'];
+            let to_id = data['to-id'];
+
+            // _id
+            ht[_id] = data;
+
+            // from_id
+            if (!ht_from[from_id])
+                ht_from[from_id] = {};
+            ht_from[from_id][to_id] = data;
+
+            // to_id
+            if (!ht_to[to_id])
+                ht_to[to_id] = {};
+            ht_to[to_id][from_id] = data;
+        }
+
+        return {
+            ht: ht,
+            list: list,
+            from: ht_from,
+            to: ht_to
+        };
+    }
     fetchGraph (mode) {
         API.get('/graph', function (response) {
             STORE.dispatch(this.fetchedGraph(mode, response));
@@ -65,7 +96,8 @@ class Actions extends Vanilla_Redux_Actions {
                     tables:           this.makeGraphData(response.TABLES),
                     columns:          this.makeGraphData(response.COLUMNS),
                     column_instances: this.makeGraphData(response.COLUMN_INSTANCES),
-                    relashonships:    this.makeGraphData(response.RELASHONSHIPS),
+                    ports:            this.makeGraphData(response.PORTS),
+                    relashonships:    this.makeGraphRData(response.RELASHONSHIPS),
                     cameras:          response.CAMERAS
                 }
             }

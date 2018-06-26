@@ -161,25 +161,36 @@ riot.tag2('section-list', '<table class="table is-bordered is-striped is-narrow 
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
 });
 
-riot.tag2('page01', '', '', '', function(opts) {
-     this.mixin(MIXINS.page);
+riot.tag2('page03-sec_root', '<svg></svg>', '', '', function(opts) {
+     this.d3svg = null;
+     this.ter = new Ter();
 
-     this.on('mount', () => { this.draw(); });
-     this.on('update', () => { this.draw(); });
-});
+     this.draw = () => {
+         let camera = STORE.state().get('er').cameras[0];
+         let callbacks = {
+             moveEndSvg: (point) => {
+                 let camera = STORE.state().get('er').cameras[0];
+                 ACTIONS.saveCameraLookAt(camera, point);
+             },
+             zoomSvg: (scale) => {
+                 let camera = STORE.state().get('er').cameras[0];
+                 ACTIONS.saveCameraLookMagnification(camera, scale);
+             },
+             clickSvg: () => {}
+         };
 
-riot.tag2('page02', '', '', '', function(opts) {
-     this.mixin(MIXINS.page);
+         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
 
-     this.on('mount', () => { this.draw(); });
-     this.on('update', () => { this.draw(); });
-});
+         this.ter.drawTables(
+             this.d3svg,
+             STORE.state().get('er')
+         );
+     }
 
-riot.tag2('page03', '', '', '', function(opts) {
-     this.mixin(MIXINS.page);
-
-     this.on('mount', () => { this.draw(); });
-     this.on('update', () => { this.draw(); });
+     STORE.subscribe((action) => {
+         if (action.type=='FETCHED-ER')
+             this.draw();
+     });
 });
 
 riot.tag2('page01-sec_root', '<svg></svg>', '', '', function(opts) {
@@ -243,6 +254,27 @@ riot.tag2('page01-sec_root', '<svg></svg>', '', '', function(opts) {
      });
 });
 
+riot.tag2('page01', '', '', '', function(opts) {
+     this.mixin(MIXINS.page);
+
+     this.on('mount', () => { this.draw(); });
+     this.on('update', () => { this.draw(); });
+});
+
+riot.tag2('page02', '', '', '', function(opts) {
+     this.mixin(MIXINS.page);
+
+     this.on('mount', () => { this.draw(); });
+     this.on('update', () => { this.draw(); });
+});
+
+riot.tag2('page03', '', '', '', function(opts) {
+     this.mixin(MIXINS.page);
+
+     this.on('mount', () => { this.draw(); });
+     this.on('update', () => { this.draw(); });
+});
+
 riot.tag2('page02-sec_root', '<svg></svg>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
@@ -265,38 +297,5 @@ riot.tag2('page02-sec_root', '<svg></svg>', '', '', function(opts) {
 
              this.entity.draw(this.d3svg, STORE.state().get('ter'))
          }
-     });
-});
-
-riot.tag2('page03-sec_root', '<svg></svg>', '', '', function(opts) {
-     this.d3svg = null;
-     this.ter = new Ter();
-
-     this.draw = () => {
-         let camera = STORE.state().get('er').cameras[0];
-         let callbacks = {
-             moveEndSvg: (point) => {
-                 let camera = STORE.state().get('er').cameras[0];
-                 ACTIONS.saveCameraLookAt(camera, point);
-             },
-             zoomSvg: (scale) => {
-                 let camera = STORE.state().get('er').cameras[0];
-                 ACTIONS.saveCameraLookMagnification(camera, scale);
-             },
-             clickSvg: () => {}
-         };
-
-         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
-
-         this.ter.drawTables(
-             this.d3svg,
-             STORE.state().get('er')
-         );
-     }
-
-     STORE.subscribe((action) => {
-
-         if (action.type=='FETCHED-ER')
-             this.draw();
      });
 });

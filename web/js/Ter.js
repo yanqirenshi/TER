@@ -29,18 +29,9 @@ class Ter {
             callbacks: callbacks
         });
 
-        let areas = [
-            {_id: -2,  name: 'lines'},
-            {_id: -1,  name: 'entities'}
-        ];
-        let svg = d3svg.Svg();
-        svg.selectAll('g')
-            .data(areas)
-            .enter()
-            .append('g')
-            .attr('id', (d) => {
-                return '#' + d.name;
-            });
+        // let svg = d3svg.Svg();
+        // svg.append('g').attr('id', '#lines');
+        // svg.append('g').attr('id', '#entities');
 
         return d3svg;
     }

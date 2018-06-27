@@ -87,7 +87,67 @@ class Actions extends Vanilla_Redux_Actions {
             STORE.dispatch(this.fetchedEr(mode, response));
         }.bind(this));
     }
+    injectTable2ColumnInstances (tables, column_instances, relashonships) {
+        let table_ht = tables.ht;
+        for (var i in column_instances.list) {
+            let column_instance = column_instances.list[i];
+            let to_ht = relashonships.to[column_instance._id];
+
+            for (var k in to_ht)
+                if (to_ht[k]['from-class'] == 'TABLE') {
+                    column_instance._table = to_ht[k];
+
+                    let from_id = to_ht[k]['from-id'];
+                    column_instance._table = table_ht[from_id];
+
+
+                    if (!table_ht[k]._column_instances)
+                        table_ht[k]._column_instances = [];
+
+                    table_ht[k]._column_instances.push(column_instance);
+                }
+        }
+    }
+    injectColumnInstances2Ports (column_instances, ports, relashonships) {
+        let column_instances_ht = column_instances.ht;
+        for (var i in ports.list) {
+            let port = ports.list[i];
+            let to_ht = relashonships.to[port._id];
+
+            for (var k in to_ht)
+                if (to_ht[k]['from-class'] == 'COLUMN-INSTANCE') {
+                    let from_id = to_ht[k]['from-id'];
+                    port._column_instance = column_instances_ht[from_id];
+
+                    if (!port._column_instance._table._ports)
+                        port._column_instance._table._ports = [];
+                    port._column_instance._table._ports.push(port);
+                }
+        }
+    }
+    makeEdges (relashonships, ports) {
+        let ports_ht = ports.ht;
+
+        return relashonships.list.filter((r) => {
+            let test = r['from-class']==r['to-class'];
+            if (test) {
+                r._port_from = ports_ht[r['from-id']];
+                r._port_to = ports_ht[r['to-id']];
+            }
+            return test;
+        });
+    }
     fetchedEr (mode, response) {
+        let relashonships    = this.makeGraphRData(response.RELASHONSHIPS);
+        let tables           = this.makeGraphData(response.TABLES);
+        let column_instances = this.makeGraphData(response.COLUMN_INSTANCES);
+        let ports            = this.makeGraphData(response.PORTS);
+        let edges            = this.makeGraphData(this.makeEdges(relashonships, ports));
+
+        // inject
+        this.injectTable2ColumnInstances(tables, column_instances, relashonships);
+        this.injectColumnInstances2Ports (column_instances, ports, relashonships);
+
         return {
             type: 'FETCHED-ER',
             mode: mode,
@@ -95,9 +155,10 @@ class Actions extends Vanilla_Redux_Actions {
                 er: {
                     tables:           this.makeGraphData(response.TABLES),
                     columns:          this.makeGraphData(response.COLUMNS),
-                    column_instances: this.makeGraphData(response.COLUMN_INSTANCES),
-                    ports:            this.makeGraphData(response.PORTS),
-                    relashonships:    this.makeGraphRData(response.RELASHONSHIPS),
+                    column_instances: column_instances,
+                    ports:            ports,
+                    relashonships:    relashonships,
+                    edges:            edges,
                     cameras:          response.CAMERAS
                 }
             }

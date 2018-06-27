@@ -24,9 +24,11 @@ class Table {
         let padding = this._padding;
         return d.w - padding * 2;
     }
+    columnHeight () { return 22; }
     columnsContentsHeight (d) {
-        let column_len = d.columns.length;
-        let contents_h = column_len==0 ? 22 : column_len * 22;
+        let column_height = this.columnHeight();
+        let column_len = d._column_instances.length;
+        let contents_h = column_height * ((column_len == 0) ? 1 : column_len);
         let padding = this._padding;
         return contents_h;
     }
@@ -42,7 +44,41 @@ class Table {
     ///// ////////////////////////////////////////
     /////  Draw
     ///// ////////////////////////////////////////
+    drawEdges (svg) {
+        let edges = STORE.state().get('er').edges.list;
+        let area = svg.select('#lines');
+        svg.selectAll('line')
+            .data(edges)
+            .enter()
+            .append('line')
+            .attr('x1', (d) => { return d._port_from._column_instance._table.x + d._port_from.x + 4; })
+            .attr('y1', (d) => { return d._port_from._column_instance._table.y + d._port_from.y + 4; })
+            .attr('x2', (d) => { return d._port_to._column_instance._table.x   + d._port_to.x   + 4; })
+            .attr('y2', (d) => { return d._port_to._column_instance._table.y   + d._port_to.y   + 4; })
+            .attr('stroke', '#000')
+            .attr('stroke-width', 1);
+    }
     drawPorts (g) {
+        g.selectAll('circle')
+            .data((d) => {
+                return d._ports ? d._ports : [];
+            })
+            .enter()
+            .append('circle')
+            .attr('cx', (d) => {
+                let column_instance = d._column_instance;
+                d.x = column_instance.x + column_instance._table.w;
+                return d.x;
+            })
+            .attr('cy', (d) => {
+                let column_instance = d._column_instance;
+                d.y = column_instance.y + (column_instance.h/2) - 16;
+                return d.y;
+            })
+            .attr('r', 4)
+            .attr('fill', '#fff')
+            .attr('stroke', '#000')
+            .attr('stroke-width', 0.5);
     }
     drawHeader (g) {
         let padding = this._padding;
@@ -92,34 +128,50 @@ class Table {
             .attr('class', 'columns')
             .attr('x', (d) => { return padding; })
             .attr('y', (d) => { return this.headerHight(d); })
-            .attr('width',  (d) => { return this.columnsWidth(d); })
-            .attr('height', (d) => { return this.columnsContentsHeight(d); })
+            .attr('width',  (d) => {
+                return this.columnsWidth(d);
+            })
+            .attr('height', (d) => {
+                return this.columnsContentsHeight(d);
+            })
             .attr('fill', '#fefefe');
 
         g.selectAll('text.column')
             .data((d) => {
-                return this.sortColumns(d.columns);
+                return this.sortColumns(d._column_instances);
             })
             .enter()
             .append('text')
             .attr('class', 'column')
             .attr('x', (d) => {
-                return padding + 6;
+                d.x = padding + 6;
+                return d.x;
             })
             .attr('y', (d, i) => {
-                return this.headerHight(d.table) + (i+1) * 22;
+                d.y = this.headerHight(d.table) + (i+1) * 22;
+                return d.y;
             })
             .attr('font-size', 16 + 'px')
+            .attr('height', (d) => {
+                d.h = this.columnHeight();
+                return d.h;
+            })
             .text((d) => { return d.name; });
     }
     drawBase (g) {
         g.append('rect')
             .attr('class', 'base')
-            .attr('width', (d) => { return d.w; })
-            .attr('height', (d) => { return this.baseHeight(d); })
+            .attr('width', (d) => {
+                return d.w;
+            })
+            .attr('height', (d) => {
+                return this.baseHeight(d);
+            })
             .attr('fill', '#f8f8f8');
     }
     drawG (svg, data) {
+        let area = svg.select('#entities');
+
         svg.selectAll('g.table')
             .data(data, (d) => { return d._id; })
             .exit()
@@ -170,6 +222,9 @@ class Table {
         this.drawBase(g);
         this.drawColumns(g);
         this.drawHeader(g);
+        this.drawPorts(g);
+
+        this.drawEdges(svg);
 
         let base = g.selectAll('rect.base');
     }

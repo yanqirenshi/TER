@@ -96,8 +96,8 @@
 (defun tx-import-foreign-key (graph from-table plist)
   (multiple-value-bind (from-column-instance to-column-instance)
       (%tx-import-foreign-key graph from-table plist)
-    (let ((from-port (add-port-er graph from-column-instance))
-          (to-port (add-port-er graph to-column-instance)))
+    (let ((from-port (add-port-er graph :out from-column-instance))
+          (to-port (add-port-er graph :in to-column-instance)))
       (shinra:tx-make-edge graph 'edge-er from-port to-port :r))))
 
 (defun tx-import-foreign-keys (graph table plist)
@@ -183,8 +183,8 @@
            (column-code-from (make-column-instance-code table-from (parse-foreign-key-line-column-code :from table-name-from options)))
            (column-code-to   (make-column-instance-code table-to   (parse-foreign-key-line-column-code :to   table-name-from options))))
       (tx-make-r-port-er-to-port-er graph
-                                    (get-table-column-instances-port graph table-from column-code-from)
-                                    (get-table-column-instances-port graph table-to   column-code-to)))))
+                                    (get-table-column-instances-port :out graph table-from column-code-from)
+                                    (get-table-column-instances-port :in  graph table-to   column-code-to)))))
 
 (defun import-keys (graph plists)
   (when-let ((plist (car plists)))

@@ -43,13 +43,13 @@
                            (code code))))
              (find-table-column-instances graph table))))
 
-(defgeneric get-table-column-instances-port (graph table column-code)
-  (:method ((schema schema) (table table) (column-code symbol))
-    (get-table-column-instances-port (get-schema-graph schema) table column-code))
-  (:method ((graph shinra:banshou) (table table) (column-code symbol))
+(defgeneric get-table-column-instances-port (graph type table column-code)
+  (:method ((schema schema) type (table table) (column-code symbol))
+    (get-table-column-instances-port (get-schema-graph schema) type table column-code))
+  (:method ((graph shinra:banshou) type (table table) (column-code symbol))
     (let ((column-instance (get-column-instance graph :code column-code)))
-      (or (first (shinra:find-r-vertex graph 'edge-er
+      (or (first (shinra:find-r-vertex graph (ter::port-type2class type)
                                        :from column-instance
                                        :vertex-class 'port-er
                                        :edge-type :have))
-          (add-port-er graph column-instance)))))
+          (add-port-er graph type column-instance)))))

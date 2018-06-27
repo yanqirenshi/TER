@@ -18,15 +18,25 @@ class Ter {
     }
     makeD3svg (selector, camera, callbacks) {
         let _camera = Object.assign({}, camera);
+        let look_at = (camera, name) => {
+            if (camera && camera.look_at)
+                return camera.look_at[name];
+            else
+                return 0;
+        };
         let d3svg = new D3Svg({
             d3: d3,
             svg: d3.select(selector),
-            x: _camera.look_at.x || 0,
-            y: _camera.look_at.y || 0,
+            x: look_at(_camera, 'x'),
+            y: look_at(_camera, 'y'),
             w: window.innerHeight,
             h: window.innerWidth,
             scale: _camera.magnification || 1,
-            callbacks: callbacks
+            callbacks: callbacks ? callbacks : {
+                moveEndSvg: null,
+                zoomSvg: null,
+                clickSvg: null
+            }
         });
 
         // let svg = d3svg.Svg();

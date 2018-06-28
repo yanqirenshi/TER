@@ -1,8 +1,11 @@
 (in-package :ter)
 
-(defun find-port-er (graph)
-  (nconc (shinra:find-vertex graph 'port-er-in)
-         (shinra:find-vertex graph 'port-er-out)))
+(defun find-port-er (graph &key (select :all))
+  (cond ((eq :all select)
+         (nconc (shinra:find-vertex graph 'port-er-in)
+                (shinra:find-vertex graph 'port-er-out)))
+        ((eq :in select) (shinra:find-vertex graph 'port-er-in))
+        ((eq :out select) (shinra:find-vertex graph 'port-er-out))))
 
 (defun get-port-er (graph &key code)
   (or (car (shinra:find-vertex graph 'port-er-in  :slot 'code :value code))

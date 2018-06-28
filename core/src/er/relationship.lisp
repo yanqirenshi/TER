@@ -53,14 +53,21 @@
 ;;;;;
 ;;;;; port-er ⇒ port-er
 ;;;;;
+(defun find-r-port-er-from-to-port-er-in (graph from)
+  (shinra:find-r-edge graph 'edge-er
+                      :from from
+                      :edge-type :fk
+                      :vertex-class 'port-er-in))
+
+
 (defgeneric get-r-port-er-to-port-er (graph from to)
-  (:method (graph (from port-er) (to port-er))
+  (:method (graph (from port-er-out) (to port-er-in))
     (find-if #'(lambda (d)
                  (= (up:%id d) (up:%id to)))
              (shinra:find-r-vertex graph 'edge-er
                                    :from from
                                    :edge-type :fk
-                                   :vertex-class 'port-er))))
+                                   :vertex-class 'port-er-in))))
 
 (defgeneric tx-make-r-port-er-to-port-er (graph from to)
   (:method (graph (from port-er) (to port-er))

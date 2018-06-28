@@ -129,13 +129,6 @@
 ;;;;;
 ;;;;; main
 ;;;;;
-(defun %import-schema.rb (graph plists)
-  (when-let ((plist (car plists)))
-    (let ((tables (cons (up:execute-transaction (tx-import-tables graph plist))
-                        (%import-schema.rb graph (cdr plists)))))
-      (tx-import-all-foreign-keys graph plists)
-      tables)))
-
 (defun get-value-string (value)
   (multiple-value-bind (ret arr)
       (cl-ppcre:scan-to-strings  "^\"(.*)\"$" (string-trim '(#\Space #\Tab #\Newline) value))
@@ -183,8 +176,8 @@
            (column-code-from (make-column-instance-code table-from (parse-foreign-key-line-column-code :from table-name-from options)))
            (column-code-to   (make-column-instance-code table-to   (parse-foreign-key-line-column-code :to   table-name-from options))))
       (tx-make-r-port-er-to-port-er graph
-                                    (get-table-column-instances-port :out graph table-from column-code-from)
-                                    (get-table-column-instances-port :in  graph table-to   column-code-to)))))
+                                    (get-table-column-instances-port graph :out table-from column-code-from)
+                                    (get-table-column-instances-port graph :in  table-to   column-code-to)))))
 
 (defun import-keys (graph plists)
   (when-let ((plist (car plists)))
@@ -193,8 +186,15 @@
               (import-keys graph (cdr plists)))
         (import-keys graph (cdr plists)))))
 
+(defun import-tables (graph plists)
+  (when-let ((plist (car plists)))
+    (let ((tables (cons (up:execute-transaction (tx-import-tables graph plist))
+                        (import-tables graph (cdr plists)))))
+      (tx-import-all-foreign-keys graph plists)
+      tables)))
+
 (defun import-schema.rb (graph pathname)
   (multiple-value-bind (tables keys)
       (ter.parser:parse-schema.rb pathname)
-    (import-keys graph keys)
-    (%import-schema.rb graph tables)))
+    (import-tables graph tables)
+    (import-keys graph keys)))

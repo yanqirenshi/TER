@@ -21,6 +21,8 @@
 (defvar *er-schema-graphs* (make-hash-table))
 
 (defgeneric get-schema-graph (schema)
+  (:method ((schema-code symbol))
+    (get-schema-graph (get-schema *graph* :code schema-code)))
   (:method ((schema schema))
     (let ((graph (gethash (code schema) *er-schema-graphs*)))
       (or graph

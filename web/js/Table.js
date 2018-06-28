@@ -50,16 +50,14 @@ class Table {
 
         let val = (port, name) => {
             try {
-                return port._column_instance._table[name] + port.x + 4;
+                return port._column_instance._table[name] + port[name];
             } catch (e) {
                 return 0;
             }
         };
 
         svg.selectAll('line')
-            .data(edges, (d) => {
-                return d._id;
-            })
+            .data(edges, (d) => { return d._id; })
             .enter()
             .append('line')
             .attr('x1', (d) => { return val(d._port_from, 'x'); })
@@ -70,7 +68,10 @@ class Table {
             // .attr('y1', (d) => { return d._port_from._column_instance._table.y + d._port_from.y + 4; })
             // .attr('x2', (d) => { return d._port_to._column_instance._table.x   + d._port_to.x   + 4; })
             // .attr('y2', (d) => { return d._port_to._column_instance._table.y   + d._port_to.y   + 4; })
-            .attr('stroke', '#000')
+            .attr('id', (d) => {return d._id;})
+            .attr('stroke', (d) => {
+                return d.hide ? 'none' : '#000';
+            })
             .attr('stroke-width', 1);
     }
     drawPorts (g) {
@@ -82,7 +83,10 @@ class Table {
             .append('circle')
             .attr('cx', (d) => {
                 let column_instance = d._column_instance;
-                d.x = column_instance.x + column_instance._table.w;
+                if (d._class=='PORT-ER-OUT')
+                    d.x = column_instance.x + column_instance._table.w;
+                else
+                    d.x = column_instance.x * -1;
                 return d.x;
             })
             .attr('cy', (d) => {

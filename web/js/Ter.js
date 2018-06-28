@@ -24,13 +24,14 @@ class Ter {
             else
                 return 0;
         };
+
         let d3svg = new D3Svg({
             d3: d3,
             svg: d3.select(selector),
             x: look_at(_camera, 'x'),
             y: look_at(_camera, 'y'),
-            w: window.innerHeight,
-            h: window.innerWidth,
+            w: window.innerWidth,
+            h: window.innerHeight,
             scale: _camera.magnification || 1,
             callbacks: callbacks ? callbacks : {
                 moveEndSvg: null,

@@ -129,7 +129,8 @@ class Actions extends Vanilla_Redux_Actions {
         let ports_ht = ports.ht;
 
         return relashonships.list.filter((r) => {
-            let test = r['from-class']==r['to-class'];
+            let test = ((r['from-class']=='PORT-ER-OUT' || r['from-class']=='PORT-ER-IN') &&
+                        (r['to-class']=='PORT-ER-OUT' || r['to-class']=='PORT-ER-IN'));
             if (test) {
                 r._port_from = ports_ht[r['from-id']];
                 r._port_to = ports_ht[r['to-id']];

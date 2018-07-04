@@ -2,14 +2,10 @@
 
 (defun import-foreign-keys (graph plists)
   (when-let ((plist (car plists)))
-    ;; '(:FROM-TABLE :USERS :FROM-COLUMN :ID :TO-TABLE :USER_RACES :TO-COLUMN :USER_ID)
     (let ((port-out (table-column-instances-port graph :out (getf plist :from-table) (getf plist :from-column)))
           (port-in  (table-column-instances-port graph :in  (getf plist :to-table)   (getf plist :to-column))))
-      (format t "~30S => ~S => ~S~%"
-              (code (table-column-instance graph (getf plist :from-table) (getf plist :from-column)))
-              (code (table-column-instance graph (getf plist :to-table)   (getf plist :to-column)))
-              (tx-make-r-port-er graph port-out port-in)))
-    (import-foreign-keys graph (cdr plists))))
+      (tx-make-r-port-er graph port-out port-in)
+      (import-foreign-keys graph (cdr plists)))))
 
 (defun import-tables (graph plists)
   (when-let ((plist (car plists)))

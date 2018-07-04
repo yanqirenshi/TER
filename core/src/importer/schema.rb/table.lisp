@@ -78,7 +78,6 @@
 ;;;;;
 ;;;;; fk
 ;;;;;
-
 (defun %table2import-fk-datas (table table-plist)
   (when-let ((plist (car table-plist)))
     (let ((foreign-key (getf plist :foreign-key)))

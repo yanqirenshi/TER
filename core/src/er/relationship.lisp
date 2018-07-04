@@ -21,13 +21,13 @@
                           :vertex-class 'column-instance
                           :edge-type :instance-of)))
 
-(defun get-r-column_column-instance (graph column column-instance)
+(defun column_column-instance (graph column column-instance)
   (find-if #'(lambda (r)
                (string= (code r) (code column-instance)))
            (find-r-column_column-instance graph :column column)))
 
 (defun tx-make-r-column_column-instance (graph column column-instance)
-  (or (get-r-column_column-instance graph column column-instance)
+  (or (column_column-instance graph column column-instance)
       (tx-make-edge graph 'edge-er column column-instance :instance-of)))
 
 
@@ -41,13 +41,13 @@
                           :vertex-class 'column-instance
                           :edge-type :have)))
 
-(defun get-r-table_column-instance (graph table column-instance)
+(defun table_column-instance (graph table column-instance)
   (find-if #'(lambda (r)
                (string= (code r) (code column-instance)))
            (find-r-table_column-instance graph :table table)))
 
 (defun tx-make-r-table_column-instance (graph table column-instance)
-  (or (get-r-table_column-instance graph table column-instance)
+  (or (table_column-instance graph table column-instance)
       (tx-make-edge graph 'edge-er table column-instance :have)))
 
 
@@ -83,17 +83,6 @@
 ;;;;;
 ;;;;; column-instance ⇒ port-er
 ;;;;;
-(defun get-column-instance-port (graph column-instance type &key (ensure t))
-  (warn "この関数は廃棄予定です。column-instance-port を利用してください。")
-  (let ((ports (shinra:find-r-vertex graph 'edge-er
-                                     :from column-instance
-                                     :vertex-class (port-type2class type)
-                                     :edge-type :have)))
-    (when (< 1 (length ports)) (warn "port count over 2"))
-    (or (first ports)
-        (when ensure
-          (add-port-er graph type column-instance)))))
-
 (defgeneric column-instance-port (graph column-instance type &key ensure)
   (:method (graph (column-instance column-instance) type &key (ensure t))
     (let ((ports (shinra:find-r-vertex graph 'edge-er
@@ -132,22 +121,6 @@
 ;;;;;
 ;;;;; table ⇒ column-instance port
 ;;;;;
-(defgeneric get-table-column-instances-port (graph type table column-code)
-  (:method ((schema schema) type (table table) (column-code symbol))
-    (get-table-column-instances-port (get-schema-graph schema) type table column-code))
-
-  (:method ((graph shinra:banshou) type (table table) (column-code symbol))
-    (warn "このオペレータは廃棄予定です。\ntable-column-instances-portを利用してください。")
-    (let ((column-instance (get-column-instance graph :code column-code)))
-      (if (null column-instance)
-          (warn "Not found column instance. column-code=~a" column-code)
-          (or (first (shinra:find-r-vertex graph 'edge-er
-                                           :from column-instance
-                                           :vertex-class (ter::port-type2class type)
-                                           :edge-type :have))
-              (add-port-er graph type column-instance))))))
-
-;; new
 (defgeneric table-column-instances-port (graph type table column)
   (:method ((graph shinra:banshou) type (table-code symbol) (column-code symbol))
     (let ((column-instance (table-column-instance graph table-code column-code)))

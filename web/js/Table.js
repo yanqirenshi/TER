@@ -242,15 +242,30 @@ class Table {
             .exit()
             .remove();
     }
-    move(data) {
+    move(tables) {
         let svg = this._d3svg._svg;
 
-        let selection = svg.selectAll('g.table')
-            .data(data, (d)=>{ return d._id; })
+        svg.selectAll('g.table')
+            .data(tables, (d)=>{ return d._id; })
             .attr('transform', (d)=>{
                 return 'translate('+d.x+','+d.y+')';
             });
 
+        let val = (port, name) => {
+            try {
+                return port._column_instance._table[name] + port[name];
+            } catch (e) {
+                return 0;
+            }
+        };
+
+        let edges = tables[0]._edges;
+        svg.selectAll('line')
+            .data(edges, (d) => { return d._id; })
+            .attr('x1', (d) => { return val(d._port_from, 'x'); })
+            .attr('y1', (d) => { return val(d._port_from, 'y'); })
+            .attr('x2', (d) => { return val(d._port_to,   'x'); })
+            .attr('y2', (d) => { return val(d._port_to,   'y'); });
     }
     draw (data) {
         let svg = this._d3svg._svg;

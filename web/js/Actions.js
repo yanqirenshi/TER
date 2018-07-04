@@ -132,8 +132,20 @@ class Actions extends Vanilla_Redux_Actions {
             let test = ((r['from-class']=='PORT-ER-OUT' || r['from-class']=='PORT-ER-IN') &&
                         (r['to-class']=='PORT-ER-OUT' || r['to-class']=='PORT-ER-IN'));
             if (test) {
-                r._port_from = ports_ht[r['from-id']];
-                r._port_to = ports_ht[r['to-id']];
+                let port_from = ports_ht[r['from-id']];
+                let port_to = ports_ht[r['to-id']];
+
+                r._port_from = port_from;
+                r._port_to = port_to;
+
+                let table_from = port_from._column_instance._table;
+                let table_to   = port_to._column_instance._table;
+
+                if (!table_from._edges) table_from._edges = [];
+                if (!table_to._edges)   table_to._edges = [];
+
+                table_from._edges.push(r);
+                table_to._edges.push(r);
             }
             return test;
         });
@@ -143,11 +155,13 @@ class Actions extends Vanilla_Redux_Actions {
         let tables           = this.makeGraphData(response.TABLES);
         let column_instances = this.makeGraphData(response.COLUMN_INSTANCES);
         let ports            = this.makeGraphData(response.PORTS);
-        let edges            = this.makeGraphData(this.makeEdges(relashonships, ports));
 
         // inject
         this.injectTable2ColumnInstances(tables, column_instances, relashonships);
         this.injectColumnInstances2Ports (column_instances, ports, relashonships);
+
+        // edges
+        let edges            = this.makeGraphData(this.makeEdges(relashonships, ports));
 
         return {
             type: 'FETCHED-ER',

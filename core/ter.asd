@@ -71,7 +71,10 @@ This file is a part of ter project.
                                              (:file "relationship-evt2evt")
                                              (:file "relationship")))
                  (:file "mapper")
-                 (:module "importer" :components ((:file "schema.rb"))))))
+                 (:module "importer" :components ((:module "schema.rb" :components ((:file "util")
+                                                                                    (:file "foreign-key")
+                                                                                    (:file "table")
+                                                                                    (:file "main"))))))))
   :description ""
   :long-description #.(read-file-string
                        (subpathname *load-pathname* "README.markdown"))

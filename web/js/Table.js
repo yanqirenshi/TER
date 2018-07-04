@@ -58,6 +58,11 @@ class Table {
 
         svg.selectAll('line')
             .data(edges, (d) => { return d._id; })
+            .exit()
+            .remove();
+
+        svg.selectAll('line')
+            .data(edges, (d) => { return d._id; })
             .enter()
             .append('line')
             .attr('x1', (d) => { return val(d._port_from, 'x'); })

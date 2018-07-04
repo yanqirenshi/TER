@@ -12,7 +12,7 @@
         (sum-table-col-types (cdr columns) ht))))
 
 (defun print-tables (graph)
-  (plist-printer:pprints
+  (plist-printer:plrints
    (mapcar #'(lambda (d)
                (list :%id (up:%id d)
                      :code (code d)
@@ -28,7 +28,7 @@
     (format t "CODE: ~S~%" (code table))
     (format t "NAME: ~a~%~%" (name table))
     (format t "<<Columns>>~%")
-    (plist-printer:pprints
+    (plist-printer:plrints
      (mapcar #'(lambda (d)
                  (list :%id (up:%id d)
                        :name (name d)

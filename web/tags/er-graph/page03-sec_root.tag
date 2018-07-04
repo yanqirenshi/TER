@@ -5,7 +5,9 @@
      this.d3svg = null;
      this.ter = new Ter();
 
-     this.draw = () => {
+     this.getD3Svg = () => {
+         if (this.d3svg) return this.d3svg
+
          let camera = STORE.state().get('er').cameras[0];
          let callbacks = {
              moveEndSvg: (point) => {
@@ -21,15 +23,16 @@
 
          this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
 
-         this.ter.drawTables(
-             this.d3svg,
-             STORE.state().get('er')
-         );
+         return this.d3svg
      }
 
      STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ER')
-             this.draw();
+         if (action.type=='FETCHED-ER') {
+             let d3svg = this.getD3Svg();
+
+             this.ter.clear(d3svg);
+             this.ter.drawTables(d3svg, STORE.state().get('er'));
+         }
      });
     </script>
 </page03-sec_root>

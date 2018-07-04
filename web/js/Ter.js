@@ -1,5 +1,6 @@
 class Ter {
     constructor (reducer) {
+        this._table = null;
     }
     // Common
     random (v, type) {
@@ -47,10 +48,16 @@ class Ter {
         return d3svg;
     }
     // ER
+    clear (d3svg) {
+        if (!this._table) this._table = new Table({ d3svg:d3svg });
+
+        this._table.removeAll();
+    }
     drawTables (d3svg, state) {
-        let table = new Table({ d3svg:d3svg });
+        if (!this._table) this._table = new Table({ d3svg:d3svg });
+
         let tables = state.tables.list;
 
-        table.draw(tables);
+        this._table.draw(tables);
     }
 }

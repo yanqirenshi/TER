@@ -81,7 +81,9 @@
 
 (defun add-foreign-key-line-p (line)
   (when (cl-ppcre:scan "^add_foreign_key.*$" (trim line))
-    (list :type :add-foreign-key :line line)))
+    (list :type :add-foreign-key
+          :contents (parse-add-foreign-key-line line)
+          :line line)))
 
 (defun add-comment-line-p (line)
   (when (cl-ppcre:scan "^#.*$" (trim line))
@@ -149,6 +151,33 @@
                                    table
                                    tables)
           (split-lines-by-table (cdr line-plists) next-table next-tables)))))
+
+;;;
+;;; fk
+;;;
+(defun parse-foreign-key-options (options)
+  (when-let ((option (car options)))
+    (multiple-value-bind (ret arr)
+        (cl-ppcre:scan-to-strings  "^(\\S+):\\s+(\\S+)$" (string-trim '(#\Space #\Tab #\Newline) option))
+      (unless ret (warn "~S がパース出来ませんでした。" option))
+      (if (not ret)
+          (parse-foreign-key-options (cdr options))
+          (nconc (list (str2keyword (aref arr 0))
+                       (get-value-string (aref arr 1)))
+                 (parse-foreign-key-options (cdr options)))))))
+
+(defun parse-add-foreign-key-line (line)
+  (multiple-value-bind (ret arr)
+      (cl-ppcre:scan-to-strings  "^add_foreign_key\\s+(.*)$" (string-trim '(#\Space #\Tab #\Newline) line))
+    (unless ret (warn "~S がパース出来ませんでした。" line))
+    (let* ((items           (split-sequence:split-sequence #\, (aref arr 0)))
+           (options         (parse-foreign-key-options (cddr items)))
+           (table-code-from (get-value-string (second items)))
+           (table-code-to   (get-value-string (first items))))
+      (list :type :add-foreign-key
+            :table-from table-code-from
+            :table-to table-code-to
+            :options options))))
 
 ;;;
 ;;; main

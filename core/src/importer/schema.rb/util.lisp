@@ -56,8 +56,11 @@
 ;;; import fk data
 ;;;
 (defun make-import-fk-data (from-table from-column to-table &optional options)
-  (let ((column (getf options :column)))
+  (let ((column (getf options :column))
+        (to-column (getf options :to-column)))
     (list :from-table  (str2keyword from-table)
           :from-column (str2keyword (or column from-column))
           :to-table    (str2keyword to-table)
-          :to-column   (str2keyword (or column (make-fk-id-column from-table))))))
+          :to-column   (str2keyword (or to-column
+                                        column
+                                        (make-fk-id-column from-table))))))

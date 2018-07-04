@@ -69,15 +69,22 @@ class Table {
             .attr('y1', (d) => { return val(d._port_from, 'y'); })
             .attr('x2', (d) => { return val(d._port_to,   'x'); })
             .attr('y2', (d) => { return val(d._port_to,   'y'); })
-            // .attr('x1', (d) => { return d._port_from._column_instance._table.x + d._port_from.x + 4; })
-            // .attr('y1', (d) => { return d._port_from._column_instance._table.y + d._port_from.y + 4; })
-            // .attr('x2', (d) => { return d._port_to._column_instance._table.x   + d._port_to.x   + 4; })
-            // .attr('y2', (d) => { return d._port_to._column_instance._table.y   + d._port_to.y   + 4; })
             .attr('id', (d) => {return d._id;})
             .attr('stroke', (d) => {
                 return d.hide ? 'none' : '#000';
             })
             .attr('stroke-width', 1);
+    }
+    removeEdgeAll (svg) {
+        svg.selectAll('line')
+            .data([], (d) => { return d._id; })
+            .exit()
+            .remove();
+    }
+    removeAll () {
+        let svg = this._d3svg._svg;
+        this.removeEdgeAll(svg);
+        this.removeGAll(svg);
     }
     drawPorts (g) {
         g.selectAll('circle')
@@ -222,12 +229,18 @@ class Table {
                   })
                   .on("end",   (d,i,arr)=>{
                       let state = STORE.state().get('schemas');
-                      let _id = state.active;
-                      let schema = state.list.find((d) => { return d._id = _id; });
+                      let code = state.active;
+                      let schema = state.list.find((d) => { return d.code == code; });
 
                       ACTIONS.savePosition(schema, d);
                       delete d.drag;
                   }));
+    }
+    removeGAll (svg) {
+        svg.selectAll('g.table')
+            .data([], (d) => { return d._id; })
+            .exit()
+            .remove();
     }
     move(data) {
         let svg = this._d3svg._svg;

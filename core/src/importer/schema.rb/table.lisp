@@ -85,7 +85,7 @@
       (if (null foreign-key)
           (%table2import-fk-datas table (cdr table-plist))
           (let ((from-table (getf foreign-key :references)))
-            (cons (make-import-fk-data from-table :id table)
+            (cons (make-import-fk-data from-table :id table (list :to-column (getf plist :name)))
                   (%table2import-fk-datas table (cdr table-plist))))))))
 
 (defun table2import-fk-datas (table-plist)

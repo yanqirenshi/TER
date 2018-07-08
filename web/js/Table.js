@@ -50,6 +50,9 @@ class Table {
 
         let val = (port, name) => {
             try {
+                if (!port[name])
+                    return 0;
+
                 return port._column_instance._table[name] + port[name];
             } catch (e) {
                 return 0;
@@ -71,7 +74,7 @@ class Table {
             .attr('y2', (d) => { return val(d._port_to,   'y'); })
             .attr('id', (d) => {return d._id;})
             .attr('stroke', (d) => {
-                return d.hide ? 'none' : '#000';
+                return d.hide ? '#e0e0e0' : '#000';
             })
             .attr('stroke-width', 1);
     }
@@ -242,6 +245,22 @@ class Table {
             .exit()
             .remove();
     }
+    moveEdges(svg, edges) {
+        let val = (port, name) => {
+            try {
+                return port._column_instance._table[name] + port[name];
+            } catch (e) {
+                return 0;
+            }
+        };
+
+        svg.selectAll('line')
+            .data(edges, (d) => { return d._id; })
+            .attr('x1', (d) => { return val(d._port_from, 'x'); })
+            .attr('y1', (d) => { return val(d._port_from, 'y'); })
+            .attr('x2', (d) => { return val(d._port_to,   'x'); })
+            .attr('y2', (d) => { return val(d._port_to,   'y'); });
+    }
     move(tables) {
         let svg = this._d3svg._svg;
 
@@ -251,32 +270,23 @@ class Table {
                 return 'translate('+d.x+','+d.y+')';
             });
 
-        let val = (port, name) => {
-            try {
-                return port._column_instance._table[name] + port[name];
-            } catch (e) {
-                return 0;
-            }
-        };
-
-        let edges = tables[0]._edges;
-        svg.selectAll('line')
-            .data(edges, (d) => { return d._id; })
-            .attr('x1', (d) => { return val(d._port_from, 'x'); })
-            .attr('y1', (d) => { return val(d._port_from, 'y'); })
-            .attr('x2', (d) => { return val(d._port_to,   'x'); })
-            .attr('y2', (d) => { return val(d._port_to,   'y'); });
+        this.moveEdges(svg, tables[0]._edges);
     }
     draw (data) {
         let svg = this._d3svg._svg;
-        let g = this.drawG(svg, data);
 
+        this.drawEdges(svg);  // TODO: g.lines が利用できればエンティティの後ろに移動。
+
+        let g = this.drawG(svg, data);
         this.drawBase(g);
         this.drawColumns(g);
         this.drawHeader(g);
         this.drawPorts(g);
 
-        this.drawEdges(svg);
+        // TODO: g.lines が利用できれば不要
+        this.moveEdges(svg, ([[]].concat(data)).reduce((a,b) => {
+            return b._edges ? a.concat(b._edges) : a;
+        }));
 
         let base = g.selectAll('rect.base');
     }

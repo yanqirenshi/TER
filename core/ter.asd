@@ -23,7 +23,8 @@ This file is a part of ter project.
                                                 (:file "ruby-unrefined")))
                  (:file "package")
                  (:module "class" :components ((:file "common")
-                                               (:module "base" :components ((:file "drawing")
+                                               (:module "base" :components ((:file "config")
+                                                                            (:file "drawing")
                                                                             (:file "schema")
                                                                             (:file "camera")))
                                                (:module "er" :components ((:file "column")
@@ -41,6 +42,7 @@ This file is a part of ter project.
                                                                            (:file "edge-ter")
                                                                            (:file "port-ter")))
                                                (:file "mapper")))
+                 (:file "config")
                  (:file "point")
                  ;; base
                  (:module "base" :components ((:file "schema")

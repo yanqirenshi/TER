@@ -5,8 +5,9 @@ Ter のモデルになります。
 ## Base
 
 ```
-Schema --------- r ---------> Camera
-                     :have [1:n]
+      User --------- :have [1:1] ---------> Cofig
+
+Schema --------- :have [1:n] ---------> Camera
 ```
 
 ## 普通のER図 のデータ構造

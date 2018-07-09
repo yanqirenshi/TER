@@ -59,6 +59,12 @@
     (render-json (nconc (ter.api.controller::find-er schema)
                         (list :cameras (ter::find-schema-camera graph schema))))))
 
+(defroute ("/config/er/schema/default" :method :POST) (&key _parsed)
+  (let* ((graph ter.db:*graph*)
+         (schema-code (getf (jojo:parse (caar _parsed)) :|schema_code|))
+         (schema (ter::get-schema graph :code schema-code)))
+    (unless schema (throw-code 404))
+    (render-json (ter.api.controller::save-config-at-default-schema graph schema))))
 
 ;;;
 ;;; ter

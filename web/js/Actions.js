@@ -5,6 +5,23 @@ class Actions extends Vanilla_Redux_Actions {
             data: data
         };
     }
+    // Save Config
+    saveConfigAtDefaultSchema (schema_code) {
+        let data = {
+            schema_code: schema_code
+        };
+
+        API.post('/config/er/schema/default', data, (response) => {
+            STORE.dispatch(this.savedConfigAtDefaultSchema(response));
+        });
+    }
+    savedConfigAtDefaultSchema (response) {
+        return {
+            type: 'SAVED-CONFIG-AT-DEFAULT-SCHEMA',
+            data: {}
+        };
+    }
+    // Fetch Environment
     fetchEnvironment (mode) {
         API.get('/environment', function (response) {
             STORE.dispatch(this.fetchedEnvironment(mode, response));
@@ -23,6 +40,7 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    // Fetch Graph
     makeGraphData (list) {
         let ht = {};
         for (var i in list) {
@@ -80,6 +98,7 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    // Fetch ER
     fetchEr (schema, mode) {
         let scheme_code = schema.code.toLowerCase();
 
@@ -179,6 +198,7 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    // Fetch TER
     fetchTer (mode) {
         API.get('/ter', function (response) {
             STORE.dispatch(this.fetchedTer(mode, response));

@@ -4,7 +4,11 @@
   (shinra:find-vertex graph 'schema))
 
 (defun get-schema (graph &key code)
-  (car (shinra:find-vertex graph 'schema :slot 'code :value code)))
+  (car (shinra:find-vertex graph 'schema
+                           :slot 'code
+                           :value (if (stringp code)
+                                      (str2keyword code)
+                                      code))))
 
 (defgeneric tx-make-schema (graph code &key name description)
   (:method (graph code &key name description)

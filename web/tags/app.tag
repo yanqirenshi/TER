@@ -72,6 +72,10 @@
          if (action.type=='FETCHED-ER' && action.mode=='FIRST')
              ACTIONS.fetchTer(action.mode);
 
+         if (action.type=='CHANGE-SCHEMA') {
+             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
+             return;
+         }
      })
 
      window.addEventListener('resize', (event) => {

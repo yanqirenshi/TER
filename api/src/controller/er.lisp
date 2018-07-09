@@ -32,3 +32,8 @@
          (table (ter::get-table graph :code code)))
     (unless table (caveman2:throw-code 404))
     (ter::save-position graph table position)))
+
+
+(defun save-config-at-default-schema (graph schema)
+  (declare (ignore graph))
+  schema)

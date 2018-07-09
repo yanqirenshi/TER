@@ -2,9 +2,32 @@
 
 Ter のモデルになります。
 
+## Graph
+
+全体を管理する common と Schema 毎に作成される二種類のグラフがあります。
+
+``` text
+  +-----------+  +-------------------+
+  | common    |  | Schema A          | ..... Schema * ......
+  |===========|  |===================|
+  |           |  |                   |
+  | - User    |  | - Table           |
+  | - Config  |  | - Column          |
+  | - Schema  |  | - Column Instance |
+  | - Camera  |  | - port-er         |
+  |           |  | - edge-er         |
+  |           |  |                   |
+  |           |  | - entity          |
+  |           |  | - attribute       |
+  |           |  |     :             |
+  |           |  |     :             |
+  |           |  |                   |
+  +-----------+  +-------------------+
+```
+
 ## Base
 
-```
+``` text
       User --------- :have [1:1] ---------> Cofig
 
 Schema --------- :have [1:n] ---------> Camera

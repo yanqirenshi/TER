@@ -190,7 +190,12 @@ class Table {
                 d.h = this.columnHeight();
                 return d.h;
             })
-            .text((d) => { return d.name; });
+            .text((d) => {
+                if (d.logical_name)
+                    return d.logical_name;
+
+                return d.physical_name;
+            });
     }
     drawBase (g) {
         g.append('rect')

@@ -59,6 +59,13 @@
         (schema (ter::get-schema ter.db:*graph* :code (str2keyword schema_code))))
     (render-json (ter.api.controller::save-er-position schema code position))))
 
+(defroute ("/er/:schema_code/tables/:code/size" :method :POST) (&key schema_code code _parsed)
+  (let ((position (jojo:parse (car (first _parsed))))
+        (code (alexandria:make-keyword (string-upcase code)))
+        (schema (ter::get-schema ter.db:*graph* :code (str2keyword schema_code))))
+    (render-json (ter.api.controller::save-er-size schema code position))))
+
+
 (defroute "/er/:schema_code" (&key schema_code)
   (let* ((graph ter.db:*graph*)
          (schema_code (alexandria:make-keyword (string-upcase schema_code)))

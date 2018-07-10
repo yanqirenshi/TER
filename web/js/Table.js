@@ -125,12 +125,28 @@ class Table {
             .attr('height', (d) => { return this.headerContentsHight(d); })
             .attr('fill', '#fefefe');
 
+        let resize_tables = this.resize_tables;
+
         g.append('text')
             .attr('class', 'header')
             .attr('x', function (d) { return padding + 6; })
             .attr('y', function (d) { return padding + 16; })
             .attr('font-size', 16 + 'px')
-            .text((d) => { return d.name; });
+            .text((d) => { return d.name; })
+            .each(function (d) {
+                let w = Math.ceil(this.getBBox().width) + padding * 4;
+                let table = d;
+
+                if (!resize_tables[table._id])
+                    resize_tables[table._id] = {
+                        table: table,
+                        max_w: 0
+                    };
+
+                if (resize_tables[table._id].max_w < w)
+                    resize_tables[table._id].max_w = w;
+
+            });
     }
     sortColumns (data) {
         let ids = [];
@@ -170,6 +186,8 @@ class Table {
             })
             .attr('fill', '#fefefe');
 
+        let resize_tables = this.resize_tables;
+
         g.selectAll('text.column')
             .data((d) => {
                 return this.sortColumns(d._column_instances);
@@ -195,7 +213,21 @@ class Table {
                     return d.logical_name;
 
                 return d.physical_name;
+            }).each(function (d) {
+                // table ごとの max を算出
+                let w = Math.ceil(this.getBBox().width) + padding * 4;
+                let table = d._table;
+
+                if (!resize_tables[table._id])
+                    resize_tables[table._id] = {
+                        table: table,
+                        max_w: 0
+                    };
+
+                if (resize_tables[table._id].max_w < w)
+                    resize_tables[table._id].max_w = w;
             });
+
     }
     drawBase (g) {
         g.append('rect')
@@ -278,6 +310,8 @@ class Table {
         this.moveEdges(svg, tables[0]._edges);
     }
     draw (data) {
+        this.resize_tables = {};
+
         let svg = this._d3svg._svg;
 
         this.drawEdges(svg);  // TODO: g.lines が利用できればエンティティの後ろに移動。
@@ -285,6 +319,7 @@ class Table {
         let g = this.drawG(svg, data);
         this.drawBase(g);
         this.drawColumns(g);
+
         this.drawHeader(g);
         this.drawPorts(g);
 
@@ -293,6 +328,17 @@ class Table {
             return b._edges ? a.concat(b._edges) : a;
         }));
 
-        let base = g.selectAll('rect.base');
+        let schemas = STORE.state().get('schemas');
+        let schema = schemas.list.find((s)=>{ return s.code == schemas.active;});
+
+        for (var k in this.resize_tables) {
+            let data = this.resize_tables[k];
+            let table = data.table;
+            if (table.w == data.max_w)
+                continue;
+
+            table.w = data.max_w;
+            ACTIONS.saveTableSize(schema, table);
+        }
     }
 }

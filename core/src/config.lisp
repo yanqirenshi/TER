@@ -1,12 +1,21 @@
 (in-package :ter)
 
-;; (:schema (:default :schema-code1
-;;           :schema-code1 (:camera (:position '(x y z)))
-;;           :schema-code2 (:camera (:position '(x y z)))
-;;           :schema-code3 (:camera (:position '(x y z)))))
+(defun config (&rest keys)
+  (let ((app-code :ter)
+        (env-code :development)
+        (graph *graph*))
+    (seph::environment-at graph
+                        :code env-code
+                        :application (seph::application-at graph :code app-code :ensure t)
+                        :ensure t)
+    (seph:fruit* graph app-code env-code keys)))
 
-(defgeneric tx-save-default-schema (graph config schema-code)
-  (:method (graph (config config) schema-code)
-    (let ((schema (copy-list (getf (contents config) :schema))))
-      (setf (getf schema :default) schema-code)
-      config)))
+(defun (setf config) (value &rest keys)
+  (let ((app-code :ter)
+        (env-code :development)
+        (graph *graph*))
+    (seph::environment-at graph
+                          :code env-code
+                          :application (seph::application-at graph :code app-code :ensure t)
+                          :ensure t)
+    (setf (seph:fruit* graph app-code env-code keys) value)))

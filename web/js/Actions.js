@@ -11,7 +11,7 @@ class Actions extends Vanilla_Redux_Actions {
             schema_code: schema_code
         };
 
-        API.post('/config/er/schema/default', data, (response) => {
+        API.post('/environment/er/schema/active', data, (response) => {
             STORE.dispatch(this.savedConfigAtDefaultSchema(response));
         });
     }
@@ -33,7 +33,7 @@ class Actions extends Vanilla_Redux_Actions {
             mode: mode,
             data: {
                 schemas: {
-                    active: response.SCHEMAS[0].code,
+                    active: response.ER.SCHEMA.ACTIVE,
                     list: response.SCHEMAS
                 },
                 camera: response.CAMERA

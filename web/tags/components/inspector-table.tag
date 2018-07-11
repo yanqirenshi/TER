@@ -9,7 +9,8 @@
 
     <section-container no="5" title="Columns" columns={getVal('_column_instances')}>
         <section-contents columns={opts.columns}>
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"
+                   style="font-size:12px;">
                 <thead>
                     <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr>
                 </thead>
@@ -58,7 +59,10 @@
          let data = this.opts.data;
          if (!data) return '';
 
-         return data[name];
+         if (name!='_column_instances')
+             return data[name];
+         else
+             return data[name].sort((a,b)=>{ return (a._id*1) - (b._id*1); });
      };
     </script>
 </inspector-table>

@@ -146,6 +146,8 @@ class Table {
                 if (resize_tables[table._id].max_w < w)
                     resize_tables[table._id].max_w = w;
 
+            }).on("click", (d) => {
+                STORE.dispatch(ACTIONS.setDataToInspector(d));
             });
     }
     sortColumns (data) {
@@ -226,6 +228,8 @@ class Table {
 
                 if (resize_tables[table._id].max_w < w)
                     resize_tables[table._id].max_w = w;
+            }).on("click", (d) => {
+                STORE.dispatch(ACTIONS.setDataToInspector(d));
             });
 
     }

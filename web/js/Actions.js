@@ -260,4 +260,27 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    // inspector
+    setDataToInspector (data) {
+        let data_old = STORE.state().get('inspector').data;
+        let data_new = data;
+
+        if (data_old!=null && data_new._id == data_old._id)
+            data_new = null;
+
+
+        let display = true;
+        if (data_new==null)
+            display = false;
+
+        return {
+            type: 'SET-DATA-TO-INSPECTOR',
+            data: {
+                inspector: {
+                    data: data_new,
+                    display: display
+                }
+            }
+        };
+    }
 }

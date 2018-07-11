@@ -3,6 +3,10 @@
 
     <div ref="page-area"></div>
 
+    <function-menus></function-menus>
+
+    <inspector></inspector>
+
     <style>
      app > .page {
          width: 100vw;

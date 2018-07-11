@@ -1,4 +1,4 @@
-riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" callback="{clickSchema}"></menu-bar> <div ref="page-area"></div>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" callback="{clickSchema}"></menu-bar> <div ref="page-area"></div> <function-menus></function-menus> <inspector></inspector>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = this.getActiveSchema();
 
@@ -68,6 +68,9 @@ riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" 
 
      if (location.hash=='')
          location.hash='#page01'
+});
+
+riot.tag2('function-menus', '<div> <a class="button is-primary">Save Config</a> <a class="button is-link">Save ER</a> <a class="button is-info">Move Center</a> </div>', 'function-menus > div { position: fixed; right: 11px; bottom: 11px; }', '', function(opts) {
 });
 
 riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu hide" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}" code="{code}" onclick="{opts.callback}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
@@ -160,6 +163,43 @@ riot.tag2('section-list', '<table class="table is-bordered is-striped is-narrow 
              return true;
          });
      };
+});
+
+riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <section-container no="5" title="Name" physical_name="{getVal(\'physical_name\')}" logical_name="{getVal(\'logical_name\')}"> <section-contents physical_name="{opts.physical_name}" logical_name="{opts.logical_name}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <tbody> <tr> <th>物理名</th> <td>{opts.physical_name}</td></tr> <tr> <th>論理名</th> <td>{opts.logical_name}</td></tr> </tbody> </table> </section-contents> </section-container> <section-container no="5" title="Type" val="{getVal(\'data_type\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-column .section { padding: 11px; padding-top: 0px; } inspector-column section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-column .contents, inspector-column .container { width: auto; }', '', function(opts) {
+     this.getVal = (name) => {
+         let data = this.opts.data;
+         if (!data) return '';
+
+         return data[name];
+     };
+});
+
+riot.tag2('inspector-table', '<h1 class="title is-4">Table</h1> <section-container no="5" title="Name" name="{getVal(\'name\')}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{getVal(\'_column_instances\')}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container> <section-container no="5" title="Edges" val="{getVal(\'\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-table .section { padding: 11px; padding-top: 0px; } inspector-table section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-table .contents, inspector-table .container { width: auto; }', '', function(opts) {
+     this.getVal = (name) => {
+         let data = this.opts.data;
+         if (!data) return '';
+
+         return data[name];
+     };
+});
+
+riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{this.data()}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" data="{this.data()}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; }', '', function(opts) {
+     this.state = () => { return STORE.state().get('inspector'); } ;
+     this.data = () => {
+         return this.state().data;
+     };
+     this.hideContents = (type) => {
+         let data = this.data();
+         if (!data) return 'hide';
+         return data._class == type.toUpperCase() ? '' : 'hide';
+     };
+     this.hide = () => {
+         return this.state().display ? '' : 'hide';
+     };
+     STORE.subscribe ((action) => {
+         if (action.type=='SET-DATA-TO-INSPECTOR')
+             this.update();
+     })
 });
 
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {

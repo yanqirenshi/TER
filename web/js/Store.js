@@ -1,4 +1,3 @@
-
 class Store extends Vanilla_Redux_Store {
     constructor(reducer) {
         super(reducer, Immutable.Map({}));
@@ -14,12 +13,8 @@ class Store extends Vanilla_Redux_Store {
                     menu_label: 'All',
                     active_section: 'root',
                     home_section: 'root',
-                    sections: [
-                        { code: 'root', tag: 'page01-sec_root', title: 'Section: root', description: '' }
-                    ],
-                    stye: {
-                        color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
-                    }
+                    sections: [{ code: 'root', tag: 'page01-sec_root', title: 'Section: root', description: '' }],
+                    stye: {color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }}
                 },
                 {
                     code: "page02",
@@ -39,9 +34,11 @@ class Store extends Vanilla_Redux_Store {
                     active_section: 'root',
                     home_section: 'root',
                     sections: [{ code: 'root', tag: 'page03-sec_root', title: 'Home', description: '' }],
-                    stye: {
-                        color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
-                    }
+                    operators: [
+                        { code: 'move-center', name: 'Move Center', color: 'is-info' },
+                        { code: 'save-graph',  name: 'Save Graph',  color: 'is-link' }
+                    ],
+                    stye: { color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' } }
                 }
             ]
         };

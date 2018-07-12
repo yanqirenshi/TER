@@ -5,7 +5,9 @@ class Actions extends Vanilla_Redux_Actions {
             data: data
         };
     }
-    // Save Config
+    /* **************************************************************** *
+     *  Save Config
+     * **************************************************************** */
     saveConfigAtDefaultSchema (schema_code) {
         let data = {
             schema_code: schema_code
@@ -21,7 +23,9 @@ class Actions extends Vanilla_Redux_Actions {
             data: {}
         };
     }
-    // Fetch Environment
+    /* **************************************************************** *
+     *  Fetch Environment
+     * **************************************************************** */
     fetchEnvironment (mode) {
         API.get('/environment', function (response) {
             STORE.dispatch(this.fetchedEnvironment(mode, response));
@@ -40,7 +44,9 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    // Fetch Graph
+    /* **************************************************************** *
+     *  Fetch Graph
+     * **************************************************************** */
     makeGraphData (list) {
         let ht = {};
         for (var i in list) {
@@ -98,7 +104,9 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    // Fetch ER
+    /* **************************************************************** *
+     *  Fetch ER
+     * **************************************************************** */
     fetchEr (schema, mode) {
         let scheme_code = schema.code.toLowerCase();
 
@@ -198,7 +206,9 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    // Fetch TER
+    /* **************************************************************** *
+     *  Fetch TER
+     * **************************************************************** */
     fetchTer (mode) {
         API.get('/ter', function (response) {
             STORE.dispatch(this.fetchedTer(mode, response));
@@ -260,7 +270,9 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    // inspector
+    /* **************************************************************** *
+     *  Inspector
+     * **************************************************************** */
     setDataToInspector (data) {
         let data_old = STORE.state().get('inspector').data;
         let data_new = data;
@@ -283,7 +295,9 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
-    // svg
+    /* **************************************************************** *
+     *  Svg
+     * **************************************************************** */
     closeAllSubPanels () {
         let state = STORE.state().toJS();
         let inspector = state.inspector;
@@ -305,7 +319,9 @@ class Actions extends Vanilla_Redux_Actions {
             data: data
         };
     }
-    // grobal menu
+    /* **************************************************************** *
+     *  Grobal menu
+     * **************************************************************** */
     toggleMovePagePanel () {
         let state = STORE.state().get('global');
         state.menu.move_panel.open = !state.menu.move_panel.open;
@@ -315,5 +331,16 @@ class Actions extends Vanilla_Redux_Actions {
                 global: state
             }
         };
+    }
+    /* **************************************************************** *
+     *  Snapshot
+     * **************************************************************** */
+    snapshotAll () {
+        let x = '/rpc/snapshot/all';
+
+        API.get('/rpc/snapshot/all', (response) => {
+            dump(response);
+        });
+
     }
 }

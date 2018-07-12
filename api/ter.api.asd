@@ -11,6 +11,7 @@
                 :components
                 ((:file "package")
                  (:module "controller" :components ((:file "package")
+                                                    (:file "environment")
                                                     (:file "er")
                                                     (:file "ter")
                                                     (:file "graph")

@@ -15,9 +15,9 @@
         </ul>
     </aside>
 
-    <div class="move-page-menu hide" ref="move-panel">
+    <div class="move-page-menu {movePanelHide()}" ref="move-panel">
         <p each={opts.moves}>
-            <a href={href} code={code} onclick={opts.callback}>{label}</a>
+            <a href={href} code={code} onclick={clickMovePanelItem}>{label}</a>
         </p>
     </div>
 
@@ -102,18 +102,16 @@
          brand.setAttribute('class', classes.join(' '));
      }
 
-     this.clickBrand = () => {
-         let panel = this.refs['move-panel'];
-         let classes = panel.getAttribute('class').trim().split(' ');
-
-         if (classes.find((d)=>{ return d=='hide'; })) {
-             classes = classes.filter((d)=>{ return d!='hide'; });
-             this.brandStatus('open');
-         } else {
-             classes.push('hide');
-             this.brandStatus('close');
-         }
-         panel.setAttribute('class', classes.join(' '));
+     this.movePanelHide = () => {
+         return this.opts.data.move_panel.open ? '' : 'hide'
      };
+
+     this.clickBrand = (e) => {
+         this.opts.callback('click-brand', e);
+     };
+     this.clickMovePanelItem = (e) => {
+         this.opts.callback('click-move-panel-item', e);
+     };
+
     </script>
 </menu-bar>

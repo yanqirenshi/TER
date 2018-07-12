@@ -1,4 +1,4 @@
-riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <div ref="page-area"></div> <function-menus></function-menus> <inspector></inspector>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <div ref="page-area"></div> <inspector></inspector>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = this.getActiveSchema();
 
@@ -85,9 +85,6 @@ riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" 
          location.hash='#page01'
 });
 
-riot.tag2('function-menus', '<div> <a class="button is-primary">Save Config</a> <a class="button is-link">Save ER</a> <a class="button is-info">Move Center</a> </div>', 'function-menus > div { position: fixed; right: 11px; bottom: 11px; }', '', function(opts) {
-});
-
 riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}" code="{code}" onclick="{clickMovePanelItem}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
@@ -114,6 +111,12 @@ riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" on
          this.opts.callback('click-move-panel-item', e);
      };
 
+});
+
+riot.tag2('operators', '<div> <a each="{opts.data}" class="button {color}" code="{code}" onclick="{click}"> {name} </a> </div>', 'operators > div { position: fixed; right: 11px; bottom: 11px; } operators .button { display: block; margin-top: 11px; }', '', function(opts) {
+     this.click = (e) => {
+         this.opts.callbak(e.target.getAttribute('code'));
+     };
 });
 
 riot.tag2('section-breadcrumb', '<section-container data="{path()}"> <nav class="breadcrumb" aria-label="breadcrumbs"> <ul> <li each="{opts.data}"> <a class="{active ? \'is-active\' : \'\'}" href="{href}" aria-current="page">{label}</a> </li> </ul> </nav> </section-container>', 'section-breadcrumb section-container > .section,[data-is="section-breadcrumb"] section-container > .section{ padding-top: 3px; }', '', function(opts) {
@@ -224,21 +227,38 @@ riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideCont
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
 });
 
-riot.tag2('page03-sec_root', '<svg></svg>', '', '', function(opts) {
+riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
+
+     this.state = () => {
+         return STORE.state().get('er');
+     };
+
+     this.operators = () => {
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='page03'; });
+         return state.operators;
+     };
+     this.clickOperator = (code) => {
+         if (code=='move-center')
+             return;
+
+         if (code=='save-graph')
+             ACTIONS.snapshotAll();
+     };
 
      this.getD3Svg = () => {
          if (this.d3svg) return this.d3svg
 
-         let camera = STORE.state().get('er').cameras[0];
+         let camera = this.state().cameras[0];
+
          let callbacks = {
              moveEndSvg: (point) => {
-                 let camera = STORE.state().get('er').cameras[0];
+                 let camera = this.state().cameras[0];
                  ACTIONS.saveCameraLookAt(camera, point);
              },
              zoomSvg: (scale) => {
-                 let camera = STORE.state().get('er').cameras[0];
+                 let camera = this.state().cameras[0];
                  ACTIONS.saveCameraLookMagnification(camera, scale);
              },
              clickSvg: () => {
@@ -249,7 +269,7 @@ riot.tag2('page03-sec_root', '<svg></svg>', '', '', function(opts) {
          this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
 
          return this.d3svg
-     }
+     };
 
      STORE.subscribe((action) => {
          if (action.type=='FETCHED-ER') {

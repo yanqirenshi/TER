@@ -104,6 +104,16 @@
   (render-json (ter.api.controller:find-graph ter.db:*graph*)))
 
 
+;;;
+;;; rpc
+;;;
+(defroute "/rpc/snapshot/all" ()
+  (let ((start (local-time:now)))
+    (ter.api.controller::snapshot-all)
+    (render-json (list :start (local-time:format-timestring nil start)
+                       :end   (local-time:format-timestring nil (local-time:now))))))
+
+
 ;;;;;
 ;;;;; Error pages
 ;;;;;

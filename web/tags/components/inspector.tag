@@ -37,6 +37,9 @@
      STORE.subscribe ((action) => {
          if (action.type=='SET-DATA-TO-INSPECTOR')
              this.update();
+
+         if (action.type=='CLOSE-ALL-SUB-PANELS')
+             this.update();
      })
     </script>
 </inspector>

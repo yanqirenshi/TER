@@ -148,6 +148,9 @@ class Table {
 
             }).on("click", (d) => {
                 STORE.dispatch(ACTIONS.setDataToInspector(d));
+                d3.event.stopPropagation();
+            }).on("dblclick", (d) => {
+                d3.event.stopPropagation();
             });
     }
     sortColumns (data) {
@@ -230,6 +233,9 @@ class Table {
                     resize_tables[table._id].max_w = w;
             }).on("click", (d) => {
                 STORE.dispatch(ACTIONS.setDataToInspector(d));
+                d3.event.stopPropagation();
+            }).on("dblclick", (d) => {
+                d3.event.stopPropagation();
             });
 
     }

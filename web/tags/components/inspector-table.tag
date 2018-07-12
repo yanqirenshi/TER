@@ -57,7 +57,7 @@
     <script>
      this.getVal = (name) => {
          let data = this.opts.data;
-         if (!data) return '';
+         if (!data || !data[name]) return '';
 
          if (name!='_column_instances')
              return data[name];

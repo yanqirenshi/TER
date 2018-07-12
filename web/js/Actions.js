@@ -283,4 +283,37 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    // svg
+    closeAllSubPanels () {
+        let state = STORE.state().toJS();
+        let inspector = state.inspector;
+        let global = state.global;
+        let data = {};
+
+        if (inspector.display) {
+            inspector.display = false;
+            data.inspector = inspector;
+        }
+
+        if (global.menu.move_panel.open) {
+            global.menu.move_panel.open = false;
+            data.global = global;
+        }
+
+        return {
+            type: 'CLOSE-ALL-SUB-PANELS',
+            data: data
+        };
+    }
+    // grobal menu
+    toggleMovePagePanel () {
+        let state = STORE.state().get('global');
+        state.menu.move_panel.open = !state.menu.move_panel.open;
+        return {
+            type: 'TOGGLE-MOVE-PAGE-PANEL',
+            data: {
+                global: state
+            }
+        };
+    }
 }

@@ -1,5 +1,9 @@
 <app>
-    <menu-bar brand={brand()} site={site()} moves={moves()} callback={clickSchema}></menu-bar>
+    <menu-bar brand={brand()}
+              site={site()}
+              moves={moves()}
+              data={menuBarData()}
+              callback={callback}></menu-bar>
 
     <div ref="page-area"></div>
 
@@ -23,6 +27,15 @@
 
          return { label: (brand ? brand.code : 'TER')};
      };
+
+     this.callback = (type, e) => {
+         if (type=='click-brand')
+             return STORE.dispatch(ACTIONS.toggleMovePagePanel());
+
+         if (type=='click-move-panel-item')
+             return this.clickSchema(e);
+     };
+
      this.clickSchema = (e) => {
          let schema_code = e.target.getAttribute('CODE');
 
@@ -43,6 +56,9 @@
 
      this.site = () => {
          return STORE.state().get('site');
+     };
+     this.menuBarData = () => {
+         return STORE.state().get('global').menu;
      };
 
      this.on('mount', function () {
@@ -80,6 +96,9 @@
              ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
              return;
          }
+
+         if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
+             this.tags['menu-bar'].update();
      })
 
      window.addEventListener('resize', (event) => {

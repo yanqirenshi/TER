@@ -74,6 +74,13 @@ class Store extends Vanilla_Redux_Store {
             inspector: {
                 display: false,
                 data: null
+            },
+            global: {
+                menu: {
+                    move_panel: {
+                        open: false
+                    }
+                }
             }
         };
 

@@ -18,7 +18,9 @@
                  let camera = STORE.state().get('er').cameras[0];
                  ACTIONS.saveCameraLookMagnification(camera, scale);
              },
-             clickSvg: () => {}
+             clickSvg: () => {
+                 STORE.dispatch(ACTIONS.closeAllSubPanels());
+             }
          };
 
          this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);

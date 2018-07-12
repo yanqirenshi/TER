@@ -1,9 +1,18 @@
-riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" callback="{clickSchema}"></menu-bar> <div ref="page-area"></div> <function-menus></function-menus> <inspector></inspector>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <div ref="page-area"></div> <function-menus></function-menus> <inspector></inspector>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = this.getActiveSchema();
 
          return { label: (brand ? brand.code : 'TER')};
      };
+
+     this.callback = (type, e) => {
+         if (type=='click-brand')
+             return STORE.dispatch(ACTIONS.toggleMovePagePanel());
+
+         if (type=='click-move-panel-item')
+             return this.clickSchema(e);
+     };
+
      this.clickSchema = (e) => {
          let schema_code = e.target.getAttribute('CODE');
 
@@ -23,6 +32,9 @@ riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" 
 
      this.site = () => {
          return STORE.state().get('site');
+     };
+     this.menuBarData = () => {
+         return STORE.state().get('global').menu;
      };
 
      this.on('mount', function () {
@@ -60,6 +72,9 @@ riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" 
              ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
              return;
          }
+
+         if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
+             this.tags['menu-bar'].update();
      })
 
      window.addEventListener('resize', (event) => {
@@ -73,7 +88,7 @@ riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" 
 riot.tag2('function-menus', '<div> <a class="button is-primary">Save Config</a> <a class="button is-link">Save ER</a> <a class="button is-info">Move Center</a> </div>', 'function-menus > div { position: fixed; right: 11px; bottom: 11px; }', '', function(opts) {
 });
 
-riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu hide" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}" code="{code}" onclick="{opts.callback}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
+riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}" code="{code}" onclick="{clickMovePanelItem}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
          let classes = brand.getAttribute('class').trim().split(' ');
@@ -88,19 +103,17 @@ riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" on
          brand.setAttribute('class', classes.join(' '));
      }
 
-     this.clickBrand = () => {
-         let panel = this.refs['move-panel'];
-         let classes = panel.getAttribute('class').trim().split(' ');
-
-         if (classes.find((d)=>{ return d=='hide'; })) {
-             classes = classes.filter((d)=>{ return d!='hide'; });
-             this.brandStatus('open');
-         } else {
-             classes.push('hide');
-             this.brandStatus('close');
-         }
-         panel.setAttribute('class', classes.join(' '));
+     this.movePanelHide = () => {
+         return this.opts.data.move_panel.open ? '' : 'hide'
      };
+
+     this.clickBrand = (e) => {
+         this.opts.callback('click-brand', e);
+     };
+     this.clickMovePanelItem = (e) => {
+         this.opts.callback('click-move-panel-item', e);
+     };
+
 });
 
 riot.tag2('section-breadcrumb', '<section-container data="{path()}"> <nav class="breadcrumb" aria-label="breadcrumbs"> <ul> <li each="{opts.data}"> <a class="{active ? \'is-active\' : \'\'}" href="{href}" aria-current="page">{label}</a> </li> </ul> </nav> </section-container>', 'section-breadcrumb section-container > .section,[data-is="section-breadcrumb"] section-container > .section{ padding-top: 3px; }', '', function(opts) {
@@ -177,7 +190,7 @@ riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <sect
 riot.tag2('inspector-table', '<h1 class="title is-4">Table</h1> <section-container no="5" title="Name" name="{getVal(\'name\')}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{getVal(\'_column_instances\')}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container> <section-container no="5" title="Edges" val="{getVal(\'\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-table .section { padding: 11px; padding-top: 0px; } inspector-table section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-table .contents, inspector-table .container { width: auto; }', '', function(opts) {
      this.getVal = (name) => {
          let data = this.opts.data;
-         if (!data) return '';
+         if (!data || !data[name]) return '';
 
          if (name!='_column_instances')
              return data[name];
@@ -202,6 +215,9 @@ riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideCont
      STORE.subscribe ((action) => {
          if (action.type=='SET-DATA-TO-INSPECTOR')
              this.update();
+
+         if (action.type=='CLOSE-ALL-SUB-PANELS')
+             this.update();
      })
 });
 
@@ -225,7 +241,9 @@ riot.tag2('page03-sec_root', '<svg></svg>', '', '', function(opts) {
                  let camera = STORE.state().get('er').cameras[0];
                  ACTIONS.saveCameraLookMagnification(camera, scale);
              },
-             clickSvg: () => {}
+             clickSvg: () => {
+                 STORE.dispatch(ACTIONS.closeAllSubPanels());
+             }
          };
 
          this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);

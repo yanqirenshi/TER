@@ -7,8 +7,6 @@
 
     <div ref="page-area"></div>
 
-    <inspector></inspector>
-
     <style>
      app > .page {
          width: 100vw;

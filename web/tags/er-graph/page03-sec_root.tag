@@ -4,9 +4,18 @@
     <operators data={operators()}
                callbak={clickOperator}></operators>
 
+    <inspector callback={inspectorCallback}></inspector>
+
+    <page03-modal-logical-name data={modalData()}
+                               callback={modalCallback}></page03-modal-logical-name>
+
     <script>
      this.d3svg = null;
      this.ter = new Ter();
+
+     this.modalData = () => {
+         return STORE.state().get('site').pages.find((d) => { return d.code == 'page03' }).modal.logical_name;
+     };
 
      this.state = () => {
          return STORE.state().get('er');
@@ -23,7 +32,22 @@
          if (code=='save-graph')
              ACTIONS.snapshotAll();
      };
-
+     this.inspectorCallback = (type, data) => {
+         if (type=='click-edit-logical-name') {
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', data));
+             this.tags['page03-modal-logical-name'].update();
+         }
+     };
+     this.modalCallback = (type, data) => {
+         if (type=='click-close-button') {
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', null));
+             this.tags['page03-modal-logical-name'].update();
+             return;
+         }
+         if (type=='click-save-button') {
+             dump([type, data]);
+         }
+     };
      this.getD3Svg = () => {
          if (this.d3svg) return this.d3svg
 

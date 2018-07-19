@@ -1,4 +1,4 @@
-riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <div ref="page-area"></div> <inspector></inspector>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <div ref="page-area"></div>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = this.getActiveSchema();
 
@@ -181,7 +181,11 @@ riot.tag2('section-list', '<table class="table is-bordered is-striped is-narrow 
      };
 });
 
-riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <section-container no="5" title="Name" physical_name="{getVal(\'physical_name\')}" logical_name="{getVal(\'logical_name\')}"> <section-contents physical_name="{opts.physical_name}" logical_name="{opts.logical_name}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <tbody> <tr> <th>物理名</th> <td>{opts.physical_name}</td></tr> <tr> <th>論理名</th> <td>{opts.logical_name}</td></tr> </tbody> </table> </section-contents> </section-container> <section-container no="5" title="Type" val="{getVal(\'data_type\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-column .section { padding: 11px; padding-top: 0px; } inspector-column section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-column .contents, inspector-column .container { width: auto; }', '', function(opts) {
+riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <section-container no="5" title="Name" physical_name="{getVal(\'physical_name\')}" logical_name="{getVal(\'logical_name\')}" callback="{clickEditLogicalName}"> <section-contents physical_name="{opts.physical_name}" logical_name="{opts.logical_name}" callback="{opts.callback}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <tbody> <tr> <th>物理名</th> <td>{opts.physical_name}</td></tr> <tr> <th>論理名</th> <td>{opts.logical_name}</td></tr> </tbody> </table> <div style="text-align: right;"> <button class="button" onclick="{opts.callback}">論理名を変更</button> </div> </section-contents> </section-container> <section-container no="5" title="Type" val="{getVal(\'data_type\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-column .section { padding: 11px; padding-top: 0px; } inspector-column section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-column .contents, inspector-column .container { width: auto; }', '', function(opts) {
+     this.clickEditLogicalName = (e) => {
+         if (this.opts.callback)
+             this.opts.callback('click-edit-logical-name', this.opts.data);
+     };
      this.getVal = (name) => {
          let data = this.opts.data;
          if (!data) return '';
@@ -202,7 +206,7 @@ riot.tag2('inspector-table', '<h1 class="title is-4">Table</h1> <section-contain
      };
 });
 
-riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{this.data()}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" data="{this.data()}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; }', '', function(opts) {
+riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{data()}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" data="{data()}" callback="{opts.callback}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; }', '', function(opts) {
      this.state = () => { return STORE.state().get('inspector'); } ;
      this.data = () => {
          return this.state().data;
@@ -227,9 +231,39 @@ riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideCont
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
 });
 
-riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators>', '', '', function(opts) {
+riot.tag2('page03-modal-logical-name', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content"> <nav class="panel"> <p class="panel-heading"> 論理名の変更 </p> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">テーブル: </span> <span>{tableName()}</span> </div> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">物理名:</span> <span>{physicalName()}</span> </div> <div class="panel-block" style="background: #fff;"> <input class="input" type="text" riot-value="{opts.data.logical_name}" placeholder="論理名" ref="logical_name"> </div> <div class="panel-block" style="background: #fff;"> <button class="button is-danger is-fullwidth" onclick="{clickSaveButton}"> Save </button> </div> </nav> </div> <button class="modal-close is-large" aria-label="close" onclick="{clickCloseButton}"></button> </div>', '', '', function(opts) {
+     this.isActive = () => {
+         return this.opts.data.data ? 'is-active' : '';
+     };
+     this.tableName = () => {
+         if (!opts.data.data) return '???';
+
+         let table = opts.data.data._table;
+
+         return table.name;
+     };
+     this.physicalName = () => {
+         dump(opts.data.data);
+         if (opts.data.data)
+             return opts.data.data.physical_name;
+
+         return '???';
+     };
+     this.clickSaveButton = () => {
+         this.opts.callback('click-save-button', this.refs.logical_name.value);
+     };
+     this.clickCloseButton = () => {
+         this.opts.callback('click-close-button');
+     };
+});
+
+riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <page03-modal-logical-name data="{modalData()}" callback="{modalCallback}"></page03-modal-logical-name>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
+
+     this.modalData = () => {
+         return STORE.state().get('site').pages.find((d) => { return d.code == 'page03' }).modal.logical_name;
+     };
 
      this.state = () => {
          return STORE.state().get('er');
@@ -246,7 +280,22 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
          if (code=='save-graph')
              ACTIONS.snapshotAll();
      };
-
+     this.inspectorCallback = (type, data) => {
+         if (type=='click-edit-logical-name') {
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', data));
+             this.tags['page03-modal-logical-name'].update();
+         }
+     };
+     this.modalCallback = (type, data) => {
+         if (type=='click-close-button') {
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', null));
+             this.tags['page03-modal-logical-name'].update();
+             return;
+         }
+         if (type=='click-save-button') {
+             dump([type, data]);
+         }
+     };
      this.getD3Svg = () => {
          if (this.d3svg) return this.d3svg
 

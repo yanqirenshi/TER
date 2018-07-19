@@ -38,7 +38,12 @@ class Store extends Vanilla_Redux_Store {
                         { code: 'move-center', name: 'Move Center', color: 'is-info' },
                         { code: 'save-graph',  name: 'Save Graph',  color: 'is-link' }
                     ],
-                    stye: { color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' } }
+                    stye: { color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' } },
+                    modal: {
+                        logical_name: {
+                            data: null
+                        }
+                    }
                 }
             ]
         };

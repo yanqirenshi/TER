@@ -1,7 +1,10 @@
 <inspector>
     <div class={hide()}>
-        <inspector-table class={hideContents('table')} data={this.data()}></inspector-table>
-        <inspector-column class={hideContents('column-instance')} data={this.data()}></inspector-column>
+        <inspector-table class={hideContents('table')}
+                         data={data()}></inspector-table>
+        <inspector-column class={hideContents('column-instance')}
+                          data={data()}
+                          callback={opts.callback}></inspector-column>
     </div>
 
     <style>

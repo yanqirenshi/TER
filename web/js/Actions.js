@@ -343,4 +343,18 @@ class Actions extends Vanilla_Redux_Actions {
         });
 
     }
+    /* **************************************************************** *
+     *  Page03
+     * **************************************************************** */
+    setDataToModalLogicalName (page_code, data) {
+        let site = STORE.state().get('site');
+        let page = site.pages.find((d) => { return d.code == page_code; });
+
+        page.modal.logical_name.data = data;
+
+        return {
+            type: 'SET-DATA-TO-MODAL-LOGICAL-NAME',
+            data: { site: site } 
+        };
+    }
 }

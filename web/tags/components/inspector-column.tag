@@ -3,15 +3,20 @@
 
     <section-container no="5" title="Name"
                        physical_name={getVal('physical_name')}
-                       logical_name={getVal('logical_name')}>
+                       logical_name={getVal('logical_name')}
+                       callback={clickEditLogicalName}>
         <section-contents physical_name={opts.physical_name}
-                          logical_name={opts.logical_name}>
+                          logical_name={opts.logical_name}
+                          callback={opts.callback}>
             <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <tbody>
                     <tr> <th>物理名</th> <td>{opts.physical_name}</td></tr>
                     <tr> <th>論理名</th> <td>{opts.logical_name}</td></tr>
                 </tbody>
             </table>
+            <div style="text-align: right;">
+                <button class="button" onclick={opts.callback}>論理名を変更</button>
+            </div>
         </section-contents>
     </section-container>
 
@@ -46,6 +51,10 @@
 
 
     <script>
+     this.clickEditLogicalName = (e) => {
+         if (this.opts.callback)
+             this.opts.callback('click-edit-logical-name', this.opts.data);
+     };
      this.getVal = (name) => {
          let data = this.opts.data;
          if (!data) return '';

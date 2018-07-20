@@ -61,5 +61,9 @@
 
          return data[name];
      };
+     STORE.subscribe((action) => {
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME')
+             this.update();
+     });
     </script>
 </inspector-column>

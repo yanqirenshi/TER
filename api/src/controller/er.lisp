@@ -1,5 +1,8 @@
 (in-package :ter.api.controller)
 
+(defun throw-404 ()
+  (caveman2:throw-code 404))
+
 (defun finder-er-tables (graph)
   (ter:find-table graph))
 
@@ -43,3 +46,16 @@
 (defun save-config-at-default-schema (graph schema)
   (declare (ignore graph))
   schema)
+
+(defun save-column-instance-logical-name (schema table-code colun-code logical-name)
+  (let* ((schema-graph (ter::get-schema-graph schema))
+         (table (ter::get-table schema-graph :code table-code)))
+    (unless table (throw-404))
+    (let ((column-instance (ter::table-column-instance schema-graph table-code colun-code)))
+      (unless column-instance (throw-404))
+      (when (string/= (ter::logical-name column-instance) logical-name)
+        (up:tx-change-object-slots schema-graph
+                                   (class-name (class-of column-instance))
+                                   (up:%id column-instance)
+                                   `((ter::logical-name ,logical-name))))
+      column-instance)))

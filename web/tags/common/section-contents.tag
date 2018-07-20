@@ -19,6 +19,5 @@
     </style>
 
     <script>
-     // dump(this.opts.no)
     </script>
 </section-contents>

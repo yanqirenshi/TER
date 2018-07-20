@@ -73,6 +73,16 @@
     (render-json (nconc (ter.api.controller::find-er schema)
                         (list :cameras (ter::find-schema-camera graph schema))))))
 
+(defroute ("/er/:schema-code/tables/:table-code/columns/:column-code/logical-name" :method :POST)
+    (&key schema-code table-code column-code _parsed)
+  (let* ((graph ter.db:*graph*)
+         (logical-name (jojo:parse (caar _parsed)))
+         (schema (ter::get-schema graph :code (str2keyword schema-code))))
+    (unless schema (throw-code 404))
+    (render-json (ter.api.controller::save-column-instance-logical-name schema
+                                                                        (str2keyword table-code)
+                                                                        (str2keyword column-code)
+                                                                        logical-name))))
 
 ;;;
 ;;; ter

@@ -14,7 +14,10 @@
      this.ter = new Ter();
 
      this.modalData = () => {
-         return STORE.state().get('site').pages.find((d) => { return d.code == 'page03' }).modal.logical_name;
+         let pages = STORE.state().get('site').pages;
+         return pages.find((d) => { return d.code == 'page03'; })
+                     .modal
+                     .logical_name;
      };
 
      this.state = () => {
@@ -45,7 +48,8 @@
              return;
          }
          if (type=='click-save-button') {
-             dump([type, data]);
+             data.schema_code = STORE.state().get('schemas').active;
+             return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
          }
      };
      this.getD3Svg = () => {
@@ -79,6 +83,9 @@
              this.ter.clear(d3svg);
              this.ter.drawTables(d3svg, STORE.state().get('er'));
          }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03')
+             this.update();
      });
     </script>
 </page03-sec_root>

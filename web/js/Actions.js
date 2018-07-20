@@ -207,6 +207,49 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     /* **************************************************************** *
+     *  table
+     * **************************************************************** */
+    saveColumnInstanceLogicalName (data, from) {
+        let fmt = '/er/%s/tables/%s/columns/%s/logical-name';
+        let path = fmt.format(data.schema_code, data.table_code, data.column_instance_code);
+
+        let post_data = data.logical_name;
+
+        API.post(path, post_data, (response)=>{
+            STORE.dispatch(this.savedColumnInstanceLogicalName(response, from));
+        });
+    }
+    savedColumnInstanceLogicalName (data, from) {
+        let state_er = null;
+
+        if (data) {
+            let _id = data._id;
+            state_er = STORE.state().get('er');
+
+            let column_instance = state_er.column_instances.ht[_id];
+            column_instance.code = data.code;
+            column_instance.column_type = data.column_type;
+            column_instance.data_type = data.data_type;
+            column_instance.logical_name = data.logical_name;
+            column_instance.physical_name = data.physical_name;
+        }
+
+        let state_site = STORE.state().get('site');
+        if (from=='page03') {
+            let page =  state_site.pages.find((d) => { return d.code == 'page03'; });
+            page.modal.logical_name.data = null;
+        }
+
+        return {
+            type: 'SAVED-COLUMN-INSTANCE-LOGICAL-NAME',
+            data: {
+                er: state_er,
+                sige: state_site
+            },
+            from: from
+        };
+    }
+    /* **************************************************************** *
      *  Fetch TER
      * **************************************************************** */
     fetchTer (mode) {

@@ -47,14 +47,17 @@
          return table.name;
      };
      this.physicalName = () => {
-         dump(opts.data.data);
          if (opts.data.data)
              return opts.data.data.physical_name;
 
          return '???';
      };
      this.clickSaveButton = () => {
-         this.opts.callback('click-save-button', this.refs.logical_name.value);
+         this.opts.callback('click-save-button', {
+             table_code: this.opts.data.data._table.code,
+             column_instance_code: this.opts.data.data.code,
+             logical_name: this.refs.logical_name.value
+         });
      };
      this.clickCloseButton = () => {
          this.opts.callback('click-close-button');

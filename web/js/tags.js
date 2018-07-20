@@ -192,6 +192,10 @@ riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <sect
 
          return data[name];
      };
+     STORE.subscribe((action) => {
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME')
+             this.update();
+     });
 });
 
 riot.tag2('inspector-table', '<h1 class="title is-4">Table</h1> <section-container no="5" title="Name" name="{getVal(\'name\')}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{getVal(\'_column_instances\')}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container> <section-container no="5" title="Edges" val="{getVal(\'\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-table .section { padding: 11px; padding-top: 0px; } inspector-table section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-table .contents, inspector-table .container { width: auto; }', '', function(opts) {
@@ -243,14 +247,17 @@ riot.tag2('page03-modal-logical-name', '<div class="modal {isActive()}"> <div cl
          return table.name;
      };
      this.physicalName = () => {
-         dump(opts.data.data);
          if (opts.data.data)
              return opts.data.data.physical_name;
 
          return '???';
      };
      this.clickSaveButton = () => {
-         this.opts.callback('click-save-button', this.refs.logical_name.value);
+         this.opts.callback('click-save-button', {
+             table_code: this.opts.data.data._table.code,
+             column_instance_code: this.opts.data.data.code,
+             logical_name: this.refs.logical_name.value
+         });
      };
      this.clickCloseButton = () => {
          this.opts.callback('click-close-button');
@@ -262,7 +269,10 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
      this.ter = new Ter();
 
      this.modalData = () => {
-         return STORE.state().get('site').pages.find((d) => { return d.code == 'page03' }).modal.logical_name;
+         let pages = STORE.state().get('site').pages;
+         return pages.find((d) => { return d.code == 'page03'; })
+                     .modal
+                     .logical_name;
      };
 
      this.state = () => {
@@ -293,7 +303,8 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              return;
          }
          if (type=='click-save-button') {
-             dump([type, data]);
+             data.schema_code = STORE.state().get('schemas').active;
+             return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
          }
      };
      this.getD3Svg = () => {
@@ -327,6 +338,9 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              this.ter.clear(d3svg);
              this.ter.drawTables(d3svg, STORE.state().get('er'));
          }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03')
+             this.update();
      });
 });
 

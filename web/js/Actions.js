@@ -221,12 +221,13 @@ class Actions extends Vanilla_Redux_Actions {
     }
     savedColumnInstanceLogicalName (data, from) {
         let state_er = null;
+        let column_instance = null;
 
         if (data) {
             let _id = data._id;
             state_er = STORE.state().get('er');
 
-            let column_instance = state_er.column_instances.ht[_id];
+            column_instance = state_er.column_instances.ht[_id];
             column_instance.code = data.code;
             column_instance.column_type = data.column_type;
             column_instance.data_type = data.data_type;
@@ -246,7 +247,8 @@ class Actions extends Vanilla_Redux_Actions {
                 er: state_er,
                 sige: state_site
             },
-            from: from
+            from: from,
+            redraw: column_instance ? column_instance._table : null
         };
     }
     /* **************************************************************** *

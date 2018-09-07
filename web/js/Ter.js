@@ -60,4 +60,8 @@ class Ter {
 
         this._table.draw(tables);
     }
+    reDrawTable (table) {
+        if (table)
+            this._table.reDraw(table);
+    }
 }

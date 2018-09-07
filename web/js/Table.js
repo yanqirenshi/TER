@@ -250,16 +250,19 @@ class Table {
             })
             .attr('fill', '#f8f8f8');
     }
-    drawG (svg, data) {
+    removeG (svg, data) {
         let area = svg.select('#entities');
 
         svg.selectAll('g.table')
             .data(data, (d) => { return d._id; })
             .exit()
             .remove();
+    }
+    drawG (svg, data) {
+        let area = svg.select('#entities');
 
         return svg.selectAll('g.table')
-            .data(data)
+            .data(data, (d) => { return d._id; })
             .enter()
             .append('g')
             .attr('class', 'table')
@@ -326,7 +329,9 @@ class Table {
 
         this.drawEdges(svg);  // TODO: g.lines が利用できればエンティティの後ろに移動。
 
+        this.removeG(svg, data);
         let g = this.drawG(svg, data);
+
         this.drawBase(g);
         this.drawColumns(g);
 
@@ -350,5 +355,8 @@ class Table {
             table.w = data.max_w;
             ACTIONS.saveTableSize(schema, table);
         }
+    }
+    reDraw (data) {
+        let svg = this._d3svg._svg;
     }
 }

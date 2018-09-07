@@ -84,8 +84,10 @@
              this.ter.drawTables(d3svg, STORE.state().get('er'));
          }
 
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03')
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03') {
              this.update();
+             this.ter.reDrawTable (action.redraw);
+         }
      });
     </script>
 </page03-sec_root>

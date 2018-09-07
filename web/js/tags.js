@@ -339,9 +339,18 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              this.ter.drawTables(d3svg, STORE.state().get('er'));
          }
 
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03')
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03') {
              this.update();
+             this.ter.reDrawTable (action.redraw);
+         }
      });
+});
+
+riot.tag2('page03', '', '', '', function(opts) {
+     this.mixin(MIXINS.page);
+
+     this.on('mount', () => { this.draw(); });
+     this.on('update', () => { this.draw(); });
 });
 
 riot.tag2('page01-sec_root', '<svg></svg>', '', '', function(opts) {
@@ -355,20 +364,6 @@ riot.tag2('page01-sec_root', '<svg></svg>', '', '', function(opts) {
 });
 
 riot.tag2('page01', '', '', '', function(opts) {
-     this.mixin(MIXINS.page);
-
-     this.on('mount', () => { this.draw(); });
-     this.on('update', () => { this.draw(); });
-});
-
-riot.tag2('page02', '', '', '', function(opts) {
-     this.mixin(MIXINS.page);
-
-     this.on('mount', () => { this.draw(); });
-     this.on('update', () => { this.draw(); });
-});
-
-riot.tag2('page03', '', '', '', function(opts) {
      this.mixin(MIXINS.page);
 
      this.on('mount', () => { this.draw(); });
@@ -398,4 +393,11 @@ riot.tag2('page02-sec_root', '<svg></svg>', '', '', function(opts) {
              this.entity.draw(this.d3svg, STORE.state().get('ter'))
          }
      });
+});
+
+riot.tag2('page02', '', '', '', function(opts) {
+     this.mixin(MIXINS.page);
+
+     this.on('mount', () => { this.draw(); });
+     this.on('update', () => { this.draw(); });
 });

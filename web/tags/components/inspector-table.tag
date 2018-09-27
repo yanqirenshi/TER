@@ -1,41 +1,33 @@
 <inspector-table>
-    <h1 class="title is-4">Table</h1>
+    <h1 class="title is-4" style="margin-bottom: 8px;">Table</h1>
 
-    <section-container no="5" title="Name" name={getVal('name')}>
-        <section-contents name={opts.name}>
-            <p>{opts.name}</p>
-        </section-contents>
-    </section-container>
+    <div class="tabs">
+        <ul>
+            <li class="{isActive('basic')}">
+                <a code="basic" onclick={clickTab}>Basic</a>
+            </li>
+            <li class="{isActive('description')}">
+                <a code="description" onclick={clickTab}>Description</a>
+            </li>
+            <li class="{isActive('relationship')}">
+                <a code="relationship" onclick={clickTab}>Relationship</a>
+            </li>
+        </ul>
+    </div>
 
-    <section-container no="5" title="Columns" columns={getVal('_column_instances')}>
-        <section-contents columns={opts.columns}>
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"
-                   style="font-size:12px;">
-                <thead>
-                    <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr>
-                </thead>
-                <tbody>
-                    <tr each={opts.columns}>
-                        <td>{physical_name}</td>
-                        <td>{logical_name}</td>
-                        <td>{data_type}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section-contents>
-    </section-container>
+    <inspector-table-basic class="{isHide('basic')}"
+                           name={getVal('name')}
+                           columns={getVal('_column_instances')}></inspector-table-basic>
 
-    <section-container no="5" title="Edges" val={getVal('')}>
-        <section-contents val={opts.val}>
-            <p>{opts.val}</p>
-        </section-contents>
-    </section-container>
+    <inspector-table-description class="{isHide('description')}"
+                                 description={getVal('description')}></inspector-table-description>
 
-    <section-container no="5" title="Description" val={getVal('description')}>
-        <section-contents val={opts.val}>
-            <p>{opts.val}</p>
-        </section-contents>
-    </section-container>
+    <inspector-table-relationship class="{isHide('relationship')}"
+                                  data={data()}></inspector-table-relationship>
+
+    <style>
+     inspector-table .hide { display: none; }
+    </style>
 
     <style>
      inspector-table .section {
@@ -55,14 +47,31 @@
 
 
     <script>
+     this.data = () => {
+         return this.opts.data;
+     };
      this.getVal = (name) => {
          let data = this.opts.data;
+         dump(data);
+
          if (!data || !data[name]) return '';
 
          if (name!='_column_instances')
              return data[name];
          else
              return data[name].sort((a,b)=>{ return (a._id*1) - (b._id*1); });
+     };
+
+     this.active_tab = 'basic'
+     this.isActive = (code) => {
+         return code == this.active_tab ? 'is-active' : '';
+     };
+     this.isHide = (code) => {
+         return code != this.active_tab ? 'hide' : '';
+     };
+     this.clickTab = (e) => {
+         this.active_tab = e.target.getAttribute('code');
+         this.update();
      };
     </script>
 </inspector-table>

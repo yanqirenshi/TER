@@ -11,7 +11,14 @@ TER は以下のような構成になっています。
 | [api](https://bitbucket.org/yanqirenshi/ter/src/master/api/README.markdown)   | WEB-API     |
 | [web](https://bitbucket.org/yanqirenshi/ter/src/master/web/README.markdown)   | WEB         |
 
-## Author
+# Usage
+
+```
+(in-package :ter)
+(import-schema.rb (get-schema-graph :your-schema-code) #P"/your/schema/project/file/path/db/schema.rb")
+```
+
+# Author
 
 + Satoshi Iwasaki (yanqirenshi@gmail.com)
 

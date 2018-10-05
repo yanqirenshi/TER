@@ -37,9 +37,7 @@
 
          STORE.dispatch(ACTIONS.changeSchema(schema_code));
 
-
-         ACTIONS.fetchEr(this.getActiveSchema());
-
+         ACTIONS.fetchErNodes(this.getActiveSchema());
      };
 
      this.moves = () => {
@@ -83,9 +81,12 @@
          }
 
          if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
-             ACTIONS.fetchEr(this.getActiveSchema(), action.mode);
+             ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
 
-         if (action.type=='FETCHED-ER' && action.mode=='FIRST')
+         if (action.type=='FETCHED-ER-NODES')
+             ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
+
+         if (action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST')
              ACTIONS.fetchTer(action.mode);
 
          if (action.type=='CHANGE-SCHEMA') {

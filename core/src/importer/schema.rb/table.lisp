@@ -34,24 +34,33 @@
   (let* ((name (getf data :name))
          (data-type (make-data-type data))
          (code (make-column-code name data-type)))
+    ;; TODO: Need update, if exists
     (tx-make-column graph code name data-type)))
 
 (defun tx-import-column-instance (graph table data)
   (let* ((name (getf data :name))
          (data-type (make-data-type data))
-         (code (make-column-instance-code table name)))
-    (tx-make-column-instance graph code name
-                             data-type
-                             (make-column-column-type name))))
+         (code (make-column-instance-code table name))
+         (column-instance (get-table-column-instance graph table :data data)))
+    (if column-instance
+        (tx-update-column-instance graph column-instance
+                                   name
+                                   data-type
+                                   (make-column-column-type name))
+        (tx-make-column-instance graph code name
+                                 data-type
+                                 (make-column-column-type name)))))
+
+(defun %tx-import-columns (graph table column-data)
+  (let* ((column (tx-import-column graph column-data))
+         (column-instance (tx-import-column-instance graph table column-data)))
+    (tx-make-r-column_column-instance graph column column-instance)
+    (tx-make-r-table_column-instance graph table column-instance)
+    column-instance))
 
 (defun tx-import-columns (graph table columns-data)
-  (when-let ((data (car columns-data)))
-    (cons (or (get-table-column-instance graph table :data data)
-              (let* ((column (tx-import-column graph data))
-                     (column-instance (tx-import-column-instance graph table data)))
-                (tx-make-r-column_column-instance graph column column-instance)
-                (tx-make-r-table_column-instance graph table column-instance)
-                column-instance))
+  (when-let ((column-data (car columns-data)))
+    (cons (%tx-import-columns graph table column-data)
           (tx-import-columns graph table (cdr columns-data)))))
 
 (defun tx-import-make-table (graph plist)

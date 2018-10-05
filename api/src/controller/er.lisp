@@ -21,14 +21,22 @@
          (finder-er-columns graph)
          (finder-er-column-instances graph)))
 
-(defun find-er (schema)
+(defun find-er-vertexes (schema)
   (let ((graph (ter::get-schema-graph schema)))
     (list :tables           (finder-er-tables graph)
           :columns          (finder-er-columns graph)
           :column_instances (finder-er-column-instances graph)
           :relashonships    (finder-er-relashonships graph)
-          :ports            (ter::find-port-er graph)
-          :edges            (ter:find-er-all-edges graph))))
+          :ports            (ter::find-port-er graph))))
+
+(defun find-er-edges (schema)
+  (let ((graph (ter::get-schema-graph schema)))
+    (list :edges            (ter:find-er-all-edges graph))))
+
+(defun find-er (schema)
+  (append (find-er-vertexes schema)
+          (find-er-edges schema)))
+
 
 (defun save-er-position (schema code position)
   (let* ((graph (ter::get-schema-graph schema))

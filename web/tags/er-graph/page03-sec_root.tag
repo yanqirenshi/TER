@@ -77,7 +77,7 @@
      };
 
      STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ER') {
+         if (action.type=='FETCHED-ER-EDGES') {
              let d3svg = this.getD3Svg();
 
              this.ter.clear(d3svg);

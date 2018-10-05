@@ -206,6 +206,59 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    //
+    fetchErNodes (schema, mode) {
+        let scheme_code = schema.code.toLowerCase();
+
+        API.get('/er/' + scheme_code + '/nodes', function (response) {
+            STORE.dispatch(this.fetchedErNodes(mode, response));
+        }.bind(this));
+    }
+    fetchedErNodes (mode, response) {
+        let relashonships    = this.makeGraphRData(response.RELASHONSHIPS);
+        let tables           = this.makeGraphData(response.TABLES);
+        let column_instances = this.makeGraphData(response.COLUMN_INSTANCES);
+        let ports            = this.makeGraphData(response.PORTS);
+
+        this.injectTable2ColumnInstances(tables, column_instances, relashonships);
+        this.injectColumnInstances2Ports (column_instances, ports, relashonships);
+
+        return {
+            type: 'FETCHED-ER-NODES',
+            mode: mode,
+            data: {
+                er: {
+                    tables:           this.makeGraphData(response.TABLES),
+                    columns:          this.makeGraphData(response.COLUMNS),
+                    column_instances: column_instances,
+                    ports:            ports,
+                    relashonships:    relashonships,
+                    cameras:          response.CAMERAS
+                }
+            }
+        };
+    }
+    //
+    fetchErEdges (schema, mode) {
+        let scheme_code = schema.code.toLowerCase();
+
+        API.get('/er/' + scheme_code + '/edges', function (response) {
+            STORE.dispatch(this.fetchedErEdges(mode, response));
+        }.bind(this));
+    }
+    fetchedErEdges (mode, response) {
+        let er               = STORE.state().get('er');
+        let relashonships    = er.relashonships;
+        let ports            = er.ports;
+
+        er.edges = this.makeGraphData(this.makeEdges(relashonships, ports));
+
+        return {
+            type: 'FETCHED-ER-EDGES',
+            mode: mode,
+            data: { er: er }
+        };
+    }
     /* **************************************************************** *
      *  table
      * **************************************************************** */

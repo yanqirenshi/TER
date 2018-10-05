@@ -73,6 +73,20 @@
     (render-json (nconc (ter.api.controller::find-er schema)
                         (list :cameras (ter::find-schema-camera graph schema))))))
 
+(defroute "/er/:schema_code/nodes" (&key schema_code)
+  (let* ((graph ter.db:*graph*)
+         (schema_code (alexandria:make-keyword (string-upcase schema_code)))
+         (schema (ter::get-schema graph :code schema_code)))
+    (render-json (nconc (ter.api.controller::find-er-vertexes schema)
+                        (list :cameras (ter::find-schema-camera graph schema))))))
+
+(defroute "/er/:schema_code/edges" (&key schema_code)
+  (let* ((graph ter.db:*graph*)
+         (schema_code (alexandria:make-keyword (string-upcase schema_code)))
+         (schema (ter::get-schema graph :code schema_code)))
+    (render-json (ter.api.controller::find-er-edges schema))))
+
+
 (defroute ("/er/:schema-code/tables/:table-code/columns/:column-code/logical-name" :method :POST)
     (&key schema-code table-code column-code _parsed)
   (let* ((graph ter.db:*graph*)

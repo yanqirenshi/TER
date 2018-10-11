@@ -1,5 +1,5 @@
-<page01_page_root>
-    <section-header title="Page01"></section-header>
+<core_page_root>
+    <section-header title="TER: Core"></section-header>
 
     <section-container title="セクション" data={sections()}>
         <sections-list data={opts.data}>
@@ -16,4 +16,4 @@
          return page.sections;
      }
     </script>
-</page01_page_root>
+</core_page_root>

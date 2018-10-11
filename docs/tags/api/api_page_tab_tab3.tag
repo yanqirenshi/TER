@@ -1,4 +1,4 @@
-<page02_page_tab_tab3>
+<api_page_tab_tab3>
     <section class="section">
         <div class="container">
             <h1 class="title">TAB3</h1>
@@ -8,4 +8,4 @@
             </div>
         </div>
     </section>
-</page02_page_tab_tab3>
+</api_page_tab_tab3>

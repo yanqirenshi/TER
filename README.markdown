@@ -18,6 +18,11 @@ TER は以下のような構成になっています。
 (import-schema.rb (get-schema-graph :your-schema-code) #P"/your/schema/project/file/path/db/schema.rb")
 ```
 
+# Docker
+
+https://hub.docker.com/r/renshi/ter/
+
+
 # Author
 
 + Satoshi Iwasaki (yanqirenshi@gmail.com)

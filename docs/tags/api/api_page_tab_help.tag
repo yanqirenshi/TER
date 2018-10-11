@@ -1,4 +1,4 @@
-<page02_page_tab_help>
+<api_page_tab_help>
     <section class="section">
         <div class="container">
             <h1 class="title">HELP</h1>
@@ -8,4 +8,4 @@
             </div>
         </div>
     </section>
-</page02_page_tab_help>
+</api_page_tab_help>

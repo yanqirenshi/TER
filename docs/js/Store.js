@@ -15,32 +15,28 @@ class Store extends Vanilla_Redux_Store {
                 }
             },
             {
-                code: "page01",
-                menu_label: 'ペ1',
+                code: "core", menu_label: '核',
                 active_section: 'root',
                 home_section: 'root',
                 sections: [
-                    { code: 'root', tag: 'page01_page_root', name: 'root' },
-                    { code: 'sec1', tag: 'page01_page1',     name: 'page1' },
-                    { code: 'sec2', tag: 'page01_page2',     name: 'page2' },
-                    { code: 'sec3', tag: 'page01_page3',     name: 'page3' },
+                    { code: 'root', tag: 'core_page_root', name: 'root' },
                 ],
                 stye: {
                     color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
                 }
             },
             {
-                code: "page02", menu_label: 'ペ2',
+                code: "api", menu_label: 'Api',
                 active_section: 'root', home_section: 'root',
-                sections: [{ code: 'root', tag: 'page02_page_root' }],
+                sections: [{ code: 'root', tag: 'api_page_root' }],
                 stye: {
                     color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
                 }
             },
             {
-                code: "page03", menu_label: 'ペ3',
+                code: "web", menu_label: 'Web',
                 active_section: 'root', home_section: 'root',
-                sections: [{ code: 'root', tag: 'page03_page_root', title: 'Home', description: '' }],
+                sections: [{ code: 'root', tag: 'web_page_root', title: 'Home', description: '' }],
                 stye: {
                     color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
                 }

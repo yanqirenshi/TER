@@ -1,5 +1,5 @@
 <api_page_root>
-    <section-header title="Page02"></section-header>
+    <section-header title="TER: API"></section-header>
 
     <page-tabs core={page_tabs} callback={clickTab}></page-tabs>
 

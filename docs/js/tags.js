@@ -5,7 +5,7 @@ riot.tag2('api', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('api_page_root', '<section-header title="Page02"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <api_page_tab_readme class="hide"></api_page_tab_readme> <api_page_tab_tab1 class="hide"></api_page_tab_tab1> <api_page_tab_tab2 class="hide"></api_page_tab_tab2> <api_page_tab_tab3 class="hide"></api_page_tab_tab3> <api_page_tab_help class="hide"></api_page_tab_help> </div> <section-footer></section-footer>', '', '', function(opts) {
+riot.tag2('api_page_root', '<section-header title="TER: API"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <api_page_tab_readme class="hide"></api_page_tab_readme> <api_page_tab_tab1 class="hide"></api_page_tab_tab1> <api_page_tab_tab2 class="hide"></api_page_tab_tab2> <api_page_tab_tab3 class="hide"></api_page_tab_tab3> <api_page_tab_help class="hide"></api_page_tab_help> </div> <section-footer></section-footer>', '', '', function(opts) {
      this.page_tabs = new PageTabs([
          {code: 'readme', label: 'README', tag: 'api_page_tab_readme' },
          {code: 'tab1',   label: 'TAB1',   tag: 'api_page_tab_tab1' },
@@ -183,13 +183,39 @@ riot.tag2('core', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('core_page_root', '<section-header title="TER: Core"></section-header> <section-container title="セクション" data="{sections()}"> <sections-list data="{opts.data}"> </sections-list> </section-container> <section-footer></section-footer>', '', '', function(opts) {
-     this.sections = () => {
-         let pages = STORE.get('site').pages;
-         let page = pages.find((d) => { return d.code=='page01'; });
+riot.tag2('core_page_root', '<section-header title="TER: Core"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <core_page_tab_readme class="hide"></core_page_tab_readme> <core_page_tab_datamodels class="hide"></core_page_tab_datamodels> <core_page_tab_packages class="hide"></core_page_tab_packages> <core_page_tab_classes class="hide"></core_page_tab_classes> <core_page_tab_operators class="hide"></core_page_tab_operators> </div> <section-footer></section-footer>', '', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         {code: 'readme',     label: 'Readme',      tag: 'core_page_tab_readme' },
+         {code: 'datamodels', label: 'Data Models', tag: 'core_page_tab_datamodels' },
+         {code: 'packages',   label: 'Packages',    tag: 'core_page_tab_packages' },
+         {code: 'classes',    label: 'Classes',     tag: 'core_page_tab_classes' },
+         {code: 'operators',  label: 'Operators',   tag: 'core_page_tab_operators' },
+     ]);
 
-         return page.sections;
-     }
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+});
+
+riot.tag2('core_page_tab_classes', '', '', '', function(opts) {
+});
+
+riot.tag2('core_page_tab_datamodels', '', '', '', function(opts) {
+});
+
+riot.tag2('core_page_tab_operators', '', '', '', function(opts) {
+});
+
+riot.tag2('core_page_tab_packages', '', '', '', function(opts) {
+});
+
+riot.tag2('core_page_tab_readme', '', '', '', function(opts) {
 });
 
 riot.tag2('home', '', '', '', function(opts) {
@@ -209,5 +235,5 @@ riot.tag2('web', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('web_page_root', '<section-header title="Page03"></section-header> <section-footer></section-footer>', '', '', function(opts) {
+riot.tag2('web_page_root', '<section-header title="TER: WEB"></section-header> <section-footer></section-footer>', '', '', function(opts) {
 });

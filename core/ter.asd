@@ -9,6 +9,7 @@ This file is a part of ter project.
   :depends-on (#:cl-lex
                #:yacc
                #:cl-inflector
+               #:jonathan
                #:upanishad
                #:shinrabanshou
                #:plist-printer

@@ -10,6 +10,7 @@ This file is a part of ter project.
                #:yacc
                #:cl-inflector
                #:jonathan
+               #:sephirothic
                #:upanishad
                #:shinrabanshou
                #:plist-printer

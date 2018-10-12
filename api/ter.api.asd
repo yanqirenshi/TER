@@ -6,7 +6,7 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ("caveman2" "ter")
+  :depends-on ("caveman2" "ter" "lack-middleware-validation")
   :components ((:module "src"
                 :components
                 ((:file "package")

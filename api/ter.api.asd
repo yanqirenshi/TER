@@ -6,7 +6,7 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on ("caveman2" "ter")
   :components ((:module "src"
                 :components
                 ((:file "package")

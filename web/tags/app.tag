@@ -1,4 +1,6 @@
 <app>
+    <github-link href="https://github.com/yanqirenshi/TER" fill="#5BBBE7" color="#ffffff"></github-link>
+
     <menu-bar brand={brand()}
               site={site()}
               moves={moves()}

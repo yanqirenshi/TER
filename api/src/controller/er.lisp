@@ -62,8 +62,9 @@
     (let ((column-instance (ter::table-column-instance schema-graph table-code colun-code)))
       (unless column-instance (throw-404))
       (when (string/= (ter::logical-name column-instance) logical-name)
-        (up:tx-change-object-slots schema-graph
-                                   (class-name (class-of column-instance))
-                                   (up:%id column-instance)
-                                   `((ter::logical-name ,logical-name))))
+        (up:execute-transaction
+         (up:tx-change-object-slots schema-graph
+                                    (class-name (class-of column-instance))
+                                    (up:%id column-instance)
+                                    `((ter::logical-name ,logical-name)))))
       column-instance)))

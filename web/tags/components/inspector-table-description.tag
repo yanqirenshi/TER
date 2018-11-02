@@ -2,9 +2,7 @@
     <div class="contents">
         <textarea class="textarea"
                   placeholder="Description"
-                  style="height:333px;">
-          {opts.description}
-        </textarea>
+                  style="height:333px;">{opts.description}</textarea>
     </div>
 
     <section class="section" style="margin-top: 11px;">

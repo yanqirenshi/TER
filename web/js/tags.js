@@ -188,6 +188,13 @@ riot.tag2('operators', '<div> <a each="{opts.data}" class="button {color}" code=
      };
 });
 
+riot.tag2('page-tabs', '<div class="tabs is-boxed"> <ul> <li each="{opts.core.tabs}" class="{opts.core.active_tab==code ? \'is-active\' : \'\'}"> <a code="{code}" onclick="{clickTab}">{label}</a> </li> </ul> </div>', 'page-tabs li:first-child { margin-left: 11px; }', '', function(opts) {
+     this.clickTab = (e) => {
+         let code = e.target.getAttribute('code');
+         this.opts.callback(e, 'CLICK-TAB', { code: code });
+     };
+});
+
 riot.tag2('section-breadcrumb', '<section-container data="{path()}"> <nav class="breadcrumb" aria-label="breadcrumbs"> <ul> <li each="{opts.data}"> <a class="{active ? \'is-active\' : \'\'}" href="{href}" aria-current="page">{label}</a> </li> </ul> </nav> </section-container>', 'section-breadcrumb section-container > .section,[data-is="section-breadcrumb"] section-container > .section{ padding-top: 3px; }', '', function(opts) {
      this.path = () => {
          let hash = location.hash;
@@ -250,17 +257,50 @@ riot.tag2('section-list', '<table class="table is-bordered is-striped is-narrow 
      };
 });
 
-riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <section-container no="5" title="Name" physical_name="{getVal(\'physical_name\')}" logical_name="{getVal(\'logical_name\')}" callback="{clickEditLogicalName}"> <section-contents physical_name="{opts.physical_name}" logical_name="{opts.logical_name}" callback="{opts.callback}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <tbody> <tr> <th>物理名</th> <td>{opts.physical_name}</td></tr> <tr> <th>論理名</th> <td>{opts.logical_name}</td></tr> </tbody> </table> <div style="text-align: right;"> <button class="button" onclick="{opts.callback}">論理名を変更</button> </div> </section-contents> </section-container> <section-container no="5" title="Type" val="{getVal(\'data_type\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container> <section-container no="5" title="Description" val="{getVal(\'description\')}"> <section-contents val="{opts.val}"> <p>{opts.val}</p> </section-contents> </section-container>', 'inspector-column .section { padding: 11px; padding-top: 0px; } inspector-column section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-column .contents, inspector-column .container { width: auto; }', '', function(opts) {
+riot.tag2('inspector-column-basic', '<section class="section"> <div class="container"> <h1 class="title is-5">物理名</h1> <div class="contents"> <p>{getVal(\'physical_name\')}</p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-5">論理名</h1> <div class="contents"> <p>{getVal(\'logical_name\')}</p> <div style="text-align:right;"> <button class="button" onclick="{clickEditLogicalName}">論理名を変更</button> </div> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-5">Type</h1> <div class="contents"> <p>{getVal(\'data_type\')}</p> </div> </div> </section>', '', '', function(opts) {
      this.clickEditLogicalName = (e) => {
          if (this.opts.callback)
-             this.opts.callback('click-edit-logical-name', this.opts.data);
+             this.opts.callback('click-edit-logical-name', this.opts.source);
      };
      this.getVal = (name) => {
-         let data = this.opts.data;
-         if (!data) return '';
+         let data = this.opts.source;
+         if (!data) return 'なし';
 
          return data[name];
      };
+});
+
+riot.tag2('inspector-column-description', '<section class="section"> <div class="container"> <h1 class="title is-5">Description</h1> <h2 class="subtitle"></h2> <div class="contents" style="padding-left:22px; padding-top: 8px;"> <textarea class="textarea" placeholder="Description" style="height:333px;" ref="description">{description()}</textarea> </div> </div> </section> <section class="section" style="margin-top: 11px;"> <div class="container"> <div class="contents" style="padding-left:22px;"> <button class="button is-danger" onclick="{clickSaveDescription}">Save</button> </div> </div> </section>', '', '', function(opts) {
+     this.description = () => {
+         if (!this.opts.source) return '';
+
+         return this.opts.source.description;
+     };
+     this.clickSaveDescription = () => {
+         opts.callback('click-save-column-description', {
+             schema_code: STORE.get('schemas.active'),
+             source: this.opts.source,
+             description: this.refs.description.value
+         });
+     };
+});
+
+riot.tag2('inspector-column', '<section class="section"> <div class="container"> <h1 class="title is-5">Column Instance</h1> <h2 class="subtitle" style="font-size: 0.8rem;"> <span>{opts.source.physical_name}</span> : <span>{opts.source.logical_name}</span> </h2> </div> </section> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div style="margin-top:22px;"> <inspector-column-basic class="hide" source="{opts.source}" callback="{opts.callback}"></inspector-column-basic> <inspector-column-description class="hide" source="{opts.source}" callback="{opts.callback}"></inspector-column-description> </div>', 'inspector-column .section { padding: 11px; padding-top: 0px; } inspector-column section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-column .contents, inspector-column .container { width: auto; }', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         {code: 'basic',       label: 'Basic',       tag: 'inspector-column-basic' },
+         {code: 'description', label: 'Description', tag: 'inspector-column-description' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+
      STORE.subscribe((action) => {
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME')
              this.update();
@@ -270,7 +310,7 @@ riot.tag2('inspector-column', '<h1 class="title is-4">Column Instance</h1> <sect
 riot.tag2('inspector-table-basic', '<section-container no="5" title="Name" name="{opts.name}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{opts.columns}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container>', '', '', function(opts) {
 });
 
-riot.tag2('inspector-table-description', '<div class="contents"> <textarea class="textarea" placeholder="Description" style="height:333px;"> {opts.description} </textarea> </div> <section class="section" style="margin-top: 11px;"> <div class="container"> <div class="contents"> <button class="button is-danger">Save</button> </div> </div> </section>', '', '', function(opts) {
+riot.tag2('inspector-table-description', '<div class="contents"> <textarea class="textarea" placeholder="Description" style="height:333px;">{opts.description}</textarea> </div> <section class="section" style="margin-top: 11px;"> <div class="container"> <div class="contents"> <button class="button is-danger">Save</button> </div> </div> </section>', '', '', function(opts) {
 });
 
 riot.tag2('inspector-table-relationship', '<div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <thead> <tr><th>Type</th><th>From</th><th>To</th></tr> </thead> <tbody> <tr each="{edges()}"> <td>{data_type}</td> <td>{_port_from._column_instance._table.name}</td> <td>{_port_to._column_instance._table.name}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
@@ -288,7 +328,6 @@ riot.tag2('inspector-table', '<h1 class="title is-4" style="margin-bottom: 8px;"
      };
      this.getVal = (name) => {
          let data = this.opts.data;
-         dump(data);
 
          if (!data || !data[name]) return '';
 
@@ -311,7 +350,7 @@ riot.tag2('inspector-table', '<h1 class="title is-4" style="margin-bottom: 8px;"
      };
 });
 
-riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{data()}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" data="{data()}" callback="{opts.callback}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; }', '', function(opts) {
+riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{data()}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" source="{data()}" callback="{opts.callback}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; max-width: 555px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; } inspector .section > .container > .contents { padding-left:22px;}', '', function(opts) {
      this.state = () => { return STORE.state().get('inspector'); } ;
      this.data = () => {
          return this.state().data;
@@ -392,10 +431,16 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              ACTIONS.snapshotAll();
      };
      this.inspectorCallback = (type, data) => {
+         let page_code = 'page03';
+
          if (type=='click-edit-logical-name') {
-             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', data));
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName(page_code, data));
              this.tags['page03-modal-logical-name'].update();
+             return;
          }
+
+         if (type=='click-save-column-description')
+             return ACTIONS.saveColumnInstanceDescription(data, page_code)
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {

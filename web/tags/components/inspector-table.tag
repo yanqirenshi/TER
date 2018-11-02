@@ -52,7 +52,6 @@
      };
      this.getVal = (name) => {
          let data = this.opts.data;
-         dump(data);
 
          if (!data || !data[name]) return '';
 

@@ -3,7 +3,7 @@
         <inspector-table class={hideContents('table')}
                          data={data()}></inspector-table>
         <inspector-column class={hideContents('column-instance')}
-                          data={data()}
+                          source={data()}
                           callback={opts.callback}></inspector-column>
     </div>
 
@@ -11,6 +11,7 @@
      inspector > div {
          overflow-y: auto;
          min-width: 333px;
+         max-width: 555px;
          height: 100vh;
          position: fixed;
          right: 0px;
@@ -22,6 +23,8 @@
      inspector > div.hide {
          display: none;
      }
+
+     inspector .section > .container > .contents { padding-left:22px;}
     </style>
 
     <script>

@@ -26,4 +26,5 @@
     (jojo:write-key-value "logical_name"  (or (slot-value obj 'logical-name)  :null))
     (jojo:write-key-value "data_type"     (slot-value obj 'data-type))
     (jojo:write-key-value "column_type"   (slot-value obj 'column-type))
+    (jojo:write-key-value "description"   (or (slot-value obj 'description) ""))
     (jojo:write-key-value "_class" 'column-instance)))

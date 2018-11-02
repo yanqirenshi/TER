@@ -1,37 +1,23 @@
 <inspector-column>
-    <h1 class="title is-4">Column Instance</h1>
+    <section class="section">
+        <div class="container">
+            <h1 class="title is-5">Column Instance</h1>
+            <h2 class="subtitle" style="font-size: 0.8rem;">
+                <span>{opts.source.physical_name}</span> : <span>{opts.source.logical_name}</span>
+            </h2>
+        </div>
+    </section>
 
-    <section-container no="5" title="Name"
-                       physical_name={getVal('physical_name')}
-                       logical_name={getVal('logical_name')}
-                       callback={clickEditLogicalName}>
-        <section-contents physical_name={opts.physical_name}
-                          logical_name={opts.logical_name}
-                          callback={opts.callback}>
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-                <tbody>
-                    <tr> <th>物理名</th> <td>{opts.physical_name}</td></tr>
-                    <tr> <th>論理名</th> <td>{opts.logical_name}</td></tr>
-                </tbody>
-            </table>
-            <div style="text-align: right;">
-                <button class="button" onclick={opts.callback}>論理名を変更</button>
-            </div>
-        </section-contents>
-    </section-container>
+    <page-tabs core={page_tabs} callback={clickTab}></page-tabs>
 
-    <section-container no="5" title="Type" val={getVal('data_type')}>
-        <section-contents val={opts.val}>
-            <p>{opts.val}</p>
-        </section-contents>
-    </section-container>
-
-    <section-container no="5" title="Description" val={getVal('description')}>
-        <section-contents val={opts.val}>
-            <p>{opts.val}</p>
-        </section-contents>
-    </section-container>
-
+    <div style="margin-top:22px;">
+        <inspector-column-basic       class="hide"
+                                      source={opts.source}
+                                      callback={opts.callback}></inspector-column-basic>
+        <inspector-column-description class="hide"
+                                      source={opts.source}
+                                      callback={opts.callback}></inspector-column-description>
+    </div>
 
     <style>
      inspector-column .section {
@@ -51,16 +37,23 @@
 
 
     <script>
-     this.clickEditLogicalName = (e) => {
-         if (this.opts.callback)
-             this.opts.callback('click-edit-logical-name', this.opts.data);
-     };
-     this.getVal = (name) => {
-         let data = this.opts.data;
-         if (!data) return '';
+     this.page_tabs = new PageTabs([
+         {code: 'basic',       label: 'Basic',       tag: 'inspector-column-basic' },
+         {code: 'description', label: 'Description', tag: 'inspector-column-description' },
+     ]);
 
-         return data[name];
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
      };
+    </script>
+
+    <script>
      STORE.subscribe((action) => {
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME')
              this.update();

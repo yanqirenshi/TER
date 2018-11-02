@@ -36,10 +36,16 @@
              ACTIONS.snapshotAll();
      };
      this.inspectorCallback = (type, data) => {
+         let page_code = 'page03';
+
          if (type=='click-edit-logical-name') {
-             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', data));
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName(page_code, data));
              this.tags['page03-modal-logical-name'].update();
+             return;
          }
+
+         if (type=='click-save-column-description')
+             return ACTIONS.saveColumnInstanceDescription(data, page_code)
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {

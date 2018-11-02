@@ -98,6 +98,23 @@
                                                                         (str2keyword column-code)
                                                                         logical-name))))
 
+(defroute ("/er/:schema-code/columns/instance/:id/description" :method :POST)
+    (&key schema-code id _parsed)
+  (let* ((graph ter.db:*graph*)
+         (schema (ter::get-schema graph :code (str2keyword schema-code)))
+         (%id (parse-integer id))
+         (description (jojo:parse (caar _parsed))))
+    (unless schema (throw-code 404))
+    (render-json (ter.api.controller::save-column-instance-description schema %id description))))
+
+(defroute ("/er/:schema-code/columns/instance/:id/description" :method :DELETE)
+    (&key schema-code id)
+  (let* ((graph ter.db:*graph*)
+         (schema (ter::get-schema graph :code (str2keyword schema-code)))
+         (%id (parse-integer id)))
+    (unless schema (throw-code 404))
+    (render-json (ter.api.controller::save-column-instance-description schema %id ""))))
+
 ;;;
 ;;; ter
 ;;;

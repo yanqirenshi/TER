@@ -304,6 +304,34 @@ class Actions extends Vanilla_Redux_Actions {
             redraw: column_instance ? column_instance._table : null
         };
     }
+    saveColumnInstanceDescription (data, from) {
+        let fmt = '/er/%s/columns/instance/%s/description';
+        let path = fmt.format(data.schema_code, data.source._id);
+        let description = data.description.trim();
+
+        if (description.length==0) {
+            API.delete(path, (resource)=>{
+                this.savedColumnInstanceDescription(resource);
+            });
+        } else {
+            API.post(path, description, (resource)=>{
+                this.savedColumnInstanceDescription(resource);
+            });
+        }
+    }
+    savedColumnInstanceDescription (resource) {
+        let state = STORE.get('er');
+        let ht = state.column_instances.ht;
+        let source = resource;
+        let target = ht[source._id];
+
+        target.description = source.description;
+
+        return {
+            type: 'SAVED-COLUMN-INSTANCE-DESCRIPTION',
+            data: { er: state }
+        };
+    }
     /* **************************************************************** *
      *  Fetch TER
      * **************************************************************** */
@@ -437,7 +465,6 @@ class Actions extends Vanilla_Redux_Actions {
         let x = '/rpc/snapshot/all';
 
         API.get('/rpc/snapshot/all', (response) => {
-            dump(response);
         });
 
     }
@@ -445,6 +472,7 @@ class Actions extends Vanilla_Redux_Actions {
      *  Page03
      * **************************************************************** */
     setDataToModalLogicalName (page_code, data) {
+        dump(page_code, data);
         let site = STORE.state().get('site');
         let page = site.pages.find((d) => { return d.code == page_code; });
 

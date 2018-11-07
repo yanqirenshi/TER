@@ -3,7 +3,9 @@
         <div class="container">
             <h1 class="title is-5">Column Instance</h1>
             <h2 class="subtitle" style="font-size: 0.8rem;">
-                <span>{opts.source.physical_name}</span> : <span>{opts.source.logical_name}</span>
+                <span>{opts.source ? opts.source.physical_name : ''}</span>
+                : 
+                <span>{opts.source ? opts.source.logical_name : ''}</span>
             </h2>
         </div>
     </section>

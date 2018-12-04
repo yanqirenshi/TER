@@ -259,6 +259,33 @@ class Actions extends Vanilla_Redux_Actions {
             data: { er: er }
         };
     }
+    saveTableDescription (schema_code, table, description) {
+        let fmt = '/er/%s/tables/%s/description';
+        let path = fmt.format(schema_code, table.code);
+
+        if (description.length==0) {
+            API.delete(path, (resource)=>{
+                this.savedTableDescription(resource);
+            });
+        } else {
+            API.post(path, description, (resource)=>{
+                this.savedTableDescription(resource);
+            });
+        }
+    }
+    savedTableDescription (resource) {
+        let state = STORE.get('er');
+        let ht = state.column_instances.ht;
+        let source = resource;
+        let target = ht[source._id];
+
+        target.description = source.description;
+
+        return {
+            type: 'SAVED-TABLE-DESCRIPTION',
+            data: { er: state }
+        };
+    }
     /* **************************************************************** *
      *  table
      * **************************************************************** */

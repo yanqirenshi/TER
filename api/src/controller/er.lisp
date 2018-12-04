@@ -77,3 +77,12 @@
                                 (class-name (class-of column-instance))
                                 (up:%id column-instance)
                                 `((ter::description ,description))))))
+
+(defun save-table-description (schema table-code description)
+  (let* ((schema-graph (ter::get-schema-graph schema))
+         (table (ter::get-table schema-graph :code table-code)))
+    (up:execute-transaction
+     (up:tx-change-object-slots schema-graph
+                                (class-name (class-of table))
+                                (up:%id table)
+                                `((ter::description ,description))))))

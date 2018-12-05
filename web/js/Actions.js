@@ -262,16 +262,11 @@ class Actions extends Vanilla_Redux_Actions {
     saveTableDescription (schema_code, table, description, from) {
         let fmt = '/er/%s/tables/%s/description';
         let path = fmt.format(schema_code, table.code);
+        let data = { contents: description };
 
-        if (description.length==0) {
-            API.delete(path, (resource)=>{
-                this.savedTableDescription(resource, from);
-            });
-        } else {
-            API.post(path, description, (resource)=>{
-                this.savedTableDescription(resource, from);
-            });
-        }
+        API.post(path, data, (resource)=>{
+            STORE.dispatch(this.savedTableDescription(resource, from));
+        });
     }
     savedTableDescription (resource, from) {
         let state = STORE.get('er');
@@ -335,17 +330,11 @@ class Actions extends Vanilla_Redux_Actions {
     saveColumnInstanceDescription (data, from) {
         let fmt = '/er/%s/columns/instance/%s/description';
         let path = fmt.format(data.schema_code, data.source._id);
-        let description = data.description.trim();
+        let data = { contents: data.description.trim() };
 
-        if (description.length==0) {
-            API.delete(path, (resource)=>{
-                this.savedColumnInstanceDescription(resource);
-            });
-        } else {
-            API.post(path, description, (resource)=>{
-                this.savedColumnInstanceDescription(resource);
-            });
-        }
+        API.post(path, data, (resource)=>{
+            STORE.dispatch(this.savedColumnInstanceDescription(resource));
+        });
     }
     savedColumnInstanceDescription (resource) {
         let state = STORE.get('er');

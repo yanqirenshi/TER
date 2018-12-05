@@ -106,17 +106,10 @@
   (let* ((graph ter.db:*graph*)
          (schema (ter::get-schema graph :code (str2keyword schema-code)))
          (table-code (str2keyword table-code))
-         (description (jojo:parse (caar _parsed))))
+         (description (getf (jojo:parse (caar _parsed)) :|contents|)))
     (unless schema (throw-code 404))
     (render-json (ter.api.controller::save-table-description schema table-code description))))
 
-(defroute ("/er/:schema-code/tables/:table-code/description" :method :DELETE)
-    (&key schema-code table-code)
-  (let* ((graph ter.db:*graph*)
-         (schema (ter::get-schema graph :code (str2keyword schema-code)))
-         (table-code (str2keyword table-code)))
-    (unless schema (throw-code 404))
-    (render-json (ter.api.controller::save-table-description schema table-code ""))))
 
 ;;;;;
 ;;;;; column description
@@ -126,17 +119,9 @@
   (let* ((graph ter.db:*graph*)
          (schema (ter::get-schema graph :code (str2keyword schema-code)))
          (%id (parse-integer id))
-         (description (jojo:parse (caar _parsed))))
+         (description (getf (jojo:parse (caar _parsed)) :|contents|)))
     (unless schema (throw-code 404))
     (render-json (ter.api.controller::save-column-instance-description schema %id description))))
-
-(defroute ("/er/:schema-code/columns/instance/:id/description" :method :DELETE)
-    (&key schema-code id)
-  (let* ((graph ter.db:*graph*)
-         (schema (ter::get-schema graph :code (str2keyword schema-code)))
-         (%id (parse-integer id)))
-    (unless schema (throw-code 404))
-    (render-json (ter.api.controller::save-column-instance-description schema %id ""))))
 
 ;;;
 ;;; ter

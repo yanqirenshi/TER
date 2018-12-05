@@ -25,7 +25,8 @@
                                columns={getVal('_column_instances')}></inspector-table-basic>
 
         <inspector-table-description class="{isHide('description')}"
-                                     data={data()}></inspector-table-description>
+                                     data={data()}
+                                     callback={this.opts.callback}></inspector-table-description>
 
         <inspector-table-relationship class="{isHide('relationship')}"
                                       data={data()}></inspector-table-relationship>

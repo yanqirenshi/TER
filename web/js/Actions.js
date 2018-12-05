@@ -259,23 +259,23 @@ class Actions extends Vanilla_Redux_Actions {
             data: { er: er }
         };
     }
-    saveTableDescription (schema_code, table, description) {
+    saveTableDescription (schema_code, table, description, from) {
         let fmt = '/er/%s/tables/%s/description';
         let path = fmt.format(schema_code, table.code);
 
         if (description.length==0) {
             API.delete(path, (resource)=>{
-                this.savedTableDescription(resource);
+                this.savedTableDescription(resource, from);
             });
         } else {
             API.post(path, description, (resource)=>{
-                this.savedTableDescription(resource);
+                this.savedTableDescription(resource, from);
             });
         }
     }
-    savedTableDescription (resource) {
+    savedTableDescription (resource, from) {
         let state = STORE.get('er');
-        let ht = state.column_instances.ht;
+        let ht = state.tables.ht;
         let source = resource;
         let target = ht[source._id];
 
@@ -283,7 +283,8 @@ class Actions extends Vanilla_Redux_Actions {
 
         return {
             type: 'SAVED-TABLE-DESCRIPTION',
-            data: { er: state }
+            data: { er: state },
+            from: from,
         };
     }
     /* **************************************************************** *

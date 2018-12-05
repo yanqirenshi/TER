@@ -9,9 +9,13 @@
     <page03-modal-logical-name data={modalData()}
                                callback={modalCallback}></page03-modal-logical-name>
 
+    <page03-modal-description data={modal_target_table}
+                              callback={modalCallback}></page03-modal-description>
+
     <script>
      this.d3svg = null;
      this.ter = new Ter();
+     this.modal_target_table = null;
 
      this.modalData = () => {
          let pages = STORE.state().get('site').pages;
@@ -46,6 +50,13 @@
 
          if (type=='click-save-column-description')
              return ACTIONS.saveColumnInstanceDescription(data, page_code)
+
+         if (type=='edit-table-description') {
+             this.modal_target_table = data;
+
+             this.update();
+             return;
+         }
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {
@@ -56,6 +67,19 @@
          if (type=='click-save-button') {
              data.schema_code = STORE.state().get('schemas').active;
              return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
+         }
+
+         if (type=='close-modal-table-description') {
+             this.modal_target_table = null;
+
+             this.update();
+             return;
+         }
+         if (type=='save-table-description') {
+             let schema_code = STORE.state().get('schemas').active;
+
+             ACTIONS.saveTableDescription(schema_code, data.table, data.value, 'page03');
+             return;
          }
      };
      this.getD3Svg = () => {
@@ -93,6 +117,11 @@
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03') {
              this.update();
              this.ter.reDrawTable (action.redraw);
+         }
+
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='page03') {
+             this.modal_target_table = null;
+             this.update();
          }
      });
     </script>

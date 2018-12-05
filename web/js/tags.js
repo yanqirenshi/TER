@@ -310,7 +310,7 @@ riot.tag2('inspector-column', '<section class="section"> <div class="container">
 riot.tag2('inspector-table-basic', '<section-container no="5" title="Name" name="{opts.name}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{opts.columns}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container>', '', '', function(opts) {
 });
 
-riot.tag2('inspector-table-description', '<div class="contents"> <textarea class="textarea" placeholder="Description" style="height:333px;" ref="description">{description()}</textarea> </div> <section class="section" style="margin-top: 11px;"> <div class="container"> <div class="contents"> <button class="button is-danger" onclick="{clickSave}">Save</button> </div> </div> </section>', '', '', function(opts) {
+riot.tag2('inspector-table-description', '<div class="contents"> <markdown-preview data="{marked(description())}"></markdown-preview> </div> <div style="margin-top:11px;"> <button class="button is-danger" onclick="{clickSave}">Edit</button> </div>', '', '', function(opts) {
      this.description = () => {
          if (!opts.data) return '';
 
@@ -318,10 +318,9 @@ riot.tag2('inspector-table-description', '<div class="contents"> <textarea class
      };
 
      this.clickSave = () => {
-         ACTIONS.saveTableDescription(
-             STORE.get('schemas.active'),
-             this.opts.data,
-             this.refs['description'].value.trim());
+         let table = this.opts.data;
+
+         this.opts.callback('edit-table-description', table);
      };
 });
 
@@ -334,7 +333,7 @@ riot.tag2('inspector-table-relationship', '<div class="contents"> <table class="
      };
 });
 
-riot.tag2('inspector-table', '<div> <h1 class="title is-4" style="margin-bottom: 8px;">Table</h1> </div> <div style="margin-bottom:11px;"> <div class="tabs"> <ul> <li class="{isActive(\'basic\')}"> <a code="basic" onclick="{clickTab}">Basic</a> </li> <li class="{isActive(\'description\')}"> <a code="description" onclick="{clickTab}">Description</a> </li> <li class="{isActive(\'relationship\')}"> <a code="relationship" onclick="{clickTab}">Relationship</a> </li> </ul> </div> </div> <div style="flex-grow:1;"> <inspector-table-basic class="{isHide(\'basic\')}" name="{getVal(\'name\')}" columns="{getVal(\'_column_instances\')}"></inspector-table-basic> <inspector-table-description class="{isHide(\'description\')}" data="{data()}"></inspector-table-description> <inspector-table-relationship class="{isHide(\'relationship\')}" data="{data()}"></inspector-table-relationship> </div>', 'inspector-table { height:100%; display:flex; flex-direction: column; } inspector-table .hide { display: none; } inspector-table .section { padding: 11px; padding-top: 0px; } inspector-table section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-table .contents, inspector-table .container { width: auto; }', '', function(opts) {
+riot.tag2('inspector-table', '<div> <h1 class="title is-4" style="margin-bottom: 8px;">Table</h1> </div> <div style="margin-bottom:11px;"> <div class="tabs"> <ul> <li class="{isActive(\'basic\')}"> <a code="basic" onclick="{clickTab}">Basic</a> </li> <li class="{isActive(\'description\')}"> <a code="description" onclick="{clickTab}">Description</a> </li> <li class="{isActive(\'relationship\')}"> <a code="relationship" onclick="{clickTab}">Relationship</a> </li> </ul> </div> </div> <div style="flex-grow:1;"> <inspector-table-basic class="{isHide(\'basic\')}" name="{getVal(\'name\')}" columns="{getVal(\'_column_instances\')}"></inspector-table-basic> <inspector-table-description class="{isHide(\'description\')}" data="{data()}" callback="{this.opts.callback}"></inspector-table-description> <inspector-table-relationship class="{isHide(\'relationship\')}" data="{data()}"></inspector-table-relationship> </div>', 'inspector-table { height:100%; display:flex; flex-direction: column; } inspector-table .hide { display: none; } inspector-table .section { padding: 11px; padding-top: 0px; } inspector-table section-contents .section { padding-bottom: 0px; padding-top: 0px; } inspector-table .contents, inspector-table .container { width: auto; }', '', function(opts) {
      this.data = () => {
          return this.opts.data;
      };
@@ -362,7 +361,7 @@ riot.tag2('inspector-table', '<div> <h1 class="title is-4" style="margin-bottom:
      };
 });
 
-riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{data()}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" source="{data()}" callback="{opts.callback}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; max-width: 555px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; } inspector .section > .container > .contents { padding-left:22px;}', '', function(opts) {
+riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideContents(\'table\')}" data="{data()}" callback="{opts.callback}"></inspector-table> <inspector-column class="{hideContents(\'column-instance\')}" source="{data()}" callback="{opts.callback}"></inspector-column> </div>', 'inspector > div { overflow-y: auto; min-width: 333px; max-width: 555px; height: 100vh; position: fixed; right: 0px; top: 0px; background: #fff; box-shadow: 0px 0px 8px #888; padding: 22px; } inspector > div.hide { display: none; } inspector .section > .container > .contents { padding-left:22px;}', '', function(opts) {
      this.state = () => { return STORE.state().get('inspector'); } ;
      this.data = () => {
          return this.state().data;
@@ -384,7 +383,55 @@ riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideCont
      })
 });
 
+riot.tag2('markdown-preview', '', 'markdown-preview h1 { font-weight: bold; font-size: 20px; margin-top: 11px; margin-bottom: 6px; } markdown-preview h2 { font-weight: bold; font-size: 18px; margin-top: 8px; margin-bottom: 4px; } markdown-preview h3 { font-weight: bold; font-size: 16px; margin-top: 6px; margin-bottom: 3px; } markdown-preview h4 { font-weight: bold; font-size: 14px; margin-top: 6px; margin-bottom: 3px; } markdown-preview h5 { font-weight: bold; font-size: 12px; margin-bottom: 4px; } markdown-preview * { font-size: 12px; } markdown-preview table { border-collapse: collapse; } markdown-preview td { border: solid 0.6px #888888; padding: 2px 5px; } markdown-preview th { border: solid 0.6px #888888; padding: 2px 5px; background: #eeeeee; }', '', function(opts) {
+     this.on('update', () => {
+         this.root.innerHTML = this.opts.data;
+     });
+
+    this.root.innerHTML = opts.data
+
+});
+
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
+});
+
+riot.tag2('page03-modal-description', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content" style="width: 88vw;"> <div class="card"> <div class="card-content" style="height: 88vh;"> <div style="display:flex; height: 100%; width: 100%;flex-direction: column;"> <div style="margin-bottom:11px;"> <h1 class="title is-4">{title()} の Description の変更</h1> </div> <div style="display:flex; flex-grow: 1"> <div style="flex-grow: 1;margin-right: 8px;"> <div class="element-container"> <h1 class="title is-5">Markdown</h1> <textarea class="input" ref="description" onkeyup="{inputDescription}">{description()}</textarea> </div> </div> <div style=";flex-grow: 1;margin-left: 8px;"> <div class="element-container"> <h1 class="title is-5">Preview</h1> <div class="preview" style="padding: 0px 11px 11px 11px;"> <markdown-preview data="{marked(markdown)}"></markdown-preview> </div> </div> </div> </div> <div style="margin-top:11px;"> <button class="button is-warning" onclick="{clickCancel}">Cancel</button> <button class="button is-danger" style="float:right;" onclick="{clickSave}">Save</button> </div> </div> </div> </div> </div> </div>', 'page03-modal-description .element-container { display:flex; height: 100%; width: 100%; flex-direction: column; } page03-modal-description .element-container .title{ margin-bottom:6px; } page03-modal-description .input { border: 1px solid #eeeeee; padding: 11px; box-shadow: none; height: 100%; width: 100%; } page03-modal-description .preview { border: 1px solid #eeeeee; flex-grow:1; }', '', function(opts) {
+     this.markdown = null;
+
+     this.clickCancel = () => {
+         this.opts.callback('close-modal-table-description');
+     };
+     this.clickSave = () => {
+         this.opts.callback('save-table-description', {
+             table: this.opts.data,
+             value: this.refs['description'].value,
+         });
+     };
+     this.inputDescription = () => {
+         this.markdown = this.refs['description'].value;
+
+         this.tags['markdown-preview'].update();
+     };
+
+     this.description = () => {
+         if (!this.markdown) {
+             let obj = this.opts.data;
+
+             this.markdown = !obj ? '' : obj.description;
+         }
+
+         return this.markdown;
+     };
+     this.title = () => {
+         if (!this.opts.data)
+             return '';
+
+         let obj = this.opts.data;
+         return obj._class + ':' + obj.name;
+     };
+     this.isActive = () => {
+         return this.opts.data ? 'is-active' : '';
+     };
 });
 
 riot.tag2('page03-modal-logical-name', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content"> <nav class="panel"> <p class="panel-heading"> 論理名の変更 </p> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">テーブル: </span> <span>{tableName()}</span> </div> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">物理名:</span> <span>{physicalName()}</span> </div> <div class="panel-block" style="background: #fff;"> <input class="input" type="text" riot-value="{opts.data.logical_name}" placeholder="論理名" ref="logical_name"> </div> <div class="panel-block" style="background: #fff;"> <button class="button is-danger is-fullwidth" onclick="{clickSaveButton}"> Save </button> </div> </nav> </div> <button class="modal-close is-large" aria-label="close" onclick="{clickCloseButton}"></button> </div>', '', '', function(opts) {
@@ -416,9 +463,10 @@ riot.tag2('page03-modal-logical-name', '<div class="modal {isActive()}"> <div cl
      };
 });
 
-riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <page03-modal-logical-name data="{modalData()}" callback="{modalCallback}"></page03-modal-logical-name>', '', '', function(opts) {
+riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <page03-modal-logical-name data="{modalData()}" callback="{modalCallback}"></page03-modal-logical-name> <page03-modal-description data="{modal_target_table}" callback="{modalCallback}"></page03-modal-description>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
+     this.modal_target_table = null;
 
      this.modalData = () => {
          let pages = STORE.state().get('site').pages;
@@ -453,6 +501,13 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
 
          if (type=='click-save-column-description')
              return ACTIONS.saveColumnInstanceDescription(data, page_code)
+
+         if (type=='edit-table-description') {
+             this.modal_target_table = data;
+
+             this.update();
+             return;
+         }
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {
@@ -463,6 +518,19 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
          if (type=='click-save-button') {
              data.schema_code = STORE.state().get('schemas').active;
              return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
+         }
+
+         if (type=='close-modal-table-description') {
+             this.modal_target_table = null;
+
+             this.update();
+             return;
+         }
+         if (type=='save-table-description') {
+             let schema_code = STORE.state().get('schemas').active;
+
+             ACTIONS.saveTableDescription(schema_code, data.table, data.value, 'page03');
+             return;
          }
      };
      this.getD3Svg = () => {
@@ -500,6 +568,11 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03') {
              this.update();
              this.ter.reDrawTable (action.redraw);
+         }
+
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='page03') {
+             this.modal_target_table = null;
+             this.update();
          }
      });
 });

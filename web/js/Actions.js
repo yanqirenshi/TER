@@ -327,10 +327,10 @@ class Actions extends Vanilla_Redux_Actions {
             redraw: column_instance ? column_instance._table : null
         };
     }
-    saveColumnInstanceDescription (data, from) {
+    saveColumnInstanceDescription (schema_code, column_instance, value, from) {
         let fmt = '/er/%s/columns/instance/%s/description';
-        let path = fmt.format(data.schema_code, data.source._id);
-        let data = { contents: data.description.trim() };
+        let path = fmt.format(schema_code, column_instance._id);
+        let data = { contents: value.trim() };
 
         API.post(path, data, (resource)=>{
             STORE.dispatch(this.savedColumnInstanceDescription(resource));

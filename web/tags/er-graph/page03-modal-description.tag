@@ -55,13 +55,24 @@
 
     <script>
      this.clickCancel = () => {
-         this.opts.callback('close-modal-table-description');
+         this.opts.callback('close-modal-description');
      };
      this.clickSave = () => {
-         this.opts.callback('save-table-description', {
-             table: this.opts.data,
-             value: this.refs['description'].value,
-         });
+         let source = this.opts.data;
+
+         if (source._class=='COLUMN-INSTANCE') {
+             this.opts.callback('save-column-instance-description', {
+                 column_instance: this.opts.data,
+                 value: this.refs['description'].value,
+             });
+         }
+
+         if (source._class=='TABLE') {
+             this.opts.callback('save-table-description', {
+                 table: this.opts.data,
+                 value: this.refs['description'].value,
+             });
+         }
      };
      this.inputDescription = () => {
          this.markdown = this.refs['description'].value;

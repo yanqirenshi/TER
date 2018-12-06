@@ -1,9 +1,9 @@
 <inspector-table-description>
-    <div class="contents">
+    <div>
         <markdown-preview  data={marked(description())}></markdown-preview>
     </div>
 
-    <div style="margin-top:11px;">
+    <div style="margin-top:22px;">
         <button class="button is-danger" onclick={clickSave}>Edit</button>
     </div>
 

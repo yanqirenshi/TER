@@ -270,18 +270,17 @@ riot.tag2('inspector-column-basic', '<section class="section"> <div class="conta
      };
 });
 
-riot.tag2('inspector-column-description', '<section class="section"> <div class="container"> <h1 class="title is-5">Description</h1> <h2 class="subtitle"></h2> <div class="contents" style="padding-left:22px; padding-top: 8px;"> <textarea class="textarea" placeholder="Description" style="height:333px;" ref="description">{description()}</textarea> </div> </div> </section> <section class="section" style="margin-top: 11px;"> <div class="container"> <div class="contents" style="padding-left:22px;"> <button class="button is-danger" onclick="{clickSaveDescription}">Save</button> </div> </div> </section>', '', '', function(opts) {
+riot.tag2('inspector-column-description', '<div> <markdown-preview data="{marked(description())}"></markdown-preview> </div> <div style="margin-top:22px;"> <button class="button is-danger" onclick="{clickSaveDescription}">Edit</button> </div>', '', '', function(opts) {
      this.description = () => {
          if (!this.opts.source) return '';
 
          return this.opts.source.description;
      };
+
      this.clickSaveDescription = () => {
-         opts.callback('click-save-column-description', {
-             schema_code: STORE.get('schemas.active'),
-             source: this.opts.source,
-             description: this.refs.description.value
-         });
+         let column_instance = this.opts.source;
+
+         this.opts.callback('edit-column-instance-description', column_instance);
      };
 });
 
@@ -310,7 +309,7 @@ riot.tag2('inspector-column', '<section class="section"> <div class="container">
 riot.tag2('inspector-table-basic', '<section-container no="5" title="Name" name="{opts.name}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{opts.columns}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container>', '', '', function(opts) {
 });
 
-riot.tag2('inspector-table-description', '<div class="contents"> <markdown-preview data="{marked(description())}"></markdown-preview> </div> <div style="margin-top:11px;"> <button class="button is-danger" onclick="{clickSave}">Edit</button> </div>', '', '', function(opts) {
+riot.tag2('inspector-table-description', '<div> <markdown-preview data="{marked(description())}"></markdown-preview> </div> <div style="margin-top:22px;"> <button class="button is-danger" onclick="{clickSave}">Edit</button> </div>', '', '', function(opts) {
      this.description = () => {
          if (!opts.data) return '';
 
@@ -399,13 +398,24 @@ riot.tag2('page03-modal-description', '<div class="modal {isActive()}"> <div cla
      this.markdown = null;
 
      this.clickCancel = () => {
-         this.opts.callback('close-modal-table-description');
+         this.opts.callback('close-modal-description');
      };
      this.clickSave = () => {
-         this.opts.callback('save-table-description', {
-             table: this.opts.data,
-             value: this.refs['description'].value,
-         });
+         let source = this.opts.data;
+
+         if (source._class=='COLUMN-INSTANCE') {
+             this.opts.callback('save-column-instance-description', {
+                 column_instance: this.opts.data,
+                 value: this.refs['description'].value,
+             });
+         }
+
+         if (source._class=='TABLE') {
+             this.opts.callback('save-table-description', {
+                 table: this.opts.data,
+                 value: this.refs['description'].value,
+             });
+         }
      };
      this.inputDescription = () => {
          this.markdown = this.refs['description'].value;
@@ -508,6 +518,13 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              this.update();
              return;
          }
+
+         if (type=='edit-column-instance-description') {
+             this.modal_target_table = data;
+
+             this.update();
+             return;
+         }
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {
@@ -520,16 +537,30 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
          }
 
-         if (type=='close-modal-table-description') {
+         if (type=='close-modal-description') {
              this.modal_target_table = null;
 
              this.update();
              return;
          }
+
+         if (type=='save-column-instance-description') {
+             let schema_code = STORE.state().get('schemas').active;
+
+             ACTIONS.saveColumnInstanceDescription(schema_code,
+                                                   data.column_instance,
+                                                   data.value,
+                                                   'page03');
+             return;
+         }
+
          if (type=='save-table-description') {
              let schema_code = STORE.state().get('schemas').active;
 
-             ACTIONS.saveTableDescription(schema_code, data.table, data.value, 'page03');
+             ACTIONS.saveTableDescription(schema_code,
+                                          data.table,
+                                          data.value,
+                                          'page03');
              return;
          }
      };
@@ -571,6 +602,11 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
          }
 
          if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='page03') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='page03') {
              this.modal_target_table = null;
              this.update();
          }

@@ -57,6 +57,13 @@
              this.update();
              return;
          }
+
+         if (type=='edit-column-instance-description') {
+             this.modal_target_table = data;
+
+             this.update();
+             return;
+         }
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {
@@ -69,16 +76,30 @@
              return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
          }
 
-         if (type=='close-modal-table-description') {
+         if (type=='close-modal-description') {
              this.modal_target_table = null;
 
              this.update();
              return;
          }
+
+         if (type=='save-column-instance-description') {
+             let schema_code = STORE.state().get('schemas').active;
+
+             ACTIONS.saveColumnInstanceDescription(schema_code,
+                                                   data.column_instance,
+                                                   data.value,
+                                                   'page03');
+             return;
+         }
+
          if (type=='save-table-description') {
              let schema_code = STORE.state().get('schemas').active;
 
-             ACTIONS.saveTableDescription(schema_code, data.table, data.value, 'page03');
+             ACTIONS.saveTableDescription(schema_code,
+                                          data.table,
+                                          data.value,
+                                          'page03');
              return;
          }
      };
@@ -120,6 +141,11 @@
          }
 
          if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='page03') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='page03') {
              this.modal_target_table = null;
              this.update();
          }

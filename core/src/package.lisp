@@ -24,5 +24,8 @@
            #:find-identifier
            #:find-identifier-instance
            #:find-ter-all-edges)
+  ;; modeler
+  (:export #:tx-make-modeler-with-ghost
+           #:get-modeler)
   (:export #:find-mapping-all-edges))
 (in-package :ter)

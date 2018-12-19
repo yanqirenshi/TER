@@ -14,6 +14,21 @@
 (defvar *api-v1* (make-instance '<router>))
 (clear-routing-rules *api-v1*)
 
+
+;;;;;
+;;;;; utilities
+;;;;;
+(defun assert-modeler (modeler)
+  (unless modeler
+    (throw-code 401)))
+
+(defmacro with-graph-modeler ((graph modeler) &body body)
+  `(let* ((,graph ter.db:*graph*)
+          (,modeler (ter.api.controller::session-modeler ,graph)))
+     (assert-modeler modeler)
+     ,@body))
+
+
 ;;;;;
 ;;;;; Routing rules
 ;;;;;
@@ -22,93 +37,96 @@
 ;;; Environment
 ;;;
 (defroute "/environment" ()
-  (render-json (ter.api.controller::environments)))
+  (with-graph-modeler (graph modeler)
+    (render-json (ter.api.controller::environments))))
 
 (defroute ("/environment/er/schema/active" :method :POST) (&key _parsed)
-  (let* ((graph ter.db:*graph*)
-         (schema-code (getf (jojo:parse (caar _parsed)) :|schema_code|))
-         (schema (ter::get-schema graph :code schema-code)))
-    (unless schema (throw-code 404))
-    (render-json (ter.api.controller::set-active-schema schema))))
+  (with-graph-modeler (graph modeler)
+    (let* ((schema-code (getf (jojo:parse (caar _parsed)) :|schema_code|))
+           (schema (ter::get-schema graph :code schema-code)))
+      (unless schema (throw-code 404))
+      (render-json (ter.api.controller::set-active-schema schema)))))
 
 (defun str2keyword (str)
   (when str
     (alexandria:make-keyword (string-upcase str))))
 
 (defroute ("/camera/:camera_code/look-at" :method :POST) (&key camera_code _parsed)
-  (let* ((look-at (jojo:parse (caar _parsed)))
-         (graph ter.db:*graph*)
-         (camera (ter::get-camera graph :code (str2keyword camera_code))))
-    (unless camera (throw-code 404))
-    (render-json (ter.api.controller::save-camera-look-at graph camera look-at))))
+  (with-graph-modeler (graph modeler)
+    (let* ((look-at (jojo:parse (caar _parsed)))
+           (camera (ter::get-camera graph :code (str2keyword camera_code))))
+      (unless camera (throw-code 404))
+      (render-json (ter.api.controller::save-camera-look-at graph camera look-at)))))
 
 (defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code _parsed)
-  (let* ((val (getf (jojo:parse (caar _parsed)) :|magnification|))
-         (graph ter.db:*graph*)
-         (camera (ter::get-camera graph :code (str2keyword camera_code))))
-    (unless camera (throw-code 404))
-    (render-json (ter.api.controller::save-camera-magnification graph camera val))))
+  (with-graph-modeler (graph modeler)
+    (let* ((val (getf (jojo:parse (caar _parsed)) :|magnification|))
+           (camera (ter::get-camera graph :code (str2keyword camera_code))))
+      (unless camera (throw-code 404))
+      (render-json (ter.api.controller::save-camera-magnification graph camera val)))))
 
 
 ;;;
 ;;; er
 ;;;
 (defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code _parsed)
-  (let ((position (jojo:parse (car (first _parsed))))
-        (code (alexandria:make-keyword code))
-        (schema (ter::get-schema ter.db:*graph* :code (str2keyword schema_code))))
-    (render-json (ter.api.controller::save-er-position schema code position))))
+  (with-graph-modeler (graph modeler)
+    (let ((position (jojo:parse (car (first _parsed))))
+          (code (alexandria:make-keyword code))
+          (schema (ter::get-schema graph :code (str2keyword schema_code))))
+      (render-json (ter.api.controller::save-er-position schema code position)))))
 
 (defroute ("/er/:schema_code/tables/:code/size" :method :POST) (&key schema_code code _parsed)
-  (let ((position (jojo:parse (car (first _parsed))))
-        (code (alexandria:make-keyword (string-upcase code)))
-        (schema (ter::get-schema ter.db:*graph* :code (str2keyword schema_code))))
-    (render-json (ter.api.controller::save-er-size schema code position))))
+  (with-graph-modeler (graph modeler)
+    (let ((position (jojo:parse (car (first _parsed))))
+          (code (alexandria:make-keyword (string-upcase code)))
+          (schema (ter::get-schema graph :code (str2keyword schema_code))))
+      (render-json (ter.api.controller::save-er-size schema code position)))))
 
 
 (defroute "/er/:schema_code" (&key schema_code)
-  (let* ((graph ter.db:*graph*)
-         (schema_code (alexandria:make-keyword (string-upcase schema_code)))
-         (schema (ter::get-schema graph :code schema_code)))
-    (render-json (nconc (ter.api.controller::find-er schema)
-                        (list :cameras (ter::find-schema-camera graph schema))))))
+  (with-graph-modeler (graph modeler)
+    (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
+           (schema (ter::get-schema graph :code schema_code)))
+      (render-json (nconc (ter.api.controller::find-er schema)
+                          (list :cameras (ter::find-schema-camera graph schema)))))))
 
 (defroute "/er/:schema_code/nodes" (&key schema_code)
-  (let* ((graph ter.db:*graph*)
-         (schema_code (alexandria:make-keyword (string-upcase schema_code)))
-         (schema (ter::get-schema graph :code schema_code)))
-    (render-json (nconc (ter.api.controller::find-er-vertexes schema)
-                        (list :cameras (ter::find-schema-camera graph schema))))))
+  (with-graph-modeler (graph modeler)
+    (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
+           (schema (ter::get-schema graph :code schema_code)))
+      (render-json (nconc (ter.api.controller::find-er-vertexes schema)
+                          (list :cameras (ter::find-schema-camera graph schema)))))))
 
 (defroute "/er/:schema_code/edges" (&key schema_code)
-  (let* ((graph ter.db:*graph*)
-         (schema_code (alexandria:make-keyword (string-upcase schema_code)))
-         (schema (ter::get-schema graph :code schema_code)))
-    (render-json (ter.api.controller::find-er-edges schema))))
+  (with-graph-modeler (graph modeler)
+    (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
+           (schema (ter::get-schema graph :code schema_code)))
+      (render-json (ter.api.controller::find-er-edges schema)))))
 
 
 (defroute ("/er/:schema-code/tables/:table-code/columns/:column-code/logical-name" :method :POST)
     (&key schema-code table-code column-code _parsed)
-  (let* ((graph ter.db:*graph*)
-         (logical-name (jojo:parse (caar _parsed)))
-         (schema (ter::get-schema graph :code (str2keyword schema-code))))
-    (unless schema (throw-code 404))
-    (render-json (ter.api.controller::save-column-instance-logical-name schema
-                                                                        (str2keyword table-code)
-                                                                        (str2keyword column-code)
-                                                                        logical-name))))
+  (with-graph-modeler (graph modeler)
+    (let* ((logical-name (jojo:parse (caar _parsed)))
+           (schema (ter::get-schema graph :code (str2keyword schema-code))))
+      (unless schema (throw-code 404))
+      (render-json (ter.api.controller::save-column-instance-logical-name schema
+                                                                          (str2keyword table-code)
+                                                                          (str2keyword column-code)
+                                                                          logical-name)))))
 
 ;;;;;
 ;;;;; table description
 ;;;;;
 (defroute ("/er/:schema-code/tables/:table-code/description" :method :POST)
     (&key schema-code table-code _parsed)
-  (let* ((graph ter.db:*graph*)
-         (schema (ter::get-schema graph :code (str2keyword schema-code)))
-         (table-code (str2keyword table-code))
-         (description (getf (jojo:parse (caar _parsed)) :|contents|)))
-    (unless schema (throw-code 404))
-    (render-json (ter.api.controller::save-table-description schema table-code description))))
+  (with-graph-modeler (graph modeler)
+    (let* ((schema (ter::get-schema graph :code (str2keyword schema-code)))
+           (table-code (str2keyword table-code))
+           (description (getf (jojo:parse (caar _parsed)) :|contents|)))
+      (unless schema (throw-code 404))
+      (render-json (ter.api.controller::save-table-description schema table-code description)))))
 
 
 ;;;;;
@@ -116,18 +134,19 @@
 ;;;;;
 (defroute ("/er/:schema-code/columns/instance/:id/description" :method :POST)
     (&key schema-code id _parsed)
-  (let* ((graph ter.db:*graph*)
-         (schema (ter::get-schema graph :code (str2keyword schema-code)))
-         (%id (parse-integer id))
-         (description (getf (jojo:parse (caar _parsed)) :|contents|)))
-    (unless schema (throw-code 404))
-    (render-json (ter.api.controller::save-column-instance-description schema %id description))))
+  (with-graph-modeler (graph modeler)
+    (let* ((schema (ter::get-schema graph :code (str2keyword schema-code)))
+           (%id (parse-integer id))
+           (description (getf (jojo:parse (caar _parsed)) :|contents|)))
+      (unless schema (throw-code 404))
+      (render-json (ter.api.controller::save-column-instance-description schema %id description)))))
 
 ;;;
 ;;; ter
 ;;;
 (defroute "/ter" ()
-  (render-json (ter.api.controller:find-ter)))
+  (with-graph-modeler (graph modeler)
+    (render-json (ter.api.controller:find-ter))))
 
 (defroute "/ter/resources"                   () (render-json (list :test "/resources")))
 (defroute "/ter/resources/:code"             () (render-json (list :test "/resources/:code")))
@@ -150,17 +169,19 @@
 ;;; Graph
 ;;;
 (defroute "/graph" ()
-  (render-json (ter.api.controller:find-graph ter.db:*graph*)))
+  (with-graph-modeler (graph modeler)
+    (render-json (ter.api.controller:find-graph graph))))
 
 
 ;;;
 ;;; rpc
 ;;;
 (defroute "/rpc/snapshot/all" ()
-  (let ((start (local-time:now)))
-    (ter.api.controller::snapshot-all)
-    (render-json (list :start (local-time:format-timestring nil start)
-                       :end   (local-time:format-timestring nil (local-time:now))))))
+  (with-graph-modeler (graph modeler)
+    (let ((start (local-time:now)))
+      (ter.api.controller::snapshot-all)
+      (render-json (list :start (local-time:format-timestring nil start)
+                         :end   (local-time:format-timestring nil (local-time:now)))))))
 
 
 ;;;;;

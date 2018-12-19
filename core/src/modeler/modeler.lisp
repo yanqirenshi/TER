@@ -19,7 +19,8 @@
 
   (:method (graph (ghost-shadow ghost-shadow) &key name)
     (let ((new-modeler (tx-make-modeler graph :name name)))
-      (tx-make-edge-ghost-shadow2modeler graph ghost-shadow new-modeler))))
+      (tx-make-edge-ghost-shadow2modeler graph ghost-shadow new-modeler)
+      new-modeler)))
 
 
 (defun find-modeler (graph &key ghost-shadow)

@@ -1,6 +1,6 @@
 (in-package :ter)
 
-(defclass event (shinra:shin rsc point rect) ())
+(defclass event (entity) ())
 
 (defmethod jojo:%to-json ((obj event))
   (jojo:with-object

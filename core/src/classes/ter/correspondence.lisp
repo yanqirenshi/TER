@@ -1,6 +1,6 @@
 (in-package :ter)
 
-(defclass correspondence (shinra:shin rsc point rect) ()
+(defclass correspondence (entity) ()
   (:documentation "対応表"))
 
 (defmethod jojo:%to-json ((obj correspondence))

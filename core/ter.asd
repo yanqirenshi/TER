@@ -37,6 +37,7 @@ This file is a part of ter project.
                                (:module "ter" :components ((:file "campus")
                                                            (:file "identifier")
                                                            (:file "attribute")
+                                                           (:fild "entity")
                                                            (:file "resource")
                                                            (:file "event")
                                                            (:file "comparative")

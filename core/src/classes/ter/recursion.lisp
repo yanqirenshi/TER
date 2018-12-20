@@ -1,6 +1,6 @@
 (in-package :ter)
 
-(defclass recursion (shinra:shin rsc point rect) ())
+(defclass recursion (entity) ())
 
 (defmethod jojo:%to-json ((obj recursion))
   (jojo:with-object

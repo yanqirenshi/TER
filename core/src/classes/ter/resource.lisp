@@ -1,6 +1,6 @@
 (in-package :ter)
 
-(defclass resource (shinra:shin rsc point rect) ())
+(defclass resource (entity) ())
 
 (defmethod jojo:%to-json ((obj resource))
   (jojo:with-object

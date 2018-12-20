@@ -1,6 +1,6 @@
 (in-package :ter)
 
-(defclass comparative (shinra:shin rsc point rect) ()
+(defclass comparative (entity) ()
   (:documentation "対照表"))
 
 (defmethod jojo:%to-json ((obj comparative))

@@ -17,7 +17,7 @@ class Entity {
             _id : null,
             _class: null,
             description: { contents: '' },
-            location: { x:0, y:0, z:0 },
+            position: { x:0, y:0, z:0 },
             size: { w:0, h:0 },
             padding: 11,
             margin: 6,
@@ -26,28 +26,28 @@ class Entity {
             },
 
             name: {
-                location: { x:0, y:0, z:0 },
+                position: { x:0, y:0, z:0 },
                 size: { h: null, w: null },
                 padding: 11,
                 contents: ''
             },
 
             type: {
-                location: { x:0, y:0, z:0 },
+                position: { x:0, y:0, z:0 },
                 size: { h: null, w: 42 },
                 padding: 11,
                 size: { w:0, h:0 },
             },
 
             identifiers: {
-                location: { x:0, y:0, z:0 },
+                position: { x:0, y:0, z:0 },
                 padding: 11,
                 size: { w: null, h: null },
                 items: { list: [], ht: {} },
             },
 
             attributes: {
-                location: { x:0, y:0, z:0 },
+                position: { x:0, y:0, z:0 },
                 padding: 11,
                 size: { w: null, h: null },
                 items: { list: [], ht: {} },
@@ -78,7 +78,7 @@ class Entity {
         let obj = Object.assign({}, core);
 
         obj._core = core;
-        obj.location = { x:0, y:0 };
+        obj.position = { x:0, y:0 };
         return obj;
     }
     addAttributes2Entity (entity, state) {
@@ -120,11 +120,11 @@ class Entity {
         for (let colkey of toplevs)
             new_entity[colkey] = entity[colkey];
 
-        new_entity.name.contents = entity.naem;
+        new_entity.name.contents        = entity.naem;
         new_entity.description.contents = entity.description;
-        new_entity.location = { x:entity.x, y:entity.y, z:entity.z };
-        new_entity.size = { w:entity.w, h:entity.h };
-        new_entity.type.contents = this.entityTypeContents(entity);
+        new_entity.position             = Object.assign({}, entity.position);
+        new_entity.size                 = Object.assign({}, entity.size);
+        new_entity.type.contents        = this.entityTypeContents(entity);
 
         this.addIdentifiers2Entity(new_entity, state);
         this.addAttributes2Entity(new_entity, state);
@@ -230,33 +230,33 @@ class Entity {
      * **************************************************************** */
     positioningName (entity) {
         let d = entity.name;
-        d.location.x = entity.padding;
-        d.location.y = entity.padding;
+        d.position.x = entity.padding;
+        d.position.y = entity.padding;
     }
     positioningType (entity) {
         let d = entity.type;
         let margin = 11;
-        d.location.x = entity.padding + entity.name.size.w + margin;
-        d.location.y = entity.padding;
+        d.position.x = entity.padding + entity.name.size.w + margin;
+        d.position.y = entity.padding;
     }
     positioningColumnItems (d) {
         let len = d.items.list.length;
         let padding = (4 * 2);
-        let start = (d.location.y + d.padding + 6);
+        let start = (d.position.y + d.padding + 6);
         let item_h = (this._default.line.height + padding);
 
         for (let i=0 ; i<len ; i++) {
             let item = d.items.list[i];
-            item.location.x = d.location.x + d.padding;
-            item.location.y = start + i * item_h;
+            item.position.x = d.position.x + d.padding;
+            item.position.y = start + i * item_h;
         }
     }
     positioningIdentifiers (entity) {
         let d = entity.identifiers;
         let margin = 11;
 
-        d.location.x = entity.padding;
-        d.location.y = entity.padding + entity.name.size.h + margin;
+        d.position.x = entity.padding;
+        d.position.y = entity.padding + entity.name.size.h + margin;
 
         this.positioningColumnItems (d);
     }
@@ -265,8 +265,8 @@ class Entity {
         let margin1 = (4 * 2);
         let margin2 = 11;
 
-        d.location.x = entity.padding + margin1 + entity.identifiers.size.w;
-        d.location.y = entity.padding + entity.name.size.h + margin2;
+        d.position.x = entity.padding + margin1 + entity.identifiers.size.w;
+        d.position.y = entity.padding + entity.name.size.h + margin2;
 
         this.positioningColumnItems (d);
     }
@@ -392,7 +392,7 @@ class Entity {
         if (!point)
             point = {x:0, y:0};
 
-        port.location = point;
+        port.position = point;
 
         return port;
     }
@@ -425,7 +425,7 @@ class Entity {
             .append('g')
             .attr('class', 'entity')
             .attr("transform", (d) => {
-                return "translate(" + d.location.x + "," + d.location.y + ")";
+                return "translate(" + d.position.x + "," + d.position.y + ")";
             });
     }
     drawBody (groups) {
@@ -443,10 +443,10 @@ class Entity {
             .append('rect')
             .attr('class', 'entity-title')
             .attr('x', (d) => {
-                return d.name.location.x;
+                return d.name.position.x;
             })
             .attr('y', (d) => {
-                return d.name.location.y;
+                return d.name.position.y;
             })
             .attr('width', (d) => {
                 return d.name.size.w;
@@ -473,10 +473,10 @@ class Entity {
             .append('rect')
             .attr('class', 'entity-type')
             .attr('x', (d) => {
-                return d.type.location.x;
+                return d.type.position.x;
             })
             .attr('y', (d) => {
-                return d.type.location.y;
+                return d.type.position.y;
             })
             .attr('width', (d) => {
                 return d.type.size.w;
@@ -495,7 +495,7 @@ class Entity {
                     d.type.padding;
             })
             .attr("y", (d) => {
-                return d.type.location.y + d.type.padding + this._default.line.font.size;
+                return d.type.position.y + d.type.padding + this._default.line.font.size;
             })
             .text((d) => {
                 return d.type.contents;
@@ -506,10 +506,10 @@ class Entity {
             .append('rect')
             .attr('class', 'entity-identifiers')
             .attr('x', (d) => {
-                return d.identifiers.location.x;
+                return d.identifiers.position.x;
             })
             .attr('y', (d) => {
-                return d.identifiers.location.y;
+                return d.identifiers.position.y;
             })
             .attr('width', (d) => {
                 return d.identifiers.size.w;
@@ -528,10 +528,10 @@ class Entity {
             .append('text')
             .attr('class', 'identifier')
             .attr("x", (d) => {
-                return d.location.x;
+                return d.position.x;
             })
             .attr("y", (d) => {
-                return d.location.y;
+                return d.position.y;
             })
             .text((d) => {
                 return d.name;
@@ -542,10 +542,10 @@ class Entity {
             .append('rect')
             .attr('class', 'entity-attributes')
             .attr('x', (d) => {
-                return d.attributes.location.x;
+                return d.attributes.position.x;
             })
             .attr('y', (d) => {
-                return d.attributes.location.y;
+                return d.attributes.position.y;
             })
             .attr('width', (d) => {
                 return d.attributes.size.w;
@@ -564,10 +564,10 @@ class Entity {
             .append('text')
             .attr('class', 'attribute')
             .attr("x", (d) => {
-                return d.location.x;
+                return d.position.x;
             })
             .attr("y", (d) => {
-                return d.location.y;
+                return d.position.y;
             })
             .text((d) => {
                 return d.name;
@@ -582,10 +582,10 @@ class Entity {
             .append('circle')
             .attr('class', 'entity-port')
             .attr('cx', (d) => {
-                return d.location.x;
+                return d.position.x;
             })
             .attr('cy', (d) => {
-                return d.location.y;
+                return d.position.y;
             })
             .attr('r', 4)
             .attr('fill', '#fff')

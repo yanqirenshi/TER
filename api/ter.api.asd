@@ -15,7 +15,8 @@
                                                     (:file "er")
                                                     (:file "ter")
                                                     (:file "graph")
-                                                    (:file "common")))
+                                                    (:file "common")
+                                                    (:file "session")))
                  (:file "render")
                  (:file "router"))))
   :description ""

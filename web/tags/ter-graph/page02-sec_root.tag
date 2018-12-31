@@ -17,12 +17,12 @@
      };
 
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-TER' && action.mode=='FIRST') {
-             this.d3svg = this.ter.makeD3svg('page02-sec_root > svg');
-             new Grid().draw(this.d3svg);
+         /* if(action.type=='???' && action.mode=='FIRST') {
+          *     this.d3svg = this.ter.makeD3svg('page02-sec_root > svg');
+          *     new Grid().draw(this.d3svg);
 
-             this.entity.draw(this.d3svg, STORE.state().get('ter'))
-         }
+          *     this.entity.draw(this.d3svg, STORE.state().get('ter'))
+          * } */
      });
     </script>
 </page02-sec_root>

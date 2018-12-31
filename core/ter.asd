@@ -26,7 +26,7 @@ This file is a part of ter project.
                  (:file "package")
                  (:module "classes"
                   :components ((:file "common")
-                               (:flie "edge")
+                               (:file "edge")
                                (:module "base" :components ((:file "drawing")
                                                             (:file "schema")
                                                             (:file "camera")))
@@ -37,7 +37,7 @@ This file is a part of ter project.
                                (:module "ter" :components ((:file "campus")
                                                            (:file "identifier")
                                                            (:file "attribute")
-                                                           (:fild "entity")
+                                                           (:file "entity")
                                                            (:file "resource")
                                                            (:file "event")
                                                            (:file "comparative")
@@ -49,7 +49,6 @@ This file is a part of ter project.
                                (:file "modeler")))
                  (:file "config")
                  (:file "point")
-
                  (:module "modeler"
                   :components ((:file "ghost-shadow")
                                (:file "ghost-shadow-to-modeler")
@@ -58,6 +57,7 @@ This file is a part of ter project.
                  (:module "base" :components ((:file "schema")
                                               (:file "drawing")
                                               (:file "camera")
+                                              (:file "campus")
                                               (:file "common")))
                  ;; er
                  (:module "er" :components ((:file "column")

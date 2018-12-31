@@ -349,26 +349,6 @@ class Actions extends Vanilla_Redux_Actions {
             data: { er: state }
         };
     }
-    /* **************************************************************** *
-     *  Fetch TER
-     * **************************************************************** */
-    fetchTer (mode) {
-        API.get('/ter', function (response) {
-            STORE.dispatch(this.fetchedTer(mode, response));
-        }.bind(this));
-    }
-    fetchedTer (mode, response) {
-        return {
-            type: 'FETCHED-TER',
-            mode: mode,
-            data: {
-                ter: {
-                    nodes: this.makeGraphData(response.NODES),
-                    edges: this.makeGraphData(response.EDGES)
-                }
-            }
-        };
-    }
     savePosition (schema, table) {
         let scheme_code = schema.code.toLowerCase();
 
@@ -410,6 +390,94 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'CHANGE-SCHEMA',
             data: {
                 schemas: schemas
+            }
+        };
+    }
+    /* **************************************************************** *
+     *  Fetch TER
+     * **************************************************************** */
+    fetchTerEntities (mode) {
+        let graph = 'RBP';
+        let path = '/ter/%s/entities'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedTerEntities(mode, response));
+        }.bind(this));
+    }
+    fetchedTerEntities (mode, response) {
+        return {
+            type: 'FETCHED-TER-ENTITIES',
+            mode: mode,
+            data: {
+                ter: {}
+            }
+        };
+    }
+    fetchTerIdentifiers (mode) {
+        let graph = 'RBP';
+        let path = '/ter/%s/identifiers'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedTerIdentifiers(mode, response));
+        }.bind(this));
+    }
+    fetchedTerIdentifiers (mode, response) {
+        return {
+            type: 'FETCHED-TER-IDENTIFIERS',
+            mode: mode,
+            data: {
+                ter: {}
+            }
+        };
+    }
+    fetchTerAttributes (mode) {
+        let graph = 'RBP';
+        let path = '/ter/%s/attributes'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedTerAttributes(mode, response));
+        }.bind(this));
+    }
+    fetchedTerAttributes (mode, response) {
+        return {
+            type: 'FETCHED-TER-ATTRIBUTES',
+            mode: mode,
+            data: {
+                ter: {}
+            }
+        };
+    }
+    fetchTerPorts (mode) {
+        let graph = 'RBP';
+        let path = '/ter/%s/ports'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedTerPorts(mode, response));
+        }.bind(this));
+    }
+    fetchedTerPorts (mode, response) {
+        return {
+            type: 'FETCHED-TER-PORTS',
+            mode: mode,
+            data: {
+                ter: {}
+            }
+        };
+    }
+    fetchTerEdges (mode) {
+        let graph = 'RBP';
+        let path = '/ter/%s/edges'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedTerEdges(mode, response));
+        }.bind(this));
+    }
+    fetchedTerEdges (mode, response) {
+        return {
+            type: 'FETCHED-TER-EDGES',
+            mode: mode,
+            data: {
+                ter: {}
             }
         };
     }

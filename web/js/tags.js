@@ -61,19 +61,33 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
              ACTIONS.fetchGraph('FIRST');
          }
 
-         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST')
+         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST') {
              ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
+             ACTIONS.fetchTerEntities(action.mode);
+         }
 
          if (action.type=='FETCHED-ER-NODES')
              ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
 
          if (action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST')
-             ACTIONS.fetchTer(action.mode);
+             ;
 
          if (action.type=='CHANGE-SCHEMA') {
              ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
              return;
          }
+
+         if (action.type=='FETCHED-TER-ENTITIES')
+             ACTIONS.fetchTerIdentifiers(action.mode);
+
+         if (action.type=='FETCHED-TER-IDENTIFIERS')
+             ACTIONS.fetchTerAttributes(action.mode);
+
+         if (action.type=='FETCHED-TER-ATTRIBUTES')
+             ACTIONS.fetchTerPorts(action.mode);
+
+         if (action.type=='FETCHED-TER-PORTS')
+             ACTIONS.fetchTerEdges(action.mode);
 
          if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
              this.tags['menu-bar'].update();
@@ -653,12 +667,7 @@ riot.tag2('page02-sec_root', '<svg></svg>', '', '', function(opts) {
      };
 
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-TER' && action.mode=='FIRST') {
-             this.d3svg = this.ter.makeD3svg('page02-sec_root > svg');
-             new Grid().draw(this.d3svg);
 
-             this.entity.draw(this.d3svg, STORE.state().get('ter'))
-         }
      });
 });
 

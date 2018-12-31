@@ -271,56 +271,66 @@ class Entity {
         this.positioningColumnItems (d);
     }
     deg2rad (degree) {
-        if (degree>=90)
-            degree = degree % 90;
-
         return degree * ( Math.PI / 180 );
+    }
+    getPortLineLength (entity) {
+        let max_length = Math.floor(Math.sqrt((entity.size.w * entity.size.w) + (entity.size.h * entity.size.h)));
+
+        return 0.8 * max_length;
+    }
+    getPortLineFrom (entity) {
+        return {
+            x: Math.floor(entity.size.w / 2),
+            y: Math.floor(entity.size.h / 2)
+        };
     }
     makePortLine (entity, port) {
         let out = {
             from: {x:0, y:0},
-            to: {x:0, y:0},
+            to:   {x:0, y:0},
         };
 
-        // center を from とする。
-        out.from.x = Math.floor(entity.size.w / 2);
-        out.from.y = Math.floor(entity.size.h / 2);
+        let from = this.getPortLineFrom(entity);
+        out.from.x = from.x;
+        out.from.y = from.y;
 
-        // ピタゴラスの定理で最大の線の長さを取得する。
-        let max_length = Math.floor(Math.sqrt((entity.size.w * entity.size.w) + (entity.size.h * entity.size.h)));
-        let port_line_length = 2 * max_length;
+        let x = 0;
+        let y = this.getPortLineLength(entity);
 
-        let degree = port.position;
-
-        if (degree>=360)
-            degree = degree % 360;
+        // let degree = 360 - (port.position % 360);
+        let degree = port.position % 360;
 
         let radian = this.deg2rad(degree);
-        let ret_acos = Math.acos(radian==0 ? 1 : radian);
+        let cos = Math.cos(radian);
+        let sin = Math.sin(radian);
 
-        // https://math.nakaken88.com/textbook/basic-trigonometric-functions-0-180/
-        if (ret_acos==0)
-            out.to.x = 0;
-        else
-            out.to.x = Math.floor(ret_acos * port_line_length);
-
-        if (180 <= degree && degree < 360)
-            out.to.x *= -1;
-
-        let ret_asin = Math.asin(radian);
-        if (ret_asin==0)
-            out.to.y = port_line_length;
-        else
-            out.to.y = Math.floor(ret_asin * port_line_length);
-        if ( 90 <=  degree && degree < 270)
-            out.to.y *= -1;
+        out.to.x = Math.floor(x * cos - y * sin);
+        out.to.y = Math.floor(x * sin + y * cos);
 
         out.to.x += out.from.x;
         out.to.y += out.from.y;
 
+        port._from = out.from;
+        port._to   = out.to;
+
         return out;
     }
-    getCrossPointCore (line, line_port) {
+    isCorss(A, B, C, D) {
+        // 二つの線分の交差チェック
+        // https://www.hiramine.com/programming/graphics/2d_segmentintersection.html
+        let ACx = C.x - A.x;
+        let ACy = C.y - A.y;
+        let BUNBO = (B.x - A.x) * (D.y - C.y) - (B.y - A.y) * (D.x - C.x);
+
+        if (BUNBO==0)
+            return false;
+
+        let r = ((D.y - C.y) * ACx - (D.x - C.x) * ACy) / BUNBO;
+        let s = ((B.y - A.y) * ACx - (B.x - A.x) * ACy) / BUNBO;
+
+        return ((0 <= r && r <= 1) && (0 <= s && s <= 1));
+    }
+    getCrossPointCore (line, line_port, port) {
         // ２直線の交点を求める公式
         let out = { x:0, y:0 };
 
@@ -331,18 +341,10 @@ class Entity {
 
         let bunbo = (B.y - A.y) * (D.x - C.x) - (B.x - A.x) * (D.y - C.y);
 
-        if ( bunbo==0 )
+        if (!this.isCorss(A, B, C, D))
             return null;
 
-        // 交差しているかをチェックする。
-        // https://www.hiramine.com/programming/graphics/2d_segmentintersection.html
-        let AC = { x: C.x - A.x, y: C.y - A.y };
-        let r = ( (D.y - C.y) * AC.x - (D.x - C.x) * AC.y ) / bunbo;
-        let s = ( (B.y - A.y) * AC.x - (B.x - A.x) * AC.y ) / bunbo;
-        if (!((0<=r && r<=1) || (0<=s && s<=1)))
-            return null;
-
-        // こうてんを算出する。
+        // 二つの線分の交点を算出する。
         // http://mf-atelier.sakura.ne.jp/mf-atelier/modules/tips/program/algorithm/a1.html
         let d1, d2;
 
@@ -354,9 +356,10 @@ class Entity {
 
         return out;
     }
-    getCrossPoint (lines, line_port) {
+    getCrossPoint (lines, line_port, port) {
         for (let line of lines) {
-            let point = this.getCrossPointCore(line, line_port);
+            let point = this.getCrossPointCore(line, line_port, port);
+
             if (point)
                 return point;
         }
@@ -382,23 +385,21 @@ class Entity {
         ];
     }
     positioningPort (entity, port) {
-
         let line_port = this.makePortLine(entity, port);
         let lines_entity = this.getEntityLines(entity);
 
-        return this.getCrossPoint(lines_entity, line_port);
+        let point = this.getCrossPoint(lines_entity, line_port, port);
+        if (!point)
+            point = {x:0, y:0};
+
+        port.location = point;
+
+        return port;
     }
     positioningPorts (entity) {
         for (let entity of this._data)
-            for (let port of entity.ports.items.list) {
-                let point = this.positioningPort(entity, port);
-
-                if (!point) {
-                    point = {x:0, y:0};
-                    //throw Error('???!');
-                }
-                port.location = point;
-            }
+            for (let port of entity.ports.items.list)
+                this.positioningPort(entity, port);
     }
     positioning () {
         for (let entity of this._data) {
@@ -573,25 +574,24 @@ class Entity {
             });
     }
     drawPorts (groups) {
-        // TODO: いったんおてあげほりゅう
-        // groups.selectAll('circle.entity-port')
-        //     .data((d) => {
-        //         console.log(d.ports.items.list);
-        //         return d.ports.items.list;
-        //     })
-        //     .enter()
-        //     .append('circle')
-        //     .attr('class', 'entity-port')
-        //     .attr('cx', (d) => {
-        //         return d.location.x;
-        //     })
-        //     .attr('cy', (d) => {
-        //         return d.location.y;
-        //     })
-        //     .attr('r', 4)
-        //     .attr('fill', '#fff')
-        //     .attr('stroke', '#000')
-        //     .attr('stroke-width', 0.5);
+        groups.selectAll('circle.entity-port')
+            .data((d) => {
+                return d.ports.items.list;
+            })
+            .enter()
+            .append('circle')
+            .attr('class', 'entity-port')
+            .attr('cx', (d) => {
+                return d.location.x;
+            })
+            .attr('cy', (d) => {
+                return d.location.y;
+            })
+            .attr('r', 4)
+            .attr('fill', '#fff')
+            .attr('stroke', '#000')
+            .attr('stroke-width', 0.5)
+            .attr('degree', (d) => { return d.position; });
     }
     draw (place) {
         let groups = this.drawGroup(place);

@@ -36,7 +36,11 @@ class Store extends Vanilla_Redux_Store {
             {
                 code: "web", menu_label: 'Web',
                 active_section: 'root', home_section: 'root',
-                sections: [{ code: 'root', tag: 'web_page_root', title: 'Home', description: '' }],
+                sections: [
+                    { code: 'root', tag: 'web_page_root' },
+                    { code: 'er',   tag: 'web_page_er'   },
+                    { code: 'ter',  tag: 'web_page_ter'  },
+                ],
                 stye: {
                     color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
                 }

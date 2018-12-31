@@ -63,7 +63,7 @@ riot.tag2('app', '<menu-bar brand="{{label:\'RT\'}}" site="{site()}" moves="{[]}
          location.hash=STORE.get('site.active_page');
 });
 
-riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu hide" ref="move-panel"> <p each="{moves()}"> <a href="{href}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: #ffffff; position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: #e198b4; } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-weight: bold; padding-top: 7px; font-size: 14px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: #ffffff; color: #e198b4; } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: #ffffff; color: #e198b4; width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
+riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu hide" ref="move-panel"> <p each="{moves()}"> <a href="{href}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: #ffffff; position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: #e198b4; } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-weight: bold; padding-top: 7px; font-size: 14px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: #ffffff; color: #e198b4; } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: #ffffff; color: #e198b4; width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 45px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
      this.moves = () => {
          let moves = [
              { code: 'link-a', href: '', label: 'Link A' },
@@ -278,5 +278,47 @@ riot.tag2('web', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
+riot.tag2('web_page_er', '<section-header title="[TER:WEB] ER"></section-header> <section-footer></section-footer>', '', '', function(opts) {
+});
+
 riot.tag2('web_page_root', '<section-header title="TER: WEB"></section-header> <section-footer></section-footer>', '', '', function(opts) {
+});
+
+riot.tag2('web_page_ter', '<section-header title="T字形ER図"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <web_page_ter_tab_home class="hide"></web_page_ter_tab_home> <web_page_ter_tab_entity class="hide"></web_page_ter_tab_entity> <web_page_ter_tab_identifier class="hide"></web_page_ter_tab_identifier> <web_page_ter_tab_attribute class="hide"></web_page_ter_tab_attribute> <web_page_ter_tab_port class="hide"></web_page_ter_tab_port> <web_page_ter_tab_relationship class="hide"></web_page_ter_tab_relationship> </div> <section-footer></section-footer>', '', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         {code: 'home',         label: 'Home',         tag: 'web_page_ter_tab_home' },
+         {code: 'enity',        label: 'Enity',        tag: 'web_page_ter_tab_entity' },
+         {code: 'identifier',   label: 'Identifier',   tag: 'web_page_ter_tab_identifier' },
+         {code: 'attribute',    label: 'Attribute',    tag: 'web_page_ter_tab_attribute' },
+         {code: 'port',         label: 'Port',         tag: 'web_page_ter_tab_port' },
+         {code: 'Relationship', label: 'Relationship', tag: 'web_page_ter_tab_relationship' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+});
+
+riot.tag2('web_page_ter_tab_attribute', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('web_page_ter_tab_entity', '<section class="section"> <div class="container"> <h1 class="title">Data</h1> <h2 class="subtitle"></h2> <div class="contents"> <p>Data は連想配列です。</p> <p>Data のキーは以下の通りです。</p> <table class="table"> <thead><tr><th>Key</th><th>Description</th></tr></thead> <tbody> <tr> <td>_id</td> <td></td> </tr> <tr> <td>_class</td> <td></td> </tr> <tr> <td>code</td> <td></td> </tr> <tr> <td>name</td> <td></td> </tr> <tr> <td>position</td> <td></td> </tr> <tr> <td>size</td> <td></td> </tr> </tbody> </table> </div> <section class="section"> <div class="container"> <h1 class="title">_class</h1> <div class="container"> <p>String</p> <table class="table"> <tbody> <tr> <th>RESOURCE</th> <td>リソース</td> </tr> <tr> <th>EVENT</th> <td>イベント</td> </tr> <tr> <th>COMPARATIVE</th> <td>対照表</td> </tr> <tr> <th>CORRESPONDENCE</th> <td>対応表</td> </tr> <tr> <th>RECURSION</th> <td>再帰</td> </tr> </tbody> </table> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">code</h1> <div class="container"> <p>String</p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">name</h1> <div class="container"> <p>String</p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">position</h1> <div class="container"> <p>連想配列</p> <table class="table"> <thead><tr><th>Key</th><th>Description</th></tr></thead> <tbody> <tr> <th>x</th> <td></td> </tr> <tr> <th>y</th> <td></td> </tr> </tbody> </table> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">size</h1> <div class="container"> <p>連想配列</p> <table class="table"> <thead><tr><th>Key</th><th>Description</th></tr></thead> <tbody> <tr> <th>w</th> <td></td> </tr> <tr> <th>h</th> <td></td> </tr> </tbody> </table> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">_id</h1> </div> <div class="container"> <p>Integer</p> </div> </section> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('web_page_ter_tab_home', '<section class="section"> <div class="container"> <h1 class="title">Usage</h1> <h2 class="subtitle"></h2> <div class="contents"> <p> <pre><code>\nlet d3svg = makeD3Svg();\nlet svg = d3svg.Svg();\nlet forground = svg.selectAll(\'g.base.forground\');\n\nnew Entity()\n    .data(state)\n    .sizing()\n    .positioning()\n    .draw(forground);</code></pre> </p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">State</h1> <h2 class="subtitle"></h2> <div class="contents"> <p>Data は連想配列です。</p> <p>Data のキーは以下の通りです。</p> <table class="table"> <thead><tr><th>Key</th><th>Description</th></tr></thead> <tbody> <tr> <td>entities</td> <td></td> </tr> <tr> <td>identifier_instances</td> <td></td> </tr> <tr> <td>attribute_instances</td> <td></td> </tr> <tr> <td>ports</td> <td></td> </tr> <tr> <td>relationships</td> <td></td> </tr> </tbody> </table> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title">Class: Entity</h1> <section class="section"> <div class="container"> <h1 class="title">Methos</h1> <div class="contents"> <table class="table"> <thead><tr><th>Key</th><th>Description</th></tr></thead> <tbody> <tr> <td>data</td> <td></td> </tr> <tr> <td>sizing</td> <td></td> </tr> <tr> <td>positioning</td> <td></td> </tr> <tr> <td>draw</td> <td></td> </tr> </tbody> </table> </div> </div> </section> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('web_page_ter_tab_identifier', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('web_page_ter_tab_port', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('web_page_ter_tab_relationship', '', '', '', function(opts) {
 });

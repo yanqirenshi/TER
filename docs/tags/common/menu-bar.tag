@@ -78,7 +78,7 @@
          padding-right: 11px;
      }
      menu-bar .menu-list a.is-active {
-         width: 44px;
+         width: 45px;
          padding-right: 11px;
          border-radius: 3px 0px 0px 3px;
          background: #ffffff;

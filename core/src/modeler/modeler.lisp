@@ -14,8 +14,8 @@
     (let ((ghost-shadow (get-ghost-shadow graph :ghost-id ghost-id)))
       (when ghost-shadow (error "Aledy exist ghost-shadow. %id=~S" ghost-id))
       (tx-make-modeler-with-ghost graph
-                       (tx-make-ghost-shadow graph ghost-id)
-                       :name name)))
+                                  (tx-make-ghost-shadow graph ghost-id)
+                                  :name name)))
 
   (:method (graph (ghost-shadow ghost-shadow) &key name)
     (let ((new-modeler (tx-make-modeler graph :name name)))

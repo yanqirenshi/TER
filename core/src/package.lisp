@@ -9,12 +9,14 @@
                 #:tx-make-vertex
                 #:tx-make-edge)
   ;; er
-  (:export #:find-table
+  (:export #:get-schema
+           #:find-table
            #:find-column
            #:find-column-instance
            #:find-er-all-edges)
   ;; ter
-  (:export #:find-resource
+  (:export #:get-campus
+           #:find-resource
            #:find-event
            #:find-correspondence
            #:find-comparative

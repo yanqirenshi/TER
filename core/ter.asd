@@ -77,6 +77,7 @@ This file is a part of ter project.
                                              (:file "correspondence")
                                              (:file "recursion")
                                              (:file "port")
+                                             (:file "build-entity-contents")
                                              (:file "relationship-common")
                                              (:file "relationship-rsc2rsc")
                                              (:file "relationship-rsc2evt")

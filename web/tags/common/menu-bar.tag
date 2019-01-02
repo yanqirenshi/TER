@@ -73,13 +73,13 @@
      .menu-label.open {
          background: rgba(255,255,255,1);
          color: rgba(44, 169, 225, 0.8);
-         width: 44px;
+         width: 45px;
          border-radius: 3px 0px 0px 3px;
          text-shadow: 0px 0px 1px #eee;
          padding-right: 11px;
      }
      menu-bar .menu-list a.is-active {
-         width: 44px;
+         width: 45px;
          padding-right: 11px;
          border-radius: 3px 0px 0px 3px;
          background: #ffffff;

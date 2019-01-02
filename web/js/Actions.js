@@ -538,6 +538,17 @@ class Actions extends Vanilla_Redux_Actions {
 
         this.mergeStateData(edges_fixed, new_state.relationships);
 
+        for (let edge of response) {
+            let index_from = new_state.relationships.indexes.from;
+            let index_to   = new_state.relationships.indexes.to;
+
+            if (!index_from[edge.from_id]) index_from[edge.from_id] = {};
+            if (!index_to[edge.to_id])     index_to[edge.to_id]     = {};
+
+            index_from[edge.from_id][edge._id] = edge;
+            index_to[edge.to_id][edge._id]     = edge;
+        }
+
         return {
             type: 'FETCHED-TER-EDGES',
             mode: mode,

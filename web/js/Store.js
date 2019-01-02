@@ -60,11 +60,11 @@ class Store extends Vanilla_Redux_Store {
     }
     initTer () {
         return {
-            entities:             {ht: {}, list: []},
-            identifier_instances: {ht: {}, list: []},
-            attribute_instances:  {ht: {}, list: []},
-            relationships:        {ht: {}, list: []},
-            ports:                {ht: {}, list: []},
+            entities:             { ht: {}, list: [] },
+            identifier_instances: { ht: {}, list: [] },
+            attribute_instances:  { ht: {}, list: [] },
+            relationships:        { ht: {}, list: [], indexes: { from: {}, to: {} } },
+            ports:                { ht: {}, list: [] },
             cameras: []
         };
     }

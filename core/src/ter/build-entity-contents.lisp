@@ -4,7 +4,9 @@
 ;;;;; column
 ;;;;;
 (defun get-entity-column-at-code (graph entity column-class code)
-  (find-if #'(lambda (d) (string= code (code d)))
+  (find-if #'(lambda (r)
+               (let ((vertex (getf r :vertex)))
+                 (string= code (code vertex))))
            (shinra:find-r graph 'edge-ter
                           :from entity
                           :vertex-class column-class

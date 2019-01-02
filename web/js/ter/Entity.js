@@ -41,14 +41,14 @@ class Entity {
 
             identifiers: {
                 position: { x:0, y:0, z:0 },
-                padding: 11,
+                padding: 8, // 各項目の一辺の padding 値
                 size: { w: null, h: null },
                 items: { list: [], ht: {} },
             },
 
             attributes: {
                 position: { x:0, y:0, z:0 },
-                padding: 11,
+                padding: 8, // 各項目の一辺の padding 値
                 size: { w: null, h: null },
                 items: { list: [], ht: {} },
             },
@@ -81,37 +81,41 @@ class Entity {
         obj.position = { x:0, y:0 };
         return obj;
     }
-    addAttributes2Entity (entity, state) {
-        let attributes = state.attribute_instances.ht;
-        let relationships = state.relationships.list;
-
-        let out = { list: [], ht: {} };
-
-        for (let r of relationships)
-            if (this.isEntityClass(r.from_class))
-                if (r.to_class=='ATTRIBUTE-INSTANCE') {
-                    let core = attributes[r.to_id];
-
-                    this.addOut(this.makeColumnData(core), out);
-                }
-
-        entity.attributes.items  = out;
-    }
     addIdentifiers2Entity (entity, state) {
         let identifiers = state.identifier_instances.ht;
-        let relationships = state.relationships.list;
+        let relationships = state.relationships.indexes.from[entity._id];
 
         let out = { list: [], ht: {} };
 
-        for (let r of relationships)
-            if (this.isEntityClass(r.from_class))
-                if (r.to_class=='IDENTIFIER-INSTANCE') {
-                    let core = identifiers[r.to_id];
+        for (let key in relationships) {
+            let r = relationships[key];
 
-                    this.addOut(this.makeColumnData(core), out);
-                }
+            if (r.to_class=='IDENTIFIER-INSTANCE') {
+                let core = identifiers[r.to_id];
+
+                this.addOut(this.makeColumnData(core), out);
+            }
+        }
 
         entity.identifiers.items = out;
+    }
+    addAttributes2Entity (entity, state) {
+        let attributes = state.attribute_instances.ht;
+        let relationships = state.relationships.indexes.from[entity._id];
+
+        let out = { list: [], ht: {} };
+
+        for (let key in relationships) {
+            let r = relationships[key];
+
+            if (r.to_class=='ATTRIBUTE-INSTANCE') {
+                let core = attributes[r.to_id];
+
+                this.addOut(this.makeColumnData(core), out);
+            }
+        }
+
+        entity.attributes.items  = out;
     }
     makeGraphEntity (entity, state) {
         let new_entity = this.makeGraphEntityTemplate();
@@ -183,16 +187,17 @@ class Entity {
     }
     sizingIdentifiers (entity) {
         let data = entity.identifiers;
-        let padding = (4 * 2);
+        let padding = entity.padding;
 
-        data.size.h = data.items.list.length * (this._default.line.height + padding);
         data.size.w = ((entity.size.w - (entity.padding * 2)) / 2) - 4;
+        data.size.h = data.items.list.length * (this._default.line.height + padding * 2);
     }
     sizingAttributes (entity) {
         let data = entity.attributes;
+        let padding = entity.padding;
 
-        data.size.h = data.items.list.length * (this._default.line.height + 8);
         data.size.w = ((entity.size.w - (entity.padding * 2)) / 2) - 4;
+        data.size.h = data.items.list.length * (this._default.line.height + padding * 2);
     }
     sizingContentsArea (entity) {
         let id_h = entity.identifiers.size.h;
@@ -240,15 +245,17 @@ class Entity {
         d.position.y = entity.padding;
     }
     positioningColumnItems (d) {
-        let len = d.items.list.length;
-        let padding = (4 * 2);
-        let start = (d.position.y + d.padding + 6);
-        let item_h = (this._default.line.height + padding);
+        let len     = d.items.list.length;
+        let padding = d.padding;
+        let start   = (d.position.y);
+        let line_height = this._default.line.height;
+        let item_h  = (line_height + padding * 2);
+        let magic_num = 3; // y軸の微調整係数
 
         for (let i=0 ; i<len ; i++) {
             let item = d.items.list[i];
-            item.position.x = d.position.x + d.padding;
-            item.position.y = start + i * item_h;
+            item.position.x = d.position.x + padding;
+            item.position.y = start + padding + line_height + i * item_h + magic_num;
         }
     }
     positioningIdentifiers (entity) {
@@ -417,10 +424,10 @@ class Entity {
      * **************************************************************** */
     moveEdges (edges) {
     }
-    moveEntity(d) {
+    moveEntity(entity) {
         let selection = this._place
             .selectAll('g.entity')
-            .data(d, (d) => { return d._id; });
+            .data([entity], (d) => { return d._id; });
 
         selection
             .attr('transform', (d)=>{
@@ -445,7 +452,7 @@ class Entity {
         d.position.x += e.x - d._drag.start.x;
         d.position.y += e.y - d._drag.start.y;
 
-        this.move([d]);
+        this.moveEntity(d);
     }
     dragEnd (d) {
         // let state = STORE.state().get('schemas');

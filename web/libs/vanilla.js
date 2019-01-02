@@ -41,7 +41,7 @@ class Vanilla_Ajax {
             + path;
     }
     error401 () {
-        location.href = '/sign-in.html';
+        location.href = '/galapagos/';
         return {};
     }
     errorCase (response) {
@@ -95,6 +95,11 @@ class Vanilla_Ajax {
 
                 if (response.redirected) {
                     location.href = response.url;
+                    return null;
+                }
+
+                if (response.status==401) {
+                    this.error401();
                     return null;
                 }
 

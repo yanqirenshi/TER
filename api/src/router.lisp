@@ -152,17 +152,17 @@
 (defroute "/ter/:campus-code/entities" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
-      (render-json (find-entity campus)))))
+      (render-json (find-entities campus)))))
 
 (defroute "/ter/:campus-code/identifiers" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
-      (render-json (princ-to-string campus)))))
+      (render-json (find-identifier-instances campus)))))
 
 (defroute "/ter/:campus-code/attributes" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
-      (render-json (princ-to-string campus)))))
+      (render-json (find-identifier-attributes campus)))))
 
 (defroute "/ter/:campus-code/ports" (&key campus-code)
   (with-graph-modeler (graph modeler)
@@ -172,7 +172,7 @@
 (defroute "/ter/:campus-code/edges" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
-      (render-json (princ-to-string campus)))))
+      (render-json (find-edge-ters campus)))))
 
 
 ;;;

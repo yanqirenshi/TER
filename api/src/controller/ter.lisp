@@ -24,10 +24,29 @@
   (or (ter::get-campus-graph campus)
       (error "????????")))
 
-(defun find-entity (campus)
+(defun find-entities (campus)
   (let ((graph (ter::get-campus-graph campus)))
     (nconc (shinra:find-vertex graph 'resource)
            (shinra:find-vertex graph 'comparative)
            (shinra:find-vertex graph 'event)
            (shinra:find-vertex graph 'correspondence)
            (shinra:find-vertex graph 'recursion))))
+
+(defun find-identifier-instances (campus)
+  (let ((graph (ter::get-campus-graph campus)))
+    (shinra:find-vertex graph 'ter::identifier-instance)))
+
+
+(defun find-identifier-attributes (campus)
+  (let ((graph (ter::get-campus-graph campus)))
+    (shinra:find-vertex graph 'ter::attribute-instance)))
+
+(defun %find-edge-ters (graph entities)
+  (when-let ((entity (car entities)))
+    (nconc (shinra:find-r-edge graph 'ter::edge-ter :from entity)
+           (%find-edge-ters graph (cdr entities)))))
+
+(defun find-edge-ters (campus)
+  (let ((graph (ter::get-campus-graph campus))
+        (entities (find-entities campus)))
+    (%find-edge-ters graph entities)))

@@ -441,6 +441,8 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerIdentifiers (mode, response) {
         let new_state = STORE.get('ter');
 
+        this.mergeStateData(response, new_state.identifiers);
+
         return {
             type: 'FETCHED-TER-IDENTIFIERS',
             mode: mode,
@@ -459,6 +461,8 @@ class Actions extends Vanilla_Redux_Actions {
     }
     fetchedTerAttributes (mode, response) {
         let new_state = STORE.get('ter');
+
+        this.mergeStateData(response, new_state.attributes);
 
         return {
             type: 'FETCHED-TER-ATTRIBUTES',
@@ -495,8 +499,44 @@ class Actions extends Vanilla_Redux_Actions {
             STORE.dispatch(this.fetchedTerEdges(mode, response));
         }.bind(this));
     }
+    fetchedTerEdgesFixData (edges, state) {
+        let out = [];
+        let keys = {
+            'RESOURCE':            'entities',
+            'IDENTIFIER-INSTANCE': 'identifiers',
+            'ATTRIBUTE-INSTANCE':  'attributes',
+            'PORT-TER':            'ports',
+
+        };
+        let getNode = (node_class, _id) => {
+            let key = keys[node_class];
+
+            if (!key)
+                throw new Error('対応していない node_class です。 node_class=' + node_class);
+
+            return state[key].ht[_id];
+        };
+
+        for (let edge of edges) {
+            let from = getNode(edge.from_class, edge.from_id);
+            let to   = getNode(edge.to_class,   edge.to_id);
+
+            if (!from || !to)
+                continue;
+
+            edge._from = from;
+            edge._to   = to;
+
+            out.push(edge);
+        }
+
+        return out;
+    }
     fetchedTerEdges (mode, response) {
-        let new_state = STORE.get('ter');
+        let new_state   = STORE.get('ter');
+        let edges_fixed = this.fetchedTerEdgesFixData(response, new_state);
+
+        this.mergeStateData(edges_fixed, new_state.edges);
 
         return {
             type: 'FETCHED-TER-EDGES',

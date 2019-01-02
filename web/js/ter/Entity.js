@@ -454,13 +454,14 @@ class Entity {
 
         this.moveEntity(d);
     }
-    dragEnd (d) {
-        // let state = STORE.state().get('schemas');
-        // let code = state.active;
-        // let schema = state.list.find((d) => { return d.code == code; });
+    dragEnd (entity) {
+        let state = STORE.state().get('schemas');
+        let code = state.active;
+        let schema = state.list.find((d) => { return d.code == code; });
 
-        // ACTIONS.savePosition(schema, d);
-        delete d._drag;
+        delete entity._drag;
+        dump(schema, entity);
+        ACTIONS.saveTerEntityPosition(schema, entity);
     }
     /* **************************************************************** *
      *  Draw

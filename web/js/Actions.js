@@ -557,6 +557,12 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    saveTerEntityPosition (schema, entity) {
+        let path = '/ter/%s/entities/%d/location'.format(schema.code, entity._id);
+
+        let data = entity.position;
+        API.post(path, data, ()=>{});
+    }
     /* **************************************************************** *
      *  Inspector
      * **************************************************************** */

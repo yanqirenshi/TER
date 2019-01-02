@@ -17,13 +17,16 @@
     (list :nodes (find-ter-all-nodes graph)
           :edges (ter:find-ter-all-edges graph))))
 
-;;;;;
-;;;;; new
-;;;;;
+;;;;;;;;
+;;;;;;;;  New
+;;;;;;;;
 (defun get-campus-graph (campus)
   (or (ter::get-campus-graph campus)
       (error "????????")))
 
+;;;
+;;; entity
+;;;
 (defun find-entities (campus)
   (let ((graph (ter::get-campus-graph campus)))
     (nconc (shinra:find-vertex graph 'resource)
@@ -32,6 +35,26 @@
            (shinra:find-vertex graph 'correspondence)
            (shinra:find-vertex graph 'recursion))))
 
+(defun get-entity (campus &key %id)
+  (let ((graph (ter::get-campus-graph campus)))
+    (or (shinra:get-vertex-at graph 'resource       :%id %id)
+        (shinra:get-vertex-at graph 'comparative    :%id %id)
+        (shinra:get-vertex-at graph 'event          :%id %id)
+        (shinra:get-vertex-at graph 'correspondence :%id %id)
+        (shinra:get-vertex-at graph 'recursion      :%id %id))))
+
+
+(defun save-entity-position (campus entity x y z)
+  (let ((graph (ter::get-campus-graph campus)))
+    (let ((new-point (make-instance 'ter::point :x x :y y :z z)))
+      (up:tx-change-object-slots graph (class-name (class-of entity))
+                                 (up:%id entity)
+                                 `((ter::location ,new-point))))))
+
+
+;;;
+;;; identifier-instances
+;;;
 (defun find-identifier-instances (campus)
   (let ((graph (ter::get-campus-graph campus)))
     (shinra:find-vertex graph 'ter::identifier-instance)))

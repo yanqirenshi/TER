@@ -142,33 +142,63 @@
       (unless schema (throw-code 404))
       (render-json (save-column-instance-description schema %id description)))))
 
-;;;
-;;; ter
-;;;
+
+;;;;;;;;
+;;;;;;;; TER
+;;;;;;;;
 (defun get-campus (graph campus-code)
   (or (ter:get-campus graph :code (str2keyword campus-code))
       (throw-code 404)))
 
+;;;
+;;; entity
+;;;
 (defroute "/ter/:campus-code/entities" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
       (render-json (find-entities campus)))))
 
+(defroute ("/ter/:campus-code/entities/:entity-code/location" :method :post)
+    (&key campus-code entity-code |x| |y| |z|)
+  (with-graph-modeler (graph modeler)
+    (let* ((campus (get-campus graph campus-code))
+           (entity-id (parse-integer entity-code))
+           (entity (get-entity campus :%id entity-id))
+           (x |x|)
+           (y |y|)
+           (z |z|))
+      (unless campus (throw-code 404))
+      (unless entity (throw-code 404))
+      (render-json (save-entity-position campus entity x y z)))))
+
+
+;;;
+;;; identifiers
+;;;
 (defroute "/ter/:campus-code/identifiers" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
       (render-json (find-identifier-instances campus)))))
 
+;;;
+;;; attributes
+;;;
 (defroute "/ter/:campus-code/attributes" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
       (render-json (find-identifier-attributes campus)))))
 
+;;;
+;;; ports
+;;;
 (defroute "/ter/:campus-code/ports" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
       (render-json (princ-to-string campus)))))
 
+;;;
+;;; edges
+;;;
 (defroute "/ter/:campus-code/edges" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))

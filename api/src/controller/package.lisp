@@ -17,8 +17,10 @@
            #:save-column-instance-description)
   (:export #:find-ter ;; TODO: こらはもういらんやろ。
            #:find-entities
+           #:get-entity
            #:find-identifier-instances
            #:find-identifier-attributes
-           #:find-edge-ters)
+           #:find-edge-ters
+           #:save-entity-position)
   (:export #:find-graph))
 (in-package :ter.api.controller)

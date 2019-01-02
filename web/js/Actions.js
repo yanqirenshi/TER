@@ -441,7 +441,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerIdentifiers (mode, response) {
         let new_state = STORE.get('ter');
 
-        this.mergeStateData(response, new_state.identifiers);
+        this.mergeStateData(response, new_state.identifier_instances);
 
         return {
             type: 'FETCHED-TER-IDENTIFIERS',
@@ -462,7 +462,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerAttributes (mode, response) {
         let new_state = STORE.get('ter');
 
-        this.mergeStateData(response, new_state.attributes);
+        this.mergeStateData(response, new_state.attribute_instances);
 
         return {
             type: 'FETCHED-TER-ATTRIBUTES',
@@ -503,8 +503,8 @@ class Actions extends Vanilla_Redux_Actions {
         let out = [];
         let keys = {
             'RESOURCE':            'entities',
-            'IDENTIFIER-INSTANCE': 'identifiers',
-            'ATTRIBUTE-INSTANCE':  'attributes',
+            'IDENTIFIER-INSTANCE': 'identifier_instances',
+            'ATTRIBUTE-INSTANCE':  'attribute_instances',
             'PORT-TER':            'ports',
 
         };
@@ -536,7 +536,7 @@ class Actions extends Vanilla_Redux_Actions {
         let new_state   = STORE.get('ter');
         let edges_fixed = this.fetchedTerEdgesFixData(response, new_state);
 
-        this.mergeStateData(edges_fixed, new_state.edges);
+        this.mergeStateData(edges_fixed, new_state.relationships);
 
         return {
             type: 'FETCHED-TER-EDGES',

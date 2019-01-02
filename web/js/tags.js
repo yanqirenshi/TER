@@ -168,7 +168,7 @@ riot.tag2('github-link', '<a id="fork" target="_blank" title="Fork Nobit@ on git
                        "141.8 Z"];
 });
 
-riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}" code="{code}" onclick="{clickMovePanelItem}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 44px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 44px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
+riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <p each="{opts.moves}"> <a href="{href}" code="{code}" onclick="{clickMovePanelItem}">{label}</a> </p> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; padding: 22px 55px 22px 22px; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 45px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 45px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
          let classes = brand.getAttribute('class').trim().split(' ');
@@ -651,23 +651,70 @@ riot.tag2('page01', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('page02-sec_root', '<svg></svg>', '', '', function(opts) {
+riot.tag2('page02-sec_root', '<svg id="page02-sec_root-svg" ref="svg"></svg>', '', '', function(opts) {
      this.d3svg = null;
+     this.svg   = null;
+
      this.ter = new Ter();
-     this.entity = new Entity();
 
-     this.drawNodes = (d3svg, state)=>{
-         let svg = d3svg._svg;
-         let nodes = state.nodes.list;
-     };
-     this.drawEdges = (d3svg, state)=>{
-         let svg = d3svg._svg;
-         let nodes = state.nodes.ht;
-         let edges = state.edges.list;
+     this.draw = () => {
+         let forground = this.svg.selectAll('g.base.forground');
+         let state     = STORE.get('ter');
+
+         new Entity()
+             .data(state)
+             .sizing()
+             .positioning()
+             .draw(forground);
      };
 
+     this.makeBases = (d3svg) => {
+         let svg = d3svg.Svg();
+
+         let base = [
+             { _id: -10, code: 'background' },
+             { _id: -15, code: 'forground' },
+         ];
+
+         svg.selectAll('g.base')
+            .data(base, (d) => { return d._id; })
+            .enter()
+            .append('g')
+            .attr('class', (d) => {
+                return 'base ' + d.code;
+            });
+     }
+     this.makeD3Svg = () => {
+         let w = window.innerWidth;
+         let h = window.innerHeight;
+
+         let svg_tag = this.refs['svg'];
+         svg_tag.setAttribute('height',h);
+         svg_tag.setAttribute('width',w);
+
+         let d3svg = new D3Svg({
+             d3: d3,
+             svg: d3.select("#page02-sec_root-svg"),
+             x: 0,
+             y: 0,
+             w: w,
+             h: h,
+             scale: 1
+         });
+
+         this.makeBases(d3svg);
+
+         return d3svg;
+     }
      STORE.subscribe((action) => {
+         if(action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST') {
+             this.draw();
+         }
+     });
 
+     this.on('mount', () => {
+         this.d3svg = this.makeD3Svg();
+         this.svg = this.d3svg.Svg();
      });
 });
 

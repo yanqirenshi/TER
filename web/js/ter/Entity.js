@@ -120,7 +120,7 @@ class Entity {
         for (let colkey of toplevs)
             new_entity[colkey] = entity[colkey];
 
-        new_entity.name.contents        = entity.naem;
+        new_entity.name.contents        = entity.name;
         new_entity.description.contents = entity.description;
         new_entity.position             = Object.assign({}, entity.position);
         new_entity.size                 = Object.assign({}, entity.size);

@@ -3,7 +3,8 @@
   (:use #:cl
         #:caveman2
         #:lack.middleware.validation
-        #:ter.api.render)
+        #:ter.api.render
+        #:ter.api.controller)
   (:export #:*api-v1*))
 (in-package :ter.api.router)
 
@@ -74,35 +75,35 @@
     (let ((position (jojo:parse (car (first _parsed))))
           (code (alexandria:make-keyword code))
           (schema (ter:get-schema graph :code (str2keyword schema_code))))
-      (render-json (ter.api.controller::save-er-position schema code position)))))
+      (render-json (save-er-position schema code position)))))
 
 (defroute ("/er/:schema_code/tables/:code/size" :method :POST) (&key schema_code code _parsed)
   (with-graph-modeler (graph modeler)
     (let ((position (jojo:parse (car (first _parsed))))
           (code (alexandria:make-keyword (string-upcase code)))
           (schema (ter:get-schema graph :code (str2keyword schema_code))))
-      (render-json (ter.api.controller::save-er-size schema code position)))))
+      (render-json (save-er-size schema code position)))))
 
 
 (defroute "/er/:schema_code" (&key schema_code)
   (with-graph-modeler (graph modeler)
     (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
            (schema (ter:get-schema graph :code schema_code)))
-      (render-json (nconc (ter.api.controller::find-er schema)
+      (render-json (nconc (find-er schema)
                           (list :cameras (ter::find-schema-camera graph schema)))))))
 
 (defroute "/er/:schema_code/nodes" (&key schema_code)
   (with-graph-modeler (graph modeler)
     (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
            (schema (ter:get-schema graph :code schema_code)))
-      (render-json (nconc (ter.api.controller::find-er-vertexes schema)
+      (render-json (nconc (find-er-vertexes schema)
                           (list :cameras (ter::find-schema-camera graph schema)))))))
 
 (defroute "/er/:schema_code/edges" (&key schema_code)
   (with-graph-modeler (graph modeler)
     (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
            (schema (ter:get-schema graph :code schema_code)))
-      (render-json (ter.api.controller::find-er-edges schema)))))
+      (render-json (find-er-edges schema)))))
 
 
 (defroute ("/er/:schema-code/tables/:table-code/columns/:column-code/logical-name" :method :POST)
@@ -111,10 +112,10 @@
     (let* ((logical-name (jojo:parse (caar _parsed)))
            (schema (ter:get-schema graph :code (str2keyword schema-code))))
       (unless schema (throw-code 404))
-      (render-json (ter.api.controller::save-column-instance-logical-name schema
-                                                                          (str2keyword table-code)
-                                                                          (str2keyword column-code)
-                                                                          logical-name)))))
+      (render-json (save-column-instance-logical-name schema
+                                                      (str2keyword table-code)
+                                                      (str2keyword column-code)
+                                                      logical-name)))))
 
 ;;;;;
 ;;;;; table description
@@ -126,7 +127,7 @@
            (table-code (str2keyword table-code))
            (description (getf (jojo:parse (caar _parsed)) :|contents|)))
       (unless schema (throw-code 404))
-      (render-json (ter.api.controller::save-table-description schema table-code description)))))
+      (render-json (save-table-description schema table-code description)))))
 
 
 ;;;;;
@@ -139,7 +140,7 @@
            (%id (parse-integer id))
            (description (getf (jojo:parse (caar _parsed)) :|contents|)))
       (unless schema (throw-code 404))
-      (render-json (ter.api.controller::save-column-instance-description schema %id description)))))
+      (render-json (save-column-instance-description schema %id description)))))
 
 ;;;
 ;;; ter
@@ -150,28 +151,28 @@
 
 (defroute "/ter/:campus-code/entities" (&key campus-code)
   (with-graph-modeler (graph modeler)
-    (let ((schema (get-campus graph campus-code)))
-      (render-json (princ-to-string schema)))))
+    (let ((campus (get-campus graph campus-code)))
+      (render-json (find-entity campus)))))
 
 (defroute "/ter/:campus-code/identifiers" (&key campus-code)
   (with-graph-modeler (graph modeler)
-    (let ((schema (get-campus graph campus-code)))
-      (render-json (princ-to-string schema)))))
+    (let ((campus (get-campus graph campus-code)))
+      (render-json (princ-to-string campus)))))
 
 (defroute "/ter/:campus-code/attributes" (&key campus-code)
   (with-graph-modeler (graph modeler)
-    (let ((schema (get-campus graph campus-code)))
-      (render-json (princ-to-string schema)))))
+    (let ((campus (get-campus graph campus-code)))
+      (render-json (princ-to-string campus)))))
 
 (defroute "/ter/:campus-code/ports" (&key campus-code)
   (with-graph-modeler (graph modeler)
-    (let ((schema (get-campus graph campus-code)))
-      (render-json (princ-to-string schema)))))
+    (let ((campus (get-campus graph campus-code)))
+      (render-json (princ-to-string campus)))))
 
 (defroute "/ter/:campus-code/edges" (&key campus-code)
   (with-graph-modeler (graph modeler)
-    (let ((schema (get-campus graph campus-code)))
-      (render-json (princ-to-string schema)))))
+    (let ((campus (get-campus graph campus-code)))
+      (render-json (princ-to-string campus)))))
 
 
 ;;;

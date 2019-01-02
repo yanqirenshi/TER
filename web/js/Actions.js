@@ -396,6 +396,19 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Fetch TER
      * **************************************************************** */
+    mergeStateData (source, target) {
+        let ht = target.ht;
+
+        for (let obj of source)
+            if (ht[obj._id]) {
+                ht[obj._id] = obj;
+            } else {
+                ht[obj._id] = obj;
+                target.list.push(obj);
+            }
+
+        return target;
+    }
     fetchTerEntities (mode) {
         let graph = 'RBP';
         let path = '/ter/%s/entities'.format(graph);
@@ -405,11 +418,15 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedTerEntities (mode, response) {
+        let new_state = STORE.get('ter');
+
+        this.mergeStateData(response, new_state.entities);
+
         return {
             type: 'FETCHED-TER-ENTITIES',
             mode: mode,
             data: {
-                ter: {}
+                ter: new_state,
             }
         };
     }
@@ -422,11 +439,13 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedTerIdentifiers (mode, response) {
+        let new_state = STORE.get('ter');
+
         return {
             type: 'FETCHED-TER-IDENTIFIERS',
             mode: mode,
             data: {
-                ter: {}
+                ter: new_state,
             }
         };
     }
@@ -439,11 +458,13 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedTerAttributes (mode, response) {
+        let new_state = STORE.get('ter');
+
         return {
             type: 'FETCHED-TER-ATTRIBUTES',
             mode: mode,
             data: {
-                ter: {}
+                ter: new_state,
             }
         };
     }
@@ -456,11 +477,13 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedTerPorts (mode, response) {
+        let new_state = STORE.get('ter');
+
         return {
             type: 'FETCHED-TER-PORTS',
             mode: mode,
             data: {
-                ter: {}
+                ter: new_state,
             }
         };
     }
@@ -473,11 +496,13 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedTerEdges (mode, response) {
+        let new_state = STORE.get('ter');
+
         return {
             type: 'FETCHED-TER-EDGES',
             mode: mode,
             data: {
-                ter: {}
+                ter: new_state,
             }
         };
     }

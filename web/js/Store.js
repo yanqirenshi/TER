@@ -48,35 +48,41 @@ class Store extends Vanilla_Redux_Store {
             ]
         };
     }
+    initEr () {
+        return {
+            tables:           {ht: {}, list: []},
+            columns:          {ht: {}, list: []},
+            column_instances: {ht: {}, list: []},
+            ports:            {ht: {}, list: []},
+            relashonships:    {ht: {}, list: []},
+            cameras: []
+        };
+    }
+    initTer () {
+        return {
+            entities:    {ht: {}, list: []},
+            identifiers: {ht: {}, list: []},
+            attributes:  {ht: {}, list: []},
+            edges:       {ht: {}, list: []},
+            ports:       {ht: {}, list: []},
+            cameras: []
+        };
+    }
+    initHomeGraph () {
+        return {
+            nodes: {ht: {}, list: []},
+            edges: {ht: {}, list: []},
+            cameras: []
+        };
+    }
     init () {
         let data = {
-            schemas: {
-                active: null,
-                list: []
-            },
-            site: this.site(),
-            er: {
-                tables:           {ht: {}, list: []},
-                columns:          {ht: {}, list: []},
-                column_instances: {ht: {}, list: []},
-                ports:            {ht: {}, list: []},
-                relashonships:    {ht: {}, list: []},
-                cameras: []
-            },
-            ter: {
-                nodes: {ht: {}, list: []},
-                edges: {ht: {}, list: []},
-                cameras: []
-            },
-            graph: {
-                nodes: {ht: {}, list: []},
-                edges: {ht: {}, list: []},
-                cameras: []
-            },
-            inspector: {
-                display: false,
-                data: null
-            },
+            schemas:   { active: null, list: [] },
+            site:      this.site(),
+            er:        this.initEr(),
+            ter:       this.initTer(),
+            graph:     this.initHomeGraph(),
+            inspector: { display: false, data: null },
             global: {
                 menu: {
                     move_panel: {

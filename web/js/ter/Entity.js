@@ -10,7 +10,7 @@ class Entity {
         };
     }
     /* **************************************************************** *
-       Data manegement
+     *  Data manegement
      * **************************************************************** */
     makeGraphEntityTemplate () {
         return {
@@ -156,7 +156,7 @@ class Entity {
         return this;
     }
     /* **************************************************************** *
-       Sizing
+     *  Sizing
      * **************************************************************** */
     sizingType (entity) {
         let data = entity.type;
@@ -226,7 +226,7 @@ class Entity {
         return this;
     }
     /* **************************************************************** *
-       Positioning
+     *  Positioning
      * **************************************************************** */
     positioningName (entity) {
         let d = entity.name;
@@ -413,7 +413,50 @@ class Entity {
         return this;
     }
     /* **************************************************************** *
-       Draw
+     *  Drag & Drop
+     * **************************************************************** */
+    moveEdges (edges) {
+    }
+    moveEntity(d) {
+        let selection = this._place
+            .selectAll('g.entity')
+            .data(d, (d) => { return d._id; });
+
+        selection
+            .attr('transform', (d)=>{
+                return 'translate(' + d.position.x + ',' + d.position.y + ')';
+            });
+
+        // this.moveEdges([...]);
+    }
+    dragStart (d) {
+        let e = d3.event;
+
+        d._drag = {
+            start: {
+                x: e.x,
+                y: e.y,
+            }
+        };
+    }
+    dragged (d) {
+        let e = d3.event;
+
+        d.position.x += e.x - d._drag.start.x;
+        d.position.y += e.y - d._drag.start.y;
+
+        this.move([d]);
+    }
+    dragEnd (d) {
+        // let state = STORE.state().get('schemas');
+        // let code = state.active;
+        // let schema = state.list.find((d) => { return d.code == code; });
+
+        // ACTIONS.savePosition(schema, d);
+        delete d._drag;
+    }
+    /* **************************************************************** *
+     *  Draw
      * **************************************************************** */
     drawGroup (place) {
         let data = this._data;
@@ -428,8 +471,17 @@ class Entity {
                 return "translate(" + d.position.x + "," + d.position.y + ")";
             });
     }
+    addMoveEvents2Body (body) {
+        let self = this;
+
+        return body.call(
+            d3.drag()
+                .on("start", (d) => { return self.dragStart(d); })
+                .on("drag",  (d) => { return self.dragged(d); })
+                .on("end",   (d) => { return self.dragEnd(d); }));
+    }
     drawBody (groups) {
-        return groups
+        let body = groups
             .append('rect')
             .attr('class', 'entity-body')
             .attr('width', (d) => { return d.size.w;})
@@ -437,6 +489,8 @@ class Entity {
             .attr('fill', (d) => {
                 return d.background.color;
             });
+
+        return this.addMoveEvents2Body(body);
     }
     drawName (groups) {
         groups
@@ -594,6 +648,8 @@ class Entity {
             .attr('degree', (d) => { return d.position; });
     }
     draw (place) {
+        this._place = place;
+
         let groups = this.drawGroup(place);
 
         this.drawBody(groups);

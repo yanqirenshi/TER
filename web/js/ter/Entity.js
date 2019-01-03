@@ -66,8 +66,9 @@ class Entity {
     }
     entityTypeContents (entity) {
         switch (entity._class) {
-        case 'RESOURCE': return 'Rsc';
-        case 'EVENT':    return 'Evt';
+        case 'RESOURCE':    return 'Rsc';
+        case 'COMPARATIVE': return '対象';
+        case 'EVENT':       return 'Evt';
         }
         throw new Error(entity._class + " は知らないよ。");
     }

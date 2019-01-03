@@ -9,9 +9,9 @@
   entity
     ^
     |
-    +-------+---------+-------------+-------------+
-    |       |         |             |             |
-resource  event  comparative  correspondence  recursion
+    +-------+---------+-------------+-------------+-------------+-------------+
+    |       |         |             |             |             |             |
+resource  event  comparative  correspondence  recursion  resouce-detail  event-detail
 
 
   identifier ------1:n------> identifier-instance
@@ -25,6 +25,12 @@ resource  event  comparative  correspondence  recursion
   identifier-instance ------1:n------> port-ter-in
   identifier-instance ------1:n------> port-ter-out
 
+  recouece : recouece
+  recouece : resouce-detail
+  recouece : recursion
+  resouece : event
+  event    : event-detail
+  event    : event
 
   port-ter-in ------1:n------> edge-ter ------1:n------> port-ter-out</pre></p>
             </div>

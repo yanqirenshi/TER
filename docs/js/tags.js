@@ -257,13 +257,14 @@ riot.tag2('core_page_tab_datamodels', '<section class="section"> <div class="con
 riot.tag2('core_page_tab_operators', '', '', '', function(opts) {
 });
 
-riot.tag2('core_page_tab_packages', '<section class="section"> <div class="container"> <h1 class="title is-4">List</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table"> <thead> <tr> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{packages}"> <td>{name.toUpperCase()}</td> <td>{description}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
+riot.tag2('core_page_tab_packages', '<section class="section"> <div class="container"> <h1 class="title is-4">List</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table"> <thead> <tr> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{packages}"> <td> <a href="{\'#core/pakages/\'+name}"> {name.toUpperCase()} </a> </td> <td>{description}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
      this.packages = [
          { code: 'ter',        name: 'ter',        description: '' },
          { code: 'ter.parser', name: 'ter.parser', description: '' },
          { code: 'ter.db',     name: 'ter.db',     description: '' },
          { code: 'ter-test',   name: 'ter-test',   description: '' },
      ]
+
 });
 
 riot.tag2('core_page_tab_readme', '', '', '', function(opts) {

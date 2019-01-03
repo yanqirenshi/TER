@@ -13,7 +13,11 @@
                     </thead>
                     <tbody>
                         <tr each={packages}>
-                            <td>{name.toUpperCase()}</td>
+                            <td>
+                                <a href={'#core/pakages/'+name}>
+                                    {name.toUpperCase()}
+                                </a>
+                            </td>
                             <td>{description}</td>
                         </tr>
                     </tbody>
@@ -30,5 +34,6 @@
          { code: 'ter.db',     name: 'ter.db',     description: '' },
          { code: 'ter-test',   name: 'ter-test',   description: '' },
      ]
+
     </script>
 </core_page_tab_packages>

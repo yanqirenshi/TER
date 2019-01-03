@@ -73,7 +73,18 @@
             ((eq :<- direction) (shinra:tx-make-edge graph 'edge-ter b a edge-type)))
       (%tx-make-relationships graph (cdr statements)))))
 
-(defun tx-make-relationships (graph &rest in_statements)
-  (let ((statements (parse-make-r-statemnts in_statements)))
-    (assert-make-r-statemnts statements)
-    (%tx-make-relationships graph statements)))
+;; TODO: これは廃止したほうがいいね
+;; (defun tx-make-relationships (graph &rest in_statements)
+;;   (let ((statements (parse-make-r-statemnts in_statements)))
+;;     (assert-make-r-statemnts statements)
+;;     (%tx-make-relationships graph statements)))
+
+
+(defgeneric tx-make-relationships2 (graph from to)
+  (:method (graph (from port-ter) (to port-ter))
+    (shinra:tx-make-edge graph 'edge-ter from to :->))
+
+  (:method (graph (from identifier-instance) (to identifier-instance))
+    (tx-make-relationships2 graph
+                            (add-port graph from)
+                            (add-port graph to))))

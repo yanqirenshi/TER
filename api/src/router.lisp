@@ -186,7 +186,7 @@
 (defroute "/ter/:campus-code/attributes" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
-      (render-json (find-identifier-attributes campus)))))
+      (render-json (find-attributes-instances campus)))))
 
 ;;;
 ;;; ports
@@ -194,7 +194,7 @@
 (defroute "/ter/:campus-code/ports" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
-      (render-json (princ-to-string campus)))))
+      (render-json (find-entities-ports campus)))))
 
 ;;;
 ;;; edges

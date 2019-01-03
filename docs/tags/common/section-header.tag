@@ -12,7 +12,13 @@
 
     <style>
      section-header > .section {
-         background: #ffffff;
+         background: #1D0D37;
+     }
+     section-header > .section .title {
+         color: #fff;
+     }
+     section-header > .section .subtitle {
+         color: #fff;
      }
     </style>
 </section-header>

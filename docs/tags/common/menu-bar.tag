@@ -47,7 +47,7 @@
          position: fixed;
          left: 0px;
          top: 0px;
-         background: #e198b4;
+         background: #CF2316;
      }
 
      menu-bar .menu-label, menu-bar .menu-list a {
@@ -67,11 +67,11 @@
      }
      .menu-label {
          background: #ffffff;
-         color: #e198b4;
+         color: #CF2316;
      }
      .menu-label.open {
          background: #ffffff;
-         color: #e198b4;
+         color: #CF2316;
          width: 44px;
          border-radius: 3px 0px 0px 3px;
          text-shadow: 0px 0px 1px #eee;

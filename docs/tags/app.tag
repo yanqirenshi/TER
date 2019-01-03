@@ -1,7 +1,7 @@
 <app>
     <menu-bar brand={{label:'RT'}} site={site()} moves={[]}></menu-bar>
 
-    <div ref="page-area"></div>
+    <div ref="page-area" style="margin-left:55px;"></div>
 
     <style>
      app > .page {

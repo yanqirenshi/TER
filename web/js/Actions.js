@@ -503,6 +503,7 @@ class Actions extends Vanilla_Redux_Actions {
         let out = [];
         let keys = {
             'RESOURCE':            'entities',
+            'EVENT':               'entities',
             'IDENTIFIER-INSTANCE': 'identifier_instances',
             'ATTRIBUTE-INSTANCE':  'attribute_instances',
             'PORT-TER':            'ports',

@@ -47,9 +47,10 @@
 (defun save-entity-position (campus entity x y z)
   (let ((graph (ter::get-campus-graph campus)))
     (let ((new-point (make-instance 'ter::point :x x :y y :z z)))
-      (up:tx-change-object-slots graph (class-name (class-of entity))
-                                 (up:%id entity)
-                                 `((ter::location ,new-point))))))
+      (up:execute-transaction
+       (up:tx-change-object-slots graph (class-name (class-of entity))
+                                  (up:%id entity)
+                                  `((ter::location ,new-point)))))))
 
 
 ;;;

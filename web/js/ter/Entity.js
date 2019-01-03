@@ -538,6 +538,8 @@ class Entity {
             .enter()
             .append('g')
             .attr('class', 'entity')
+            .attr('entity-id', (d) => { return d._id; })
+            .attr('entity-type', (d) => { return d._class; })
             .attr("transform", (d) => {
                 return "translate(" + d.position.x + "," + d.position.y + ")";
             });
@@ -712,7 +714,8 @@ class Entity {
             })
             .enter()
             .append('text')
-            .attr('class', 'identifier');
+            .attr('class', 'identifier')
+            .attr('identifier-id', (d) => { return d._id; });
 
         this.drawIdentifiersText(texts)
             .each(function (identifier) {
@@ -765,7 +768,8 @@ class Entity {
             })
             .enter()
             .append('text')
-            .attr('class', 'attribute');
+            .attr('class', 'attribute')
+            .attr('attribute-id', (d) => { return d._id; });
 
         this.drawAttributesText(texts)
             .each(function (attribute) {

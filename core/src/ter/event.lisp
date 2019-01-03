@@ -6,9 +6,10 @@
 (defun get-event (graph &key code)
   (car (shinra:find-vertex graph 'event :slot 'code :value code)))
 
-(defun tx-make-event (graph code name)
+(defun tx-make-event (graph code name &key (description ""))
   (or (get-event graph :code code)
       (shinra:tx-make-vertex graph
                              'event
                              `((code ,code)
-                               (name ,name)))))
+                               (name ,name)
+                               (description ,description)))))

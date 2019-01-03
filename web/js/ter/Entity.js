@@ -21,6 +21,12 @@ class Entity {
             size: { w:0, h:0 },
             padding: 11,
             margin: 6,
+            bar: {
+                size: {
+                    header: 11,
+                    contents: 8,
+                }
+            },
             background: {
                 color: '',
             },
@@ -60,8 +66,8 @@ class Entity {
     }
     entityTypeContents (entity) {
         switch (entity._class) {
-        case 'RESOURCE':
-            return 'Rsc';
+        case 'RESOURCE': return 'Rsc';
+        case 'EVENT':    return 'Evt';
         }
         throw new Error(entity._class + " は知らないよ。");
     }
@@ -93,6 +99,8 @@ class Entity {
             if (r.to_class=='IDENTIFIER-INSTANCE') {
                 let core = identifiers[r.to_id];
 
+                core._entity = entity;
+                core._parent = entity.identifiers;
                 this.addOut(this.makeColumnData(core), out);
             }
         }
@@ -111,6 +119,8 @@ class Entity {
             if (r.to_class=='ATTRIBUTE-INSTANCE') {
                 let core = attributes[r.to_id];
 
+                core._entity = entity;
+                core._parent = entity.attributes;
                 this.addOut(this.makeColumnData(core), out);
             }
         }
@@ -180,23 +190,28 @@ class Entity {
         data.size.h = this._default.line.height + data.padding * 2;
 
         let type = entity.type;
+        let split_bar_size = 11;
 
         data.size.w = (entity.size.w - (entity.padding * 2) -
-                       11 - // TODO: margin
+                       entity.bar.size.header -
                        type.size.w);
     }
     sizingIdentifiers (entity) {
         let data = entity.identifiers;
         let padding = entity.padding;
 
-        data.size.w = ((entity.size.w - (entity.padding * 2)) / 2) - 4;
+        data.size.w =
+            ((entity.size.w - (entity.padding * 2)) / 2) -
+            (entity.bar.size.contents / 2);
         data.size.h = data.items.list.length * (this._default.line.height + padding * 2);
     }
     sizingAttributes (entity) {
         let data = entity.attributes;
         let padding = entity.padding;
 
-        data.size.w = ((entity.size.w - (entity.padding * 2)) / 2) - 4;
+        data.size.w =
+            ((entity.size.w - (entity.padding * 2)) / 2) -
+            (entity.bar.size.contents / 2);
         data.size.h = data.items.list.length * (this._default.line.height + padding * 2);
     }
     sizingContentsArea (entity) {
@@ -229,6 +244,52 @@ class Entity {
     sizing () {
         this.sizingEntities(this._data);
         return this;
+    }
+    reSizingEntity (entity) {
+        entity.name.size.w        = Math.ceil(entity._max_w.name)       + entity.name.padding * 2;
+        entity.identifiers.size.w = Math.ceil(entity._max_w.identifier) + entity.identifiers.padding * 2;
+        entity.attributes.size.w  = Math.ceil(entity._max_w.attribute)  + entity.attributes.padding * 2;
+
+        let name_area_w =
+            entity.name.size.w +
+            entity.bar.size.header +
+            entity.type.size.w +
+            (entity.padding * 2);
+
+        let contents_area_w =
+            entity.identifiers.size.w
+            + entity.bar.size.contents
+            + entity.attributes.size.w
+            + (entity.padding * 2);
+
+        entity.size.w = contents_area_w > name_area_w ? contents_area_w : name_area_w;
+
+        // fix size for attr area
+        if (entity._max_w.attribute==0) {
+            entity.attributes.size.w =
+                entity.size.w -
+                entity.identifiers.size.w -
+                entity.bar.size.contents -
+                (entity.padding * 2);
+        }
+
+        // fix size for name area
+        if (contents_area_w > name_area_w) {
+            entity.name.size.w =
+                entity.size.w -
+                entity.bar.size.header -
+                entity.type.size.w -
+                (entity.padding * 2);
+        }
+    }
+    reSizing (groups) {
+        groups
+            .each((entity) => {
+                this.reSizingEntity(entity);
+                this.positioningEntity(entity);
+            });
+
+        this.reDrawEntity(groups);
     }
     /* **************************************************************** *
      *  Positioning
@@ -408,14 +469,16 @@ class Entity {
             for (let port of entity.ports.items.list)
                 this.positioningPort(entity, port);
     }
+    positioningEntity (entity) {
+        this.positioningName(entity);
+        this.positioningType(entity);
+        this.positioningIdentifiers(entity);
+        this.positioningAttributes(entity);
+        this.positioningPorts(entity);
+    }
     positioning () {
-        for (let entity of this._data) {
-            this.positioningName(entity);
-            this.positioningType(entity);
-            this.positioningIdentifiers(entity);
-            this.positioningAttributes(entity);
-            this.positioningPorts(entity);
-        }
+        for (let entity of this._data)
+            this.positioningEntity(entity);
 
         return this;
     }
@@ -460,7 +523,7 @@ class Entity {
         let schema = state.list.find((d) => { return d.code == code; });
 
         delete entity._drag;
-        dump(schema, entity);
+
         ACTIONS.saveTerEntityPosition(schema, entity);
     }
     /* **************************************************************** *
@@ -488,22 +551,26 @@ class Entity {
                 .on("drag",  (d) => { return self.dragged(d); })
                 .on("end",   (d) => { return self.dragEnd(d); }));
     }
-    drawBody (groups) {
-        let body = groups
-            .append('rect')
+    drawBodyCore (body) {
+        body
             .attr('class', 'entity-body')
             .attr('width', (d) => { return d.size.w;})
             .attr('height', (d) => { return d.size.h;})
             .attr('fill', (d) => {
                 return d.background.color;
             });
+    }
+    drawBody (groups) {
+        let body = groups
+            .append('rect');
+
+        this.drawBodyCore(body);
 
         return this.addMoveEvents2Body(body);
     }
-    drawName (groups) {
-        groups
-            .append('rect')
-            .attr('class', 'entity-title')
+    // name
+    drawNameRect (rects) {
+        rects
             .attr('x', (d) => {
                 return d.name.position.x;
             })
@@ -517,9 +584,10 @@ class Entity {
                 return d.name.size.h;
             })
             .attr('fill', (d) => { return '#ffffff'; });
-
-        groups
-            .append('text')
+    }
+    drawNameText (texts) {
+        return texts
+            .attr('class', 'entity-title')
             .attr("x", (d) => {
                 return d.padding + d.name.padding;
             })
@@ -530,10 +598,35 @@ class Entity {
                 return d.name.contents;
             });
     }
-    drawType (groups) {
-        groups
+    drawName (groups) {
+        let rects = groups
             .append('rect')
-            .attr('class', 'entity-type')
+            .attr('class', 'entity-title');
+
+        this.drawNameRect(rects);
+
+        let texts = groups
+            .append('text')
+            .attr('class', 'entity-title');
+
+        this.drawNameText(texts)
+            .each(function (d) {
+                if (!d._max)
+                    d._max_w = {
+                        name:       0,
+                        identifier: 0,
+                        attribute:  0,
+                    };
+
+                let w = this.getBBox().width;
+
+                if (w > d._max_w.name)
+                    d._max_w.name = w;
+            });
+    }
+    // type
+    drawTypeRect (selection) {
+        selection
             .attr('x', (d) => {
                 return d.type.position.x;
             })
@@ -547,9 +640,9 @@ class Entity {
                 return d.type.size.h;
             })
             .attr('fill', (d) => { return '#ffffff'; });
-
-        groups
-            .append('text')
+    }
+    drawTypeText (selection) {
+        selection
             .attr("x", (d) => {
                 return d.padding +
                     d.name.size.w +
@@ -563,10 +656,22 @@ class Entity {
                 return d.type.contents;
             });
     }
-    drawIdentifiers (groups) {
-        groups
+    drawType (groups) {
+        let rects = groups
             .append('rect')
-            .attr('class', 'entity-identifiers')
+            .attr('class', 'entity-type');
+
+        this.drawTypeRect(rects);
+
+        let texts = groups
+            .append('text')
+            .attr('class', 'entity-type');
+
+        this.drawTypeText(texts);
+    }
+    // identifier
+    drawIdentifiersRect (rects) {
+        rects
             .attr('x', (d) => {
                 return d.identifiers.position.x;
             })
@@ -580,15 +685,9 @@ class Entity {
                 return d.identifiers.size.h;
             })
             .attr('fill', (d) => { return '#ffffff'; });
-
-        groups
-            .selectAll('text.identifier')
-            .data((d) => {
-                return d.identifiers.items.list;
-            })
-            .enter()
-            .append('text')
-            .attr('class', 'identifier')
+    }
+    drawIdentifiersText (texts) {
+        return texts
             .attr("x", (d) => {
                 return d.position.x;
             })
@@ -599,10 +698,33 @@ class Entity {
                 return d.name;
             });
     }
-    drawAttributes (groups) {
-        groups
+    drawIdentifiers (groups) {
+        let rects = groups
             .append('rect')
-            .attr('class', 'entity-attributes')
+            .attr('class', 'entity-identifiers');
+
+        this.drawIdentifiersRect(rects);
+
+        let texts = groups
+            .selectAll('text.identifier')
+            .data((d) => {
+                return d.identifiers.items.list;
+            })
+            .enter()
+            .append('text')
+            .attr('class', 'identifier');
+
+        this.drawIdentifiersText(texts)
+            .each(function (identifier) {
+                let w = this.getBBox().width;
+
+                if (w > identifier._entity._max_w.identifier)
+                    identifier._entity._max_w.identifier = w;
+            });
+    }
+    // Attribute
+    drawAttributesRect (rects) {
+        rects
             .attr('x', (d) => {
                 return d.attributes.position.x;
             })
@@ -616,15 +738,9 @@ class Entity {
                 return d.attributes.size.h;
             })
             .attr('fill', (d) => { return '#ffffff'; });
-
-        groups
-            .selectAll('text.attribute')
-            .data((d) => {
-                return d.attributes.items.list;
-            })
-            .enter()
-            .append('text')
-            .attr('class', 'attribute')
+    }
+    drawAttributesText (texts) {
+        return texts
             .attr("x", (d) => {
                 return d.position.x;
             })
@@ -635,6 +751,31 @@ class Entity {
                 return d.name;
             });
     }
+    drawAttributes (groups) {
+        let rects = groups
+            .append('rect')
+            .attr('class', 'entity-attributes');
+
+        this.drawAttributesRect(rects);
+
+        let texts = groups
+            .selectAll('text.attribute')
+            .data((d) => {
+                return d.attributes.items.list;
+            })
+            .enter()
+            .append('text')
+            .attr('class', 'attribute');
+
+        this.drawAttributesText(texts)
+            .each(function (attribute) {
+                let w = this.getBBox().width;
+
+                if (w > attribute._entity._max_w.attribute)
+                    attribute._entity._max_w.attribute = w;
+            });
+    }
+    // ports
     drawPorts (groups) {
         groups.selectAll('circle.entity-port')
             .data((d) => {
@@ -655,16 +796,33 @@ class Entity {
             .attr('stroke-width', 0.5)
             .attr('degree', (d) => { return d.position; });
     }
-    draw (place) {
-        this._place = place;
-
-        let groups = this.drawGroup(place);
-
+    // entity
+    reDrawEntity (groups) {
+        this.drawBodyCore(groups.selectAll('rect.entity-body'));
+        this.drawNameRect(groups.selectAll('rect.entity-title'));
+        this.drawNameText(groups.selectAll('text.entity-title'));
+        this.drawTypeRect(groups.selectAll('rect.entity-type'));
+        this.drawTypeText(groups.selectAll('text.entity-type'));
+        this.drawIdentifiersRect(groups.selectAll('rect.entity-identifiers'));
+        this.drawIdentifiersText(groups.selectAll('text.identifier'));
+        this.drawAttributesRect(groups.selectAll('rect.entity-attributes'));
+        this.drawAttributesText(groups.selectAll('text.attribute'));
+    }
+    drawEntity (groups) {
         this.drawBody(groups);
         this.drawName(groups);
         this.drawType(groups);
         this.drawIdentifiers(groups);
         this.drawAttributes(groups);
+
+        this.reSizing(groups);
+
         this.drawPorts(groups);
+    }
+    // main
+    draw (place) {
+        this._place = place;
+
+        this.drawEntity(this.drawGroup(place));
     }
 }

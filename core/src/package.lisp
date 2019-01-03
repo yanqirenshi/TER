@@ -25,7 +25,9 @@
            #:find-attribute-instance
            #:find-identifier
            #:find-identifier-instance
-           #:find-ter-all-edges)
+           #:find-ter-all-edges
+           #:find-entity-identifiers
+           #:find-identifier-ports)
   ;; modeler
   (:export #:tx-make-modeler-with-ghost
            #:get-modeler)

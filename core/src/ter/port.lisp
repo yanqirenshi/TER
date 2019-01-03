@@ -22,3 +22,10 @@
   (:method (graph (from recursion))           (%add-port graph from))
   (:method (graph (from recursion))           (%add-port graph from))
   (:method (graph (from identifier-instance)) (%add-port graph from)))
+
+
+(defun find-identifier-ports (graph identifer-instance)
+  (shinra:find-r-vertex graph 'edge-ter
+                        :from identifer-instance
+                        :edge-type :have-to
+                        :vertex-class 'port-ter))

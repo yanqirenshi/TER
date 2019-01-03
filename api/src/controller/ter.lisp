@@ -52,6 +52,10 @@
                                   (up:%id entity)
                                   `((ter::location ,new-point)))))))
 
+(defun find-entities-ports (campus)
+  (let ((graph (ter::get-campus-graph campus)))
+    (shinra:find-vertex graph 'ter::port-ter)))
+
 
 ;;;
 ;;; identifier-instances
@@ -61,16 +65,30 @@
     (shinra:find-vertex graph 'ter::identifier-instance)))
 
 
-(defun find-identifier-attributes (campus)
+(defun find-attributes-instances (campus)
   (let ((graph (ter::get-campus-graph campus)))
     (shinra:find-vertex graph 'ter::attribute-instance)))
 
-(defun %find-edge-ters (graph entities)
+(defun find-edge-ters-entities (graph entities)
   (when-let ((entity (car entities)))
     (nconc (shinra:find-r-edge graph 'ter::edge-ter :from entity)
-           (%find-edge-ters graph (cdr entities)))))
+           (find-edge-ters-entities graph (cdr entities)))))
+
+(defun find-edge-ters-identifiers (graph identifiers)
+  (when-let ((identifier (car identifiers)))
+    (nconc (shinra:find-r-edge graph 'ter::edge-ter :from identifier)
+           (find-edge-ters-identifiers graph (cdr identifiers)))))
+
+(defun find-all-edges (graph objects)
+  (when-let ((object (car objects)))
+    (nconc (shinra:find-r-edge graph 'ter::edge-ter :from object)
+           (find-all-edges graph (cdr objects)))))
 
 (defun find-edge-ters (campus)
-  (let ((graph (ter::get-campus-graph campus))
-        (entities (find-entities campus)))
-    (%find-edge-ters graph entities)))
+  (let ((graph      (ter::get-campus-graph campus))
+        (entities   (find-entities campus))
+        (identifers (find-identifier-instances campus))
+        (ports      (find-entities-ports campus)))
+    (nconc (find-all-edges graph entities)
+           (find-all-edges graph identifers)
+           (find-all-edges graph ports))))

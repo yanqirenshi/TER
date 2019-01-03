@@ -22,13 +22,18 @@
   (when (get-entity-identifier-at-code graph entity code)
     (error "aledy exist relationship of entity to identifier")))
 
+(defun find-entity-identifiers (graph entity &key edge-type)
+  (shinra:find-r-vertex graph
+                        'edge-ter
+                        :from entity
+                        :edge-type edge-type
+                        :vertex-class 'identifier-instance))
+
 (defun get-native-identifier (graph entity)
-  (assert graph) (assert entity)
-  (car (shinra:find-r-vertex graph
-                             'edge-ter
-                             :from entity
-                             :edge-type :have-to-native
-                             :vertex-class 'identifier-instance)))
+  (assert graph)
+  (assert entity)
+  (car (find-entity-identifiers graph entity
+                                :edge-type :have-to-native)))
 
 (defun assert-not-exist-native-identifier (graph entity type)
   (when (eq :native type)

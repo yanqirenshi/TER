@@ -19,8 +19,9 @@
            #:find-entities
            #:get-entity
            #:find-identifier-instances
-           #:find-identifier-attributes
+           #:find-attributes-instances
            #:find-edge-ters
-           #:save-entity-position)
+           #:save-entity-position
+           #:find-entities-ports)
   (:export #:find-graph))
 (in-package :ter.api.controller)

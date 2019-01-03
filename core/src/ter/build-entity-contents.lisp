@@ -22,20 +22,62 @@
   (when (get-entity-identifier-at-code graph entity code)
     (error "aledy exist relationship of entity to identifier")))
 
-(defgeneric tx-add-identifier (graph entity identifier)
-  (:method (graph (entity entity) (identifier identifier-instance))
-    (assert-not-exist-entity-identifier graph entity :code (code identifier))
-    (values identifier
-            entity
-            (shinra:tx-make-edge graph 'edge-ter entity identifier :have-to)))
+(defun get-native-identifier (graph entity)
+  (assert graph) (assert entity)
+  (car (shinra:find-r-vertex graph
+                             'edge-ter
+                             :from entity
+                             :edge-type :have-to-native
+                             :vertex-class 'identifier-instance)))
 
-  (:method (graph (entity entity) (params list))
+(defun assert-not-exist-native-identifier (graph entity type)
+  (when (eq :native type)
+    (when (get-native-identifier graph entity)
+      (error "Aledy have native identifier."))))
+
+(defun get-identifier-edge-type (type)
+  (cond ((eq :native    type) :have-to-native)
+        ((eq :foreigner type) :have-to-foreigner)
+        (t (error "Not supported yet. type=~S" type))))
+
+(defgeneric assert-entity-identifier-type (entity type)
+  (:method ((entity resource) type)
+    (unless (eq :native type)
+      (error "Invalid type. entity=~S, type=~S" entity type)))
+  (:method ((entity event) type)
+    (unless (or (eq :native type) (eq :foreigner type))
+      (error "Invalid type. entity=~S, type=~S" entity type)))
+  (:method ((entity correspondence) type)
+    (unless (eq :foreigner type)
+      (error "Invalid type. entity=~S, type=~S" entity type)))
+  (:method ((entity recursion) type)
+    (unless (eq :foreigner type)
+      (error "Invalid type. entity=~S, type=~S" entity type)))
+  (:method ((entity comparative) type)
+    (unless (eq :foreigner type)
+      (error "Invalid type. entity=~S, type=~S" entity type)))
+  (:method (entity type)
+    (error "Invalid entity. entity=~S, type=~S" entity type)))
+
+(defgeneric tx-add-identifier (graph entity identifier &key type)
+  (:method (graph (entity entity) (identifier identifier-instance) &key (type :native))
+    (assert-entity-identifier-type entity type)
+    (assert-not-exist-native-identifier graph entity type)
+    (assert-not-exist-entity-identifier graph entity :code (code identifier))
+    (let ((edge-type (get-identifier-edge-type type)))
+      (values identifier
+              entity
+              (shinra:tx-make-edge graph 'edge-ter entity identifier edge-type))))
+
+  (:method (graph (entity entity) (params list) &key (type :native))
     (let ((code (getf params :code))
           (name (getf params :name))
           (data-type (getf params :data-type)))
       (assert-not-exist-entity-identifier graph entity :code code)
-      (tx-add-identifier graph entity
-                         (tx-make-identifier-instance graph code name data-type)))))
+      (tx-add-identifier graph
+                         entity
+                         (tx-make-identifier-instance graph code name data-type)
+                         :type type))))
 
 
 ;;;;;
@@ -53,7 +95,7 @@
     (assert-not-exist-entity-attribute graph entity :code (code attribute))
     (values attribute
             entity
-            (shinra:tx-make-edge graph 'edge-ter entity attribute :have-to)))
+            (shinra:tx-make-edge graph 'edge-ter entity attribute :have-to-native)))
 
   (:method (graph (entity entity) (params list))
     (let ((code (getf params :code))

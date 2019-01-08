@@ -128,6 +128,35 @@ class Entity {
 
         entity.attributes.items  = out;
     }
+    addPorts2Entity (entity, state) {
+        let identifiers = entity.identifiers.items.list;
+        let ports = state.ports;
+        let edges_all = state.relationships.indexes.from;
+
+        for (let identifier of identifiers) {
+            let edges = edges_all[identifier._id];
+
+            if (!edges)  continue;
+
+            for (let key in edges) {
+                let edge = edges[key];
+
+                if (edge.to_class!='PORT-TER')
+                    continue;
+
+                let items = entity.ports.items;
+                let port_core = ports.ht[edge.to_id];
+                let port = {
+                    position: { x:0, y:0 },
+                    _class: port_core._class,
+                    _core: port_core,
+                };
+
+                items.list.push(port);
+                items.ht[port._id] = port;
+            }
+        }
+    }
     makeGraphEntity (entity, state) {
         let new_entity = this.makeGraphEntityTemplate();
 
@@ -143,7 +172,7 @@ class Entity {
 
         this.addIdentifiers2Entity(new_entity, state);
         this.addAttributes2Entity(new_entity, state);
-        new_entity.ports.items = state.ports;
+        this.addPorts2Entity(new_entity, state);
 
         let background_ht = {
             resource:       { color: '#a0d8ef' },
@@ -366,8 +395,7 @@ class Entity {
         let x = 0;
         let y = this.getPortLineLength(entity);
 
-        // let degree = 360 - (port.position % 360);
-        let degree = port.position % 360;
+        let degree = port._core.position % 360;
 
         let radian = this.deg2rad(degree);
         let cos = Math.cos(radian);
@@ -487,6 +515,7 @@ class Entity {
      *  Drag & Drop
      * **************************************************************** */
     moveEdges (edges) {
+        // TODO:
     }
     moveEntity(entity) {
         let selection = this._place

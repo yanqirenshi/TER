@@ -483,6 +483,8 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerPorts (mode, response) {
         let new_state = STORE.get('ter');
 
+        new_state.ports = this.mergeStateData(response, new_state.ports);
+
         return {
             type: 'FETCHED-TER-PORTS',
             mode: mode,

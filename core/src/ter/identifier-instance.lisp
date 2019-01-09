@@ -7,9 +7,8 @@
   (car (shinra:find-vertex graph 'identifier-instance :slot 'code :value code)))
 
 (defun tx-make-identifier-instance (graph code name data-type)
-  (or (get-identifier-instance graph :code code)
-      (shinra:tx-make-vertex graph
-                             'identifier-instance
-                             `((code ,code)
-                               (name ,name)
-                               (data-type ,data-type)))))
+  (shinra:tx-make-vertex graph
+                         'identifier-instance
+                         `((code ,code)
+                           (name ,name)
+                           (data-type ,data-type))))

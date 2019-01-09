@@ -160,16 +160,16 @@ class Actions extends Vanilla_Redux_Actions {
                         (r['to-class']=='PORT-ER-OUT' || r['to-class']=='PORT-ER-IN'));
             if (test) {
                 let port_from = ports_ht[r['from-id']];
-                let port_to = ports_ht[r['to-id']];
+                let port_to   = ports_ht[r['to-id']];
 
                 r._port_from = port_from;
-                r._port_to = port_to;
+                r._port_to   = port_to;
 
                 let table_from = port_from._column_instance._table;
                 let table_to   = port_to._column_instance._table;
 
                 if (!table_from._edges) table_from._edges = [];
-                if (!table_to._edges)   table_to._edges = [];
+                if (!table_to._edges)   table_to._edges   = [];
 
                 table_from._edges.push(r);
                 table_to._edges.push(r);

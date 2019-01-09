@@ -6,8 +6,7 @@
     (tx-make-relationship-rsc2rsc-th graph from to))
 
   (:method (graph (from resource) (to event))
-    ;;(tx-make-relationship-rsc2evt-to graph from to)
-    (error "building now..."))
+    (tx-make-relationship-rsc2evt-to graph from to))
 
   (:method (graph (from event) (to event))
     ;;(tx-make-relationship-evt2evt-to graph from to)

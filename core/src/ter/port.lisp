@@ -3,8 +3,9 @@
 (defun find-port (graph)
   (shinra:find-vertex graph 'port-ter))
 
-(defun get-port (graph &key code)
-  (car (shinra:find-vertex graph 'port-ter :slot 'code :value code)))
+(defun get-port (graph &key %id code)
+  (cond (%id (shinra:get-vertex-at graph 'port-ter :%id %id))
+        (code (car (shinra:find-vertex graph 'port-ter :slot 'code :value code)))))
 
 (defun tx-make-port (graph)
   (shinra:tx-make-vertex graph 'port-ter '()))

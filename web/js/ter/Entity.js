@@ -1,10 +1,22 @@
 class Entity {
     constructor() {
+
         this._default = {
             line: {
                 height: 14,
                 font: {
                     size: 14
+                }
+            },
+            style: {
+                entity: {
+                    background: {
+                        resource:       { color: '#2ca9e1' },
+                        event:          { color: '#ec6d71' },
+                        comparative:    { color: '#c8d5bb' },
+                        correspondence: { color: '#f2f2b0' },
+                        recursion:      { color: '#dbd0e6' },
+                    }
                 }
             }
         };
@@ -128,34 +140,46 @@ class Entity {
 
         entity.attributes.items  = out;
     }
-    addPorts2Entity (entity, state) {
+    findEntityPorts (entity, state) {
         let identifiers = entity.identifiers.items.list;
-        let ports = state.ports;
         let edges_all = state.relationships.indexes.from;
 
+        let out = [];
         for (let identifier of identifiers) {
             let edges = edges_all[identifier._id];
 
-            if (!edges)  continue;
+            if (!edges) continue;
 
             for (let key in edges) {
                 let edge = edges[key];
 
-                if (edge.to_class!='PORT-TER')
-                    continue;
-
-                let items = entity.ports.items;
-                let port_core = ports.ht[edge.to_id];
-                let port = {
-                    position: { x:0, y:0 },
-                    _class: port_core._class,
-                    _core: port_core,
-                };
-
-                items.list.push(port);
-                items.ht[port._id] = port;
+                if (edge.to_class=='PORT-TER')
+                    out.push(edge._to);
             }
         }
+
+        return out;
+    }
+    addPorts2Entity (entity, state) {
+        let identifiers = entity.identifiers.items.list;
+        let edges_all = state.relationships.indexes.from;
+
+        let ports = this.findEntityPorts(entity, state);
+
+        for (let port_core of ports) {
+            let items = entity.ports.items;
+            let port = {
+                position: { x:0, y:0 },
+                _class: port_core._class,
+                _core: port_core,
+                _entity: entity,
+            };
+
+            port_core._element = port;
+
+            items.list.push(port);
+            items.ht[port._id] = port;
+        };
     }
     makeGraphEntity (entity, state) {
         let new_entity = this.makeGraphEntityTemplate();
@@ -174,13 +198,7 @@ class Entity {
         this.addAttributes2Entity(new_entity, state);
         this.addPorts2Entity(new_entity, state);
 
-        let background_ht = {
-            resource:       { color: '#a0d8ef' },
-            event:          { color: '#fdeff2' },
-            comparative:    { color: '#c3d825' },
-            correspondence: { color: '#f2f2b0' },
-            recursion:      { color: '#dbd0e6' },
-        };
+        let background_ht = this._default.style.entity.background;
 
         new_entity.background = background_ht[entity._class.toLowerCase()];
 
@@ -196,6 +214,8 @@ class Entity {
     }
     data(state) {
         this._data =  this.makeGraphEntities (state);
+
+        this._edges = state.relationships;
 
         return this;
     }
@@ -828,7 +848,12 @@ class Entity {
             .attr('fill', '#fff')
             .attr('stroke', '#000')
             .attr('stroke-width', 0.5)
-            .attr('degree', (d) => { return d.position; });
+            .attr('degree', (d) => {
+                return d._core.position;
+            })
+            .attr('port-id', (d) => {
+                return d._core._id;
+            });
     }
     // entity
     reDrawEntity (groups) {
@@ -853,10 +878,51 @@ class Entity {
 
         this.drawPorts(groups);
     }
-    // main
-    draw (place) {
-        this._place = place;
+    // edges
+    drawEdges (place) {
+        let edges = this._edges.list.filter((edge) => {
+            return edge.from_class=='PORT-TER' && edge.to_class=='PORT-TER';
+        });
 
-        this.drawEntity(this.drawGroup(place));
+        place
+            .selectAll('line.connector')
+            .data(edges, (d) => { return d._id; })
+            .enter()
+            .append('line')
+            .attr('class', 'connector')
+            .attr('x1', (d) => {
+                let port = d._from._element;
+                let entity = port._entity;
+
+                return port.position.x + entity.position.x;
+            })
+            .attr('y1', (d) => {
+                let port = d._from._element;
+                let entity = port._entity;
+
+                return port.position.y + entity.position.y;
+            })
+            .attr('x2', (d) => {
+                let port = d._to._element;
+                let entity = port._entity;
+
+                return port.position.x + entity.position.x;
+            })
+            .attr('y2', (d) => {
+                let port = d._to._element;
+                let entity = port._entity;
+
+                return port.position.y + entity.position.y;
+            })
+            .attr('stroke', '#888888')
+            .attr('stroke-width', 1);
+    }
+    // main
+    draw (forground, background) {
+        this._place = forground;
+        this._background = background;
+
+        this.drawEntity(this.drawGroup(forground));
+        this.drawEdges(background);
     }
 }

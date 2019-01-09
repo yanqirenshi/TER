@@ -9,13 +9,14 @@
 
      this.draw = () => {
          let forground = this.svg.selectAll('g.base.forground');
+         let background = this.svg.selectAll('g.base.background');
          let state     = STORE.get('ter');
 
          new Entity()
              .data(state)
              .sizing()
              .positioning()
-             .draw(forground);
+             .draw(forground, background);
      };
 
      this.makeBases = (d3svg) => {

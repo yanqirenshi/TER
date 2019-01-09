@@ -659,13 +659,14 @@ riot.tag2('page02-sec_root', '<svg id="page02-sec_root-svg" ref="svg"></svg>', '
 
      this.draw = () => {
          let forground = this.svg.selectAll('g.base.forground');
+         let background = this.svg.selectAll('g.base.background');
          let state     = STORE.get('ter');
 
          new Entity()
              .data(state)
              .sizing()
              .positioning()
-             .draw(forground);
+             .draw(forground, background);
      };
 
      this.makeBases = (d3svg) => {

@@ -3,9 +3,9 @@
         <div class="container">
             <h1 class="title is-5">Column Instance</h1>
             <h2 class="subtitle" style="font-size: 0.8rem;">
-                <span>{opts.source ? opts.source.physical_name : ''}</span>
+                <span>{physicalName()}</span>
                 : 
-                <span>{opts.source ? opts.source.logical_name : ''}</span>
+                <span>{logicalName()}</span>
             </h2>
         </div>
     </section>
@@ -14,10 +14,10 @@
 
     <div style="margin-top:22px;">
         <inspector-column-basic       class="hide"
-                                      source={opts.source}
+                                      source={columnData()}
                                       callback={opts.callback}></inspector-column-basic>
         <inspector-column-description class="hide"
-                                      source={opts.source}
+                                      source={columnData()}
                                       callback={opts.callback}></inspector-column-description>
     </div>
 
@@ -36,6 +36,30 @@
          width: auto;
      }
     </style>
+
+    <script>
+     this.columnData = () => {
+         if (!opts.source)
+             return null;
+         if (opts.source._class!='COLUMN-INSTANCE')
+             return null;
+         return opts.source
+     };
+     this.physicalName = () => {
+         let data = this.columnData();
+
+         if (!data) return '';
+
+         return data.physical_name;
+     };
+     this.logicalName = () => {
+         let data = this.columnData();
+
+         if (!data) return '';
+
+         return data.logical_name;
+     }
+    </script>
 
 
     <script>

@@ -637,6 +637,7 @@ class Entity {
                 return d.name.size.h;
             })
             .attr('fill', (d) => { return '#ffffff'; });
+
     }
     drawNameText (texts) {
         return texts
@@ -652,14 +653,26 @@ class Entity {
             });
     }
     drawName (groups) {
+        let self = this;
+
         let rects = groups
             .append('rect')
+            .on("click", (d) => {
+                let func = self._callbacks.entity.click;
+
+                if (func) func(d);
+            })
             .attr('class', 'entity-title');
 
         this.drawNameRect(rects);
 
         let texts = groups
             .append('text')
+            .on("click", (d) => {
+                let func = self._callbacks.entity.click;
+
+                if (func) func(d);
+            })
             .attr('class', 'entity-title');
 
         this.drawNameText(texts)
@@ -919,9 +932,10 @@ class Entity {
             .attr('stroke-width', 1);
     }
     // main
-    draw (forground, background) {
+    draw (forground, background, callbacks) {
         this._place = forground;
         this._background = background;
+        this._callbacks = callbacks;
 
         this.drawEntity(this.drawGroup(forground));
         this.drawEdges(background);

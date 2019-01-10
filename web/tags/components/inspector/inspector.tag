@@ -7,6 +7,10 @@
         <inspector-column class={hideContents('column-instance')}
                           source={data()}
                           callback={opts.callback}></inspector-column>
+
+        <inspector-entity class={hideContents('entity')}
+                          source={data()}
+                          callback={opts.callback}></inspector-entity>
     </div>
 
     <style>
@@ -36,8 +40,18 @@
      };
      this.hideContents = (type) => {
          let data = this.data();
-         if (!data) return 'hide';
-         return data._class == type.toUpperCase() ? '' : 'hide';
+
+         if (!data)
+             return 'hide';
+
+         if (data._class == type.toUpperCase())
+             return '';
+
+         if (data._class=='RESOURCE' || data._class=='EVENT' || data._class=='COMPARATIVE')
+             if (type=='entity')
+                 return '';
+
+         return 'hide';
      };
      this.hide = () => {
          return this.state().display ? '' : 'hide';

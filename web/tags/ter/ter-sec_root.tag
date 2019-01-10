@@ -1,6 +1,14 @@
 <ter-sec_root>
     <svg id="ter-sec_root-svg" ref="svg"></svg>
 
+    <inspector callback={inspectorCallback}></inspector>
+
+
+    <script>
+     this.inspectorCallback = (type, data) => {
+     };
+    </script>
+
     <script>
      this.d3svg = null;
      this.svg   = null;
@@ -16,9 +24,13 @@
              .data(state)
              .sizing()
              .positioning()
-             .draw(forground, background);
+             .draw(forground, background, {
+                 entity: {
+                     click: (d) => {
+                         STORE.dispatch(ACTIONS.setDataToInspector(d));
+                         d3.event.stopPropagation();
+                     }}});
      };
-
      this.makeBases = (d3svg) => {
          let svg = d3svg.Svg();
 

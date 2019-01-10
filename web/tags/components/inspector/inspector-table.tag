@@ -25,11 +25,11 @@
                                columns={getVal('_column_instances')}></inspector-table-basic>
 
         <inspector-table-description class="{isHide('description')}"
-                                     data={data()}
+                                     data={tableData()}
                                      callback={this.opts.callback}></inspector-table-description>
 
         <inspector-table-relationship class="{isHide('relationship')}"
-                                      data={data()}></inspector-table-relationship>
+                                      data={tableData()}></inspector-table-relationship>
     </div>
 
     <style>
@@ -59,11 +59,17 @@
 
 
     <script>
-     this.data = () => {
+     this.tableData = () => {
+         if (!this.opts.data)
+             return null;
+
+         if (this.opts.data._class!='TABLE')
+             return null;
+
          return this.opts.data;
      };
      this.getVal = (name) => {
-         let data = this.opts.data;
+         let data = this.tableData();
 
          if (!data || !data[name]) return '';
 

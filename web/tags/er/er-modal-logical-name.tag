@@ -1,4 +1,4 @@
-<page03-modal-logical-name>
+<er-modal-logical-name>
     <div class="modal {isActive()}">
         <div class="modal-background"></div>
         <div class="modal-content">
@@ -63,4 +63,4 @@
          this.opts.callback('click-close-button');
      };
     </script>
-</page03-modal-logical-name>
+</er-modal-logical-name>

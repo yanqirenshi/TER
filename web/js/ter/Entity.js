@@ -199,8 +199,8 @@ class Entity {
         this.addPorts2Entity(new_entity, state);
 
         let background_ht = this._default.style.entity.background;
-
         new_entity.background = background_ht[entity._class.toLowerCase()];
+        new_entity._core = entity;
 
         return new_entity;
     }
@@ -588,7 +588,8 @@ class Entity {
             .enter()
             .append('g')
             .attr('class', 'entity')
-            .attr('entity-id', (d) => { return d._id; })
+            .attr('entity-id',   (d) => { return d._id; })
+            .attr('entity-code', (d) => { return d._core.code; })
             .attr('entity-type', (d) => { return d._class; })
             .attr("transform", (d) => {
                 return "translate(" + d.position.x + "," + d.position.y + ")";

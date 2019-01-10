@@ -17,7 +17,7 @@
      inspector > div {
          overflow-y: auto;
          min-width: 333px;
-         max-width: 555px;
+         max-width: 888px;
          height: 100vh;
          position: fixed;
          right: 0px;

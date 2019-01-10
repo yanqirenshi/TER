@@ -27,8 +27,10 @@
                 <tr>
                     <th>entity</th>
                     <th>identifier</th>
+
                     <th>entity</th>
                     <th>identifier</th>
+
                     <th>degree</th>
                     <th>x</th>
                     <th>y</th>
@@ -37,10 +39,13 @@
             <tbody>
                 <tr each={port in portsData()}>
                     <td>{port._core._id}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+
+                    <td>{fromEntity(port)}</td>
+                    <td>{fromIdentiferName(port)}</td>
+
+                    <td>{toEntity(port)}</td>
+                    <td>{toIdentiferName(port)}</td>
+
                     <td>{port._core.position}</td>
                     <td>{Math.floor(port.position.x * 100)/100}</td>
                     <td>{Math.floor(port.position.y * 100)/100}</td>
@@ -50,12 +55,66 @@
     </div>
 
     <script>
-     this.dataType = () => {
-         let data = this.entityData();
+     this.toIdentifer = (port) => {
+         let port_id = port._core._id;
+         let state = STORE.get('ter');
+         let edges = state.relationships.indexes.from[port_id];
 
-         if (!data) return '';
+         let edge = null;
 
-         return data._class;
+         for (let key in edges) {
+             if (edges[key].to_class!='PORT-TER')
+                 continue;
+             else
+                 edge = edges[key];
+         }
+
+         edges = state.relationships.indexes.to[edge.to_id];
+         for (let key in edges) {
+             if (edges[key].from_class!='IDENTIFIER-INSTANCE')
+                 continue;
+             else
+                 edge = edges[key];
+         }
+
+         return state.identifier_instances.ht[edge.from_id];
+     }
+     this.toIdentiferName = (port) => {
+         let identifier = this.toIdentifer(port);
+
+         return identifier ? identifier.name : '';
+     };
+     this.toEntity = (port) => {
+         let identifier = this.toIdentifer(port);
+
+         return identifier ? identifier._entity._core.name : '';
+     }
+
+     this.fromIdentifer = (port) => {
+         let port_id = port._core._id;
+         let state = STORE.get('ter');
+         let edges = state.relationships.indexes.to[port_id];
+
+         let edge = null;
+         for (let key in edges) {
+             if (edges[key].from_class!='IDENTIFIER-INSTANCE')
+                 continue;
+             else
+                 edge = edges[key];
+         }
+
+         let identifier = state.identifier_instances.ht[edge.from_id]
+
+         return identifier;
+     }
+     this.fromIdentiferName = (port) => {
+         let identifier = this.fromIdentifer(port);
+         return identifier ? identifier.name : '';
+     }
+     this.fromEntity = (port) => {
+         let identifier = this.fromIdentifer(port);
+
+         return identifier ? identifier._entity._core.name : '';
      }
      this.entityName = () => {
          let data = this.entityData();
@@ -64,6 +123,14 @@
 
          return data._core.name;
      }
+     this.dataType = () => {
+         let data = this.entityData();
+
+         if (!data) return '';
+
+         return data._class;
+     }
+
      this.entityCode = () => {
          let data = this.entityData();
 

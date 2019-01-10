@@ -1,4 +1,4 @@
-<page03-sec_root>
+<er-sec_root>
     <svg></svg>
 
     <operators data={operators()}
@@ -6,11 +6,11 @@
 
     <inspector callback={inspectorCallback}></inspector>
 
-    <page03-modal-logical-name data={modalData()}
-                               callback={modalCallback}></page03-modal-logical-name>
+    <er-modal-logical-name data={modalData()}
+                               callback={modalCallback}></er-modal-logical-name>
 
-    <page03-modal-description data={modal_target_table}
-                              callback={modalCallback}></page03-modal-description>
+    <er-modal-description data={modal_target_table}
+                              callback={modalCallback}></er-modal-description>
 
     <script>
      this.d3svg = null;
@@ -19,7 +19,7 @@
 
      this.modalData = () => {
          let pages = STORE.state().get('site').pages;
-         return pages.find((d) => { return d.code == 'page03'; })
+         return pages.find((d) => { return d.code == 'er'; })
                      .modal
                      .logical_name;
      };
@@ -29,7 +29,7 @@
      };
 
      this.operators = () => {
-         let state = STORE.state().get('site').pages.find((d) => { return d.code=='page03'; });
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='er'; });
          return state.operators;
      };
      this.clickOperator = (code) => {
@@ -40,11 +40,11 @@
              ACTIONS.snapshotAll();
      };
      this.inspectorCallback = (type, data) => {
-         let page_code = 'page03';
+         let page_code = 'er';
 
          if (type=='click-edit-logical-name') {
              STORE.dispatch(ACTIONS.setDataToModalLogicalName(page_code, data));
-             this.tags['page03-modal-logical-name'].update();
+             this.tags['er-modal-logical-name'].update();
              return;
          }
 
@@ -67,13 +67,13 @@
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {
-             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', null));
-             this.tags['page03-modal-logical-name'].update();
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName('er', null));
+             this.tags['er-modal-logical-name'].update();
              return;
          }
          if (type=='click-save-button') {
              data.schema_code = STORE.state().get('schemas').active;
-             return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
+             return ACTIONS.saveColumnInstanceLogicalName(data, 'er');
          }
 
          if (type=='close-modal-description') {
@@ -89,7 +89,7 @@
              ACTIONS.saveColumnInstanceDescription(schema_code,
                                                    data.column_instance,
                                                    data.value,
-                                                   'page03');
+                                                   'er');
              return;
          }
 
@@ -99,7 +99,7 @@
              ACTIONS.saveTableDescription(schema_code,
                                           data.table,
                                           data.value,
-                                          'page03');
+                                          'er');
              return;
          }
      };
@@ -122,7 +122,7 @@
              }
          };
 
-         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
+         this.d3svg = this.ter.makeD3svg('er-sec_root > svg', camera, callbacks);
 
          return this.d3svg
      };
@@ -135,20 +135,20 @@
              this.ter.drawTables(d3svg, STORE.state().get('er'));
          }
 
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03') {
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
              this.update();
              this.ter.reDrawTable (action.redraw);
          }
 
-         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='page03') {
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
              this.modal_target_table = null;
              this.update();
          }
 
-         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='page03') {
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
              this.modal_target_table = null;
              this.update();
          }
      });
     </script>
-</page03-sec_root>
+</er-sec_root>

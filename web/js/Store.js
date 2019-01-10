@@ -17,23 +17,23 @@ class Store extends Vanilla_Redux_Store {
                     stye: {color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }}
                 },
                 {
-                    code: "page02",
+                    code: "ter",
                     title: "TER",
                     menu_label: 'TER',
                     active_section: 'root',
                     home_section: 'root',
-                    sections: [{ code: 'root', tag: 'page02-sec_root', title: 'Home', description: '' }],
+                    sections: [{ code: 'root', tag: 'ter-sec_root', title: 'Home', description: '' }],
                     stye: {
                         color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
                     }
                 },
                 {
-                    code: "page03",
+                    code: "er",
                     title: "ER",
                     menu_label: 'ER',
                     active_section: 'root',
                     home_section: 'root',
-                    sections: [{ code: 'root', tag: 'page03-sec_root', title: 'Home', description: '' }],
+                    sections: [{ code: 'root', tag: 'er-sec_root', title: 'Home', description: '' }],
                     operators: [
                         { code: 'move-center', name: 'Move Center', color: 'is-info' },
                         { code: 'save-graph',  name: 'Save Graph',  color: 'is-link' }

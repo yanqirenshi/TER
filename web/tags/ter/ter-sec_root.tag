@@ -1,5 +1,5 @@
-<page02-sec_root>
-    <svg id="page02-sec_root-svg" ref="svg"></svg>
+<ter-sec_root>
+    <svg id="ter-sec_root-svg" ref="svg"></svg>
 
     <script>
      this.d3svg = null;
@@ -45,7 +45,7 @@
 
          let d3svg = new D3Svg({
              d3: d3,
-             svg: d3.select("#page02-sec_root-svg"),
+             svg: d3.select("#ter-sec_root-svg"),
              x: 0,
              y: 0,
              w: w,
@@ -68,4 +68,4 @@
          this.svg = this.d3svg.Svg();
      });
     </script>
-</page02-sec_root>
+</ter-sec_root>

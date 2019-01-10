@@ -408,7 +408,7 @@ riot.tag2('markdown-preview', '', 'markdown-preview h1 { font-weight: bold; font
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
 });
 
-riot.tag2('page03-modal-description', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content" style="width: 88vw;"> <div class="card"> <div class="card-content" style="height: 88vh;"> <div style="display:flex; height: 100%; width: 100%;flex-direction: column;"> <div style="margin-bottom:11px;"> <h1 class="title is-4">{title()} の Description の変更</h1> </div> <div style="display:flex; flex-grow: 1"> <div style="flex-grow: 1;margin-right: 8px;"> <div class="element-container"> <h1 class="title is-5">Markdown</h1> <textarea class="input" ref="description" onkeyup="{inputDescription}">{description()}</textarea> </div> </div> <div style=";flex-grow: 1;margin-left: 8px;"> <div class="element-container"> <h1 class="title is-5">Preview</h1> <div class="preview" style="padding: 0px 11px 11px 11px;"> <markdown-preview data="{marked(markdown)}"></markdown-preview> </div> </div> </div> </div> <div style="margin-top:11px;"> <button class="button is-warning" onclick="{clickCancel}">Cancel</button> <button class="button is-danger" style="float:right;" onclick="{clickSave}">Save</button> </div> </div> </div> </div> </div> </div>', 'page03-modal-description .element-container { display:flex; height: 100%; width: 100%; flex-direction: column; } page03-modal-description .element-container .title{ margin-bottom:6px; } page03-modal-description .input { border: 1px solid #eeeeee; padding: 11px; box-shadow: none; height: 100%; width: 100%; } page03-modal-description .preview { border: 1px solid #eeeeee; flex-grow:1; }', '', function(opts) {
+riot.tag2('er-modal-description', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content" style="width: 88vw;"> <div class="card"> <div class="card-content" style="height: 88vh;"> <div style="display:flex; height: 100%; width: 100%;flex-direction: column;"> <div style="margin-bottom:11px;"> <h1 class="title is-4">{title()} の Description の変更</h1> </div> <div style="display:flex; flex-grow: 1"> <div style="flex-grow: 1;margin-right: 8px;"> <div class="element-container"> <h1 class="title is-5">Markdown</h1> <textarea class="input" ref="description" onkeyup="{inputDescription}">{description()}</textarea> </div> </div> <div style=";flex-grow: 1;margin-left: 8px;"> <div class="element-container"> <h1 class="title is-5">Preview</h1> <div class="preview" style="padding: 0px 11px 11px 11px;"> <markdown-preview data="{marked(markdown)}"></markdown-preview> </div> </div> </div> </div> <div style="margin-top:11px;"> <button class="button is-warning" onclick="{clickCancel}">Cancel</button> <button class="button is-danger" style="float:right;" onclick="{clickSave}">Save</button> </div> </div> </div> </div> </div> </div>', 'er-modal-description .element-container { display:flex; height: 100%; width: 100%; flex-direction: column; } er-modal-description .element-container .title{ margin-bottom:6px; } er-modal-description .input { border: 1px solid #eeeeee; padding: 11px; box-shadow: none; height: 100%; width: 100%; } er-modal-description .preview { border: 1px solid #eeeeee; flex-grow:1; }', '', function(opts) {
      this.markdown = null;
 
      this.clickCancel = () => {
@@ -458,7 +458,7 @@ riot.tag2('page03-modal-description', '<div class="modal {isActive()}"> <div cla
      };
 });
 
-riot.tag2('page03-modal-logical-name', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content"> <nav class="panel"> <p class="panel-heading"> 論理名の変更 </p> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">テーブル: </span> <span>{tableName()}</span> </div> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">物理名:</span> <span>{physicalName()}</span> </div> <div class="panel-block" style="background: #fff;"> <input class="input" type="text" riot-value="{opts.data.logical_name}" placeholder="論理名" ref="logical_name"> </div> <div class="panel-block" style="background: #fff;"> <button class="button is-danger is-fullwidth" onclick="{clickSaveButton}"> Save </button> </div> </nav> </div> <button class="modal-close is-large" aria-label="close" onclick="{clickCloseButton}"></button> </div>', '', '', function(opts) {
+riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-content"> <nav class="panel"> <p class="panel-heading"> 論理名の変更 </p> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">テーブル: </span> <span>{tableName()}</span> </div> <div class="panel-block" style="background: #fff;"> <span style="margin-right:11px;">物理名:</span> <span>{physicalName()}</span> </div> <div class="panel-block" style="background: #fff;"> <input class="input" type="text" riot-value="{opts.data.logical_name}" placeholder="論理名" ref="logical_name"> </div> <div class="panel-block" style="background: #fff;"> <button class="button is-danger is-fullwidth" onclick="{clickSaveButton}"> Save </button> </div> </nav> </div> <button class="modal-close is-large" aria-label="close" onclick="{clickCloseButton}"></button> </div>', '', '', function(opts) {
      this.isActive = () => {
          return this.opts.data.data ? 'is-active' : '';
      };
@@ -487,14 +487,14 @@ riot.tag2('page03-modal-logical-name', '<div class="modal {isActive()}"> <div cl
      };
 });
 
-riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <page03-modal-logical-name data="{modalData()}" callback="{modalCallback}"></page03-modal-logical-name> <page03-modal-description data="{modal_target_table}" callback="{modalCallback}"></page03-modal-description>', '', '', function(opts) {
+riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <er-modal-logical-name data="{modalData()}" callback="{modalCallback}"></er-modal-logical-name> <er-modal-description data="{modal_target_table}" callback="{modalCallback}"></er-modal-description>', '', '', function(opts) {
      this.d3svg = null;
      this.ter = new Ter();
      this.modal_target_table = null;
 
      this.modalData = () => {
          let pages = STORE.state().get('site').pages;
-         return pages.find((d) => { return d.code == 'page03'; })
+         return pages.find((d) => { return d.code == 'er'; })
                      .modal
                      .logical_name;
      };
@@ -504,7 +504,7 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
      };
 
      this.operators = () => {
-         let state = STORE.state().get('site').pages.find((d) => { return d.code=='page03'; });
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='er'; });
          return state.operators;
      };
      this.clickOperator = (code) => {
@@ -515,11 +515,11 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              ACTIONS.snapshotAll();
      };
      this.inspectorCallback = (type, data) => {
-         let page_code = 'page03';
+         let page_code = 'er';
 
          if (type=='click-edit-logical-name') {
              STORE.dispatch(ACTIONS.setDataToModalLogicalName(page_code, data));
-             this.tags['page03-modal-logical-name'].update();
+             this.tags['er-modal-logical-name'].update();
              return;
          }
 
@@ -542,13 +542,13 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
      };
      this.modalCallback = (type, data) => {
          if (type=='click-close-button') {
-             STORE.dispatch(ACTIONS.setDataToModalLogicalName('page03', null));
-             this.tags['page03-modal-logical-name'].update();
+             STORE.dispatch(ACTIONS.setDataToModalLogicalName('er', null));
+             this.tags['er-modal-logical-name'].update();
              return;
          }
          if (type=='click-save-button') {
              data.schema_code = STORE.state().get('schemas').active;
-             return ACTIONS.saveColumnInstanceLogicalName(data, 'page03');
+             return ACTIONS.saveColumnInstanceLogicalName(data, 'er');
          }
 
          if (type=='close-modal-description') {
@@ -564,7 +564,7 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              ACTIONS.saveColumnInstanceDescription(schema_code,
                                                    data.column_instance,
                                                    data.value,
-                                                   'page03');
+                                                   'er');
              return;
          }
 
@@ -574,7 +574,7 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              ACTIONS.saveTableDescription(schema_code,
                                           data.table,
                                           data.value,
-                                          'page03');
+                                          'er');
              return;
          }
      };
@@ -597,7 +597,7 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              }
          };
 
-         this.d3svg = this.ter.makeD3svg('page03-sec_root > svg', camera, callbacks);
+         this.d3svg = this.ter.makeD3svg('er-sec_root > svg', camera, callbacks);
 
          return this.d3svg
      };
@@ -610,24 +610,24 @@ riot.tag2('page03-sec_root', '<svg></svg> <operators data="{operators()}" callba
              this.ter.drawTables(d3svg, STORE.state().get('er'));
          }
 
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='page03') {
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
              this.update();
              this.ter.reDrawTable (action.redraw);
          }
 
-         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='page03') {
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
              this.modal_target_table = null;
              this.update();
          }
 
-         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='page03') {
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
              this.modal_target_table = null;
              this.update();
          }
      });
 });
 
-riot.tag2('page03', '', '', '', function(opts) {
+riot.tag2('er', '', '', '', function(opts) {
      this.mixin(MIXINS.page);
 
      this.on('mount', () => { this.draw(); });
@@ -651,7 +651,7 @@ riot.tag2('page01', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('page02-sec_root', '<svg id="page02-sec_root-svg" ref="svg"></svg>', '', '', function(opts) {
+riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg>', '', '', function(opts) {
      this.d3svg = null;
      this.svg   = null;
 
@@ -695,7 +695,7 @@ riot.tag2('page02-sec_root', '<svg id="page02-sec_root-svg" ref="svg"></svg>', '
 
          let d3svg = new D3Svg({
              d3: d3,
-             svg: d3.select("#page02-sec_root-svg"),
+             svg: d3.select("#ter-sec_root-svg"),
              x: 0,
              y: 0,
              w: w,
@@ -719,7 +719,7 @@ riot.tag2('page02-sec_root', '<svg id="page02-sec_root-svg" ref="svg"></svg>', '
      });
 });
 
-riot.tag2('page02', '', '', '', function(opts) {
+riot.tag2('ter', '', '', '', function(opts) {
      this.mixin(MIXINS.page);
 
      this.on('mount', () => { this.draw(); });

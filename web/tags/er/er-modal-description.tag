@@ -1,4 +1,4 @@
-<page03-modal-description>
+<er-modal-description>
     <div class="modal {isActive()}">
         <div class="modal-background"></div>
         <div class="modal-content" style="width: 88vw;">
@@ -104,25 +104,25 @@
     </script>
 
     <style>
-     page03-modal-description .element-container {
+     er-modal-description .element-container {
          display:flex;
          height: 100%;
          width: 100%;
          flex-direction: column;
      }
-     page03-modal-description .element-container .title{
+     er-modal-description .element-container .title{
          margin-bottom:6px;
      }
-     page03-modal-description .input {
+     er-modal-description .input {
          border: 1px solid #eeeeee;
          padding: 11px;
          box-shadow: none;
          height: 100%;
          width: 100%;
      }
-     page03-modal-description .preview {
+     er-modal-description .preview {
          border: 1px solid #eeeeee;
          flex-grow:1;
      }
     </style>
-</page03-modal-description>
+</er-modal-description>

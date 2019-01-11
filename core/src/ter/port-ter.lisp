@@ -1,6 +1,7 @@
 (in-package :ter)
 
 (defun find-port (graph)
+  ;; TODO: rename to find-port-ter
   (shinra:find-vertex graph 'port-ter))
 
 (defun get-port (graph &key %id code)

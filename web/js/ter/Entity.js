@@ -170,6 +170,7 @@ class Entity {
             let items = entity.ports.items;
             let port = {
                 position: { x:0, y:0 },
+                _id: port_core._id,
                 _class: port_core._class,
                 _core: port_core,
                 _entity: entity,

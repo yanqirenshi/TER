@@ -342,30 +342,85 @@ riot.tag2('inspector-column', '<section class="section"> <div class="container">
      });
 });
 
-riot.tag2('inspector-entity', '<div> <h1 class="title is-5">{entityName()}</h1> </div> <div style="margin-top:22px;"> <h1 class="title is-6">基本情報</h1> <p>{dataType()}</p> <p>{entityCode()}</p> <p>{entityName()}</p> </div> <div style="margin-top:22px;"> <h1 class="title is-6">Ports</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3">ID</th> <th colspan="4">Relationship</th> <th colspan="3" rowspan="2">Position</th> </tr> <tr> <th colspan="2">from</th> <th colspan="2">to</th> </tr> <tr> <th>entity</th> <th>identifier</th> <th>entity</th> <th>identifier</th> <th>degree</th> <th>x</th> <th>y</th> </tr> </thead> <tbody> <tr each="{port in portsData()}"> <td>{port._core._id}</td> <td>{fromEntity(port)}</td> <td>{fromIdentiferName(port)}</td> <td>{toEntity(port)}</td> <td>{toIdentiferName(port)}</td> <td>{port._core.position}</td> <td>{Math.floor(port.position.x * 100)/100}</td> <td>{Math.floor(port.position.y * 100)/100}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
-     this.toIdentifer = (port) => {
+riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <h1 class="title is-6">基本情報</h1> <table class="table is-bordered is-narrow is-hoverable"> <tbody> <tr> <th>Type</th> <td>{dataType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+     this.entityName = () => {
+         let data = this.opts.entity;
+
+         if (!data) return '';
+
+         return data._core.name;
+     }
+     this.dataType = () => {
+         let data = this.opts.entity;
+
+         if (!data) return '';
+
+         return data._class;
+     }
+
+     this.entityCode = () => {
+         let data = this.opts.entity;
+
+         if (!data) return '';
+
+         return data._core.code;
+     }
+});
+
+riot.tag2('inspector-entity-ports-positions', '<div style="margin-top:22px;"> <h1 class="title is-7">Positions</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="2">ID</th> <th colspan="3">Position</th> </tr> <tr> <th>degree</th> <th>x</th> <th>y</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{port._core.position}</td> <td>{Math.floor(port.position.x * 100)/100}</td> <td>{Math.floor(port.position.y * 100)/100}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+});
+
+riot.tag2('inspector-entity-ports-relationships', '<div style="margin-top:22px;"> <h1 class="title is-7">Relationships</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3">ID</th> <th colspan="3">Relationship</th> </tr> <tr> <th rowspan="2">from</th> <th colspan="2">to</th> </tr> <tr> <th>entity</th> <th>identifier</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{fromIdentiferName(port)}</td> <td>{toEntity(port)}</td> <td>{toIdentiferName(port)}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+     this.getEdge = (port) => {
          let port_id = port._core._id;
+         let port_direction = port._core.direction;
+
          let state = STORE.get('ter');
-         let edges = state.relationships.indexes.from[port_id];
+         let edges_index = state.relationships.indexes;
 
-         let edge = null;
+         let edges;
+         if (port_direction=="IN")
+             edges = edges_index.to[port_id];
+         else if (port_direction=="OUT")
+             edges = edges_index.from[port_id];
+         else
+             throw new Error('??? port.direction=' + port_direction);
 
-         for (let key in edges) {
-             if (edges[key].to_class!='PORT-TER')
-                 continue;
-             else
-                 edge = edges[key];
-         }
+         for (let key in edges)
+             if (edges[key].from_class=='PORT-TER' && edges[key].to_class=='PORT-TER')
+                 return edges[key];
 
-         edges = state.relationships.indexes.to[edge.to_id];
-         for (let key in edges) {
-             if (edges[key].from_class!='IDENTIFIER-INSTANCE')
-                 continue;
-             else
-                 edge = edges[key];
-         }
+         return null;
+     };
+     this.getToPortID = (state, port) => {
+         let edge = this.getEdge(port);
+         let port_direction = port._core.direction;
+         let ports_ht = state.ports.ht;
 
-         return state.identifier_instances.ht[edge.from_id];
+         if (port_direction=="IN")
+             return ports_ht[edge.from_id];
+         else if (port_direction=="OUT")
+             return ports_ht[edge.to_id];
+         else
+             throw new Error('??? port.direction=' + port_direction);
+     };
+     this.getPortIdentifier = (state, port) => {
+         let edges = state.relationships.indexes.to[port._id];
+
+         let identifiers_ht = state.identifier_instances.ht;
+         for (let key in edges)
+             if (edges[key].from_class=='IDENTIFIER-INSTANCE')
+                 return identifiers_ht[edges[key].from_id];
+
+         return null
+     }
+
+     this.toIdentifer = (port) => {
+         let state = STORE.get('ter');
+
+         let to_port = this.getToPortID(state, port);
+
+         return this.getPortIdentifier(state, to_port);
      }
      this.toIdentiferName = (port) => {
          let identifier = this.toIdentifer(port);
@@ -377,26 +432,14 @@ riot.tag2('inspector-entity', '<div> <h1 class="title is-5">{entityName()}</h1> 
 
          return identifier ? identifier._entity._core.name : '';
      }
-
      this.fromIdentifer = (port) => {
-         let port_id = port._core._id;
          let state = STORE.get('ter');
-         let edges = state.relationships.indexes.to[port_id];
 
-         let edge = null;
-         for (let key in edges) {
-             if (edges[key].from_class!='IDENTIFIER-INSTANCE')
-                 continue;
-             else
-                 edge = edges[key];
-         }
-
-         let identifier = state.identifier_instances.ht[edge.from_id]
-
-         return identifier;
+         return this.getPortIdentifier(state, port);
      }
      this.fromIdentiferName = (port) => {
          let identifier = this.fromIdentifer(port);
+
          return identifier ? identifier.name : '';
      }
      this.fromEntity = (port) => {
@@ -404,6 +447,20 @@ riot.tag2('inspector-entity', '<div> <h1 class="title is-5">{entityName()}</h1> 
 
          return identifier ? identifier._entity._core.name : '';
      }
+});
+
+riot.tag2('inspector-entity-ports', '<h1 class="title is-6">Ports</h1> <inspector-entity-ports-relationships ports="{portsData()}"></inspector-entity-ports-relationships> <inspector-entity-ports-positions ports="{portsData()}"></inspector-entity-ports-positions>', 'inspector-entity-ports { display: block; }', '', function(opts) {
+     this.portsData = () => {
+         let data = this.opts.entity;
+
+         if (!data || !data.ports || data.ports.items.list.length==0)
+             return null;
+
+         return data.ports.items.list;
+     };
+});
+
+riot.tag2('inspector-entity', '<div> <h1 class="title is-5">{entityName()}</h1> </div> <inspector-entity-basic entity="{entityData()}"></inspector-entity-basic> <inspector-entity-ports entity="{entityData()}"></inspector-entity-ports>', '', '', function(opts) {
      this.entityName = () => {
          let data = this.entityData();
 
@@ -411,29 +468,6 @@ riot.tag2('inspector-entity', '<div> <h1 class="title is-5">{entityName()}</h1> 
 
          return data._core.name;
      }
-     this.dataType = () => {
-         let data = this.entityData();
-
-         if (!data) return '';
-
-         return data._class;
-     }
-
-     this.entityCode = () => {
-         let data = this.entityData();
-
-         if (!data) return '';
-
-         return data._core.code;
-     }
-     this.portsData = () => {
-         let data = this.entityData();
-
-         if (!data || !data.ports || data.ports.items.list.length==0)
-             return null;
-
-         return data.ports.items.list;
-     };
      this.entityData = () => {
          let data = this.opts.source;
 

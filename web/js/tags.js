@@ -699,7 +699,7 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
 
 riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <er-modal-logical-name data="{modalData()}" callback="{modalCallback}"></er-modal-logical-name> <er-modal-description data="{modal_target_table}" callback="{modalCallback}"></er-modal-description>', '', '', function(opts) {
      this.d3svg = null;
-     this.ter = new Ter();
+     this.ter = new Sketcher();
      this.modal_target_table = null;
 
      this.modalData = () => {
@@ -869,14 +869,13 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      this.svg   = null;
 
      this.ter = new Ter();
-     this.entity = new Entity();
 
      this.draw = () => {
          let forground = this.svg.selectAll('g.base.forground');
          let background = this.svg.selectAll('g.base.background');
          let state     = STORE.get('ter');
 
-         this.entity
+         this.ter
              .data(state)
              .sizing()
              .positioning()
@@ -942,7 +941,7 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
                      edge = edge_tmp;
              }
 
-             this.entity.movePort(edge._from._entity, action.target);
+             this.ter.movePort(edge._from._entity, action.target);
          }
      });
 

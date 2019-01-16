@@ -14,14 +14,13 @@
      this.svg   = null;
 
      this.ter = new Ter();
-     this.entity = new Entity();
 
      this.draw = () => {
          let forground = this.svg.selectAll('g.base.forground');
          let background = this.svg.selectAll('g.base.background');
          let state     = STORE.get('ter');
 
-         this.entity
+         this.ter
              .data(state)
              .sizing()
              .positioning()
@@ -87,7 +86,7 @@
                      edge = edge_tmp;
              }
 
-             this.entity.movePort(edge._from._entity, action.target);
+             this.ter.movePort(edge._from._entity, action.target);
          }
      });
 

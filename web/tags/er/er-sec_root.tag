@@ -7,14 +7,14 @@
     <inspector callback={inspectorCallback}></inspector>
 
     <er-modal-logical-name data={modalData()}
-                               callback={modalCallback}></er-modal-logical-name>
+                           callback={modalCallback}></er-modal-logical-name>
 
     <er-modal-description data={modal_target_table}
-                              callback={modalCallback}></er-modal-description>
+                          callback={modalCallback}></er-modal-description>
 
     <script>
      this.d3svg = null;
-     this.ter = new Ter();
+     this.ter = new Sketcher();
      this.modal_target_table = null;
 
      this.modalData = () => {

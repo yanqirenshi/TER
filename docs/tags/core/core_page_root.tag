@@ -4,6 +4,7 @@
     <page-tabs core={page_tabs} callback={clickTab}></page-tabs>
 
     <div>
+        <core_page_tab_usage      class="hide"></core_page_tab_usage>
         <core_page_tab_datamodels class="hide"></core_page_tab_datamodels>
         <core_page_tab_packages   class="hide"></core_page_tab_packages>
         <core_page_tab_classes    class="hide"></core_page_tab_classes>
@@ -15,6 +16,7 @@
 
     <script>
      this.page_tabs = new PageTabs([
+         {code: 'usage',      label: 'Usage',       tag: 'core_page_tab_usage' },
          {code: 'datamodels', label: 'Data Models', tag: 'core_page_tab_datamodels' },
          {code: 'packages',   label: 'Packages',    tag: 'core_page_tab_packages' },
          {code: 'classes',    label: 'Classes',     tag: 'core_page_tab_classes' },

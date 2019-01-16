@@ -173,6 +173,38 @@ riot.tag2('section-list', '<table class="table is-bordered is-striped is-narrow 
      };
 });
 
+riot.tag2('subtitle-breadcrumb', '<nav class="breadcrumb" aria-label="breadcrumbs"> <ul> <li each="{path()}"> <a class="{active ? \'is-active\' : \'\'}" href="{href}" aria-current="page">{label}</a> </li> </ul> </nav>', 'subtitle-breadcrumb { display: block; } subtitle-breadcrumb > nav.breadcrumb { padding-left: 22px; }', '', function(opts) {
+     this.path = () => {
+         let hash = location.hash;
+         let path = hash.split('/');
+
+         if (path[0] && path[0].substr(0,1)=='#')
+             path[0] = path[0].substr(1);
+
+         let out = [];
+         let len = path.length;
+         let href = null;
+         for (var i in path) {
+             href = href ? href + '/' + path[i] : '#' + path[i];
+
+             if (i==len-1)
+                 out.push({
+                     label: path[i],
+                     href: hash,
+                     active: true
+                 });
+
+             else
+                 out.push({
+                     label: path[i],
+                     href: href,
+                     active: false
+                 });
+         }
+         return out;
+     }
+});
+
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{name}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
 });
 
@@ -183,8 +215,9 @@ riot.tag2('core', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('core_page_root', '<section-header title="TER: Core"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <core_page_tab_datamodels class="hide"></core_page_tab_datamodels> <core_page_tab_packages class="hide"></core_page_tab_packages> <core_page_tab_classes class="hide"></core_page_tab_classes> <core_page_tab_operators class="hide"></core_page_tab_operators> <core_page_tab_readme class="hide"></core_page_tab_readme> </div> <section-footer></section-footer>', 'core_page_root > page-tabs { display: block; margin-top:22px; }', '', function(opts) {
+riot.tag2('core_page_root', '<section-header title="TER: Core"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <core_page_tab_usage class="hide"></core_page_tab_usage> <core_page_tab_datamodels class="hide"></core_page_tab_datamodels> <core_page_tab_packages class="hide"></core_page_tab_packages> <core_page_tab_classes class="hide"></core_page_tab_classes> <core_page_tab_operators class="hide"></core_page_tab_operators> <core_page_tab_readme class="hide"></core_page_tab_readme> </div> <section-footer></section-footer>', 'core_page_root > page-tabs { display: block; margin-top:22px; }', '', function(opts) {
      this.page_tabs = new PageTabs([
+         {code: 'usage',      label: 'Usage',       tag: 'core_page_tab_usage' },
          {code: 'datamodels', label: 'Data Models', tag: 'core_page_tab_datamodels' },
          {code: 'packages',   label: 'Packages',    tag: 'core_page_tab_packages' },
          {code: 'classes',    label: 'Classes',     tag: 'core_page_tab_classes' },
@@ -254,7 +287,15 @@ riot.tag2('core_page_tab_classes', '<section class="section"> <div class="contai
 riot.tag2('core_page_tab_datamodels', '<section class="section"> <div class="container"> <h1 class="title is-4">TER図</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>\n  entity\n    ^\n    |\n    +-------+---------+-------------+-------------+-------------+-------------+\n    |       |         |             |             |             |             |\nresource  event  comparative  correspondence  recursion  resouce-detail  event-detail\n\n\n  identifier ------1:n------> identifier-instance\n  attribute  ------1:n------> attribute-instance\n\n\n  entity ------1:n------> identifier-instance\n  entity ------1:n------> attribute-instance\n\n\n  identifier-instance ------1:n------> port-ter-in\n  identifier-instance ------1:n------> port-ter-out\n\n  recouece : recouece\n  recouece : resouce-detail\n  recouece : recursion\n  resouece : event\n  event    : event-detail\n  event    : event\n\n  port-ter-in ------1:n------> edge-ter ------1:n------> port-ter-out</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">ER図</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>\n  table  ------1:n------> column-instance\n\n\n  column ------1:n------> column-instance\n\n\n  column-instance -------1:1------> port-er-in\n  column-instance -------1:1------> port-er-out\n\n\n  port-er-in ------1:1------> edge-er ------1:1------> port-er-out</pre></p> </div> </div> </section>', '', '', function(opts) {
 });
 
-riot.tag2('core_page_tab_operators', '<section class="section"> <div class="container"> <h1 class="title"> <i style="font-weight:normal; font-size:14px;">Standard Generic Function</i> <b>tx-make-relationship</b> </h1> <h2 class="subtitle"></h2> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Syntax:</h1> <div class="contents"> <p style="padding:22px 22px; background:#eeeeee; border-radius:3px; font-size:33px;"> <i style="color:#888;">tx-make-relationship</i> <b>graph</b> <b>from</b> <b>to</b> <i style="color:#888;">&key</i> <b>type</b> </p> </div> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Method Signatures:</h1> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead><tr><th>graph</th><th>from</th><th>to</th></tr></thead> <tbody> <tr> <td>t</td> <td>RESOURCE</td> <td>RESOURCE</td> </tr> <tr> <td>t</td> <td>RESOURCE</td> <td>EVENT</td> </tr> <tr> <td>t</td> <td>EVENT</td> <td>EVENT</td> </tr> <tr> <td>t</td> <td>IDENTIFIER-INSTANCE</td> <td>IDENTIFIER-INSTANCE</td> </tr> <tr> <td>t</td> <td>t</td> <td>t</td> </tr> </tbody> </table> </div> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Arguments and Values:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Description:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Examples:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Side Effects:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Affected By:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Exceptional Situations:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">See Also:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Notes:</h1> <h2 class="subtitle">None.</h2> </div> </section> </div> </section>', 'core_page_tab_operators .clhs-section { padding-top: 11px; } core_page_tab_operators .clhs-section > .container > .contents { padding-left: 22px; }', '', function(opts) {
+riot.tag2('core_page_tab_operators', '<section class="section"> <div class="container"> <h1 class="title">Dictionary</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>Type</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{operator in operators}"> <td>{operator.type}</td> <td> <a href="{makeHref(operator.tag)}"> {operator.name} </a> </td> <td></td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
+     this.makeHref = (tag) => {
+         return location.hash + '/' + tag;
+     }
+     this.operators = [
+         { name: 'tx-make-relationship',       tag: 'tx-make-relationship',       type: 'Standard Generic Function' },
+         { name: 'tx-add-identifier-2-entity', tag: 'tx-add-identifier-2-entity', type: 'Function' },
+         { name: 'tx-add-attribute-2-entity',  tag: 'tx-add-attribute-2-entity',  type: 'Function' },
+     ];
 });
 
 riot.tag2('core_page_tab_packages', '<section class="section"> <div class="container"> <h1 class="title is-4">List</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table"> <thead> <tr> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{packages}"> <td> <a href="{\'#core/pakages/\'+name}"> {name.toUpperCase()} </a> </td> <td>{description}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
@@ -268,6 +309,18 @@ riot.tag2('core_page_tab_packages', '<section class="section"> <div class="conta
 });
 
 riot.tag2('core_page_tab_readme', '', '', '', function(opts) {
+});
+
+riot.tag2('core_page_tab_usage', '<section class="section"> <div class="container"> <h1 class="title is-5">Entity を追加する。</h1> <h2 class="subtitle"></h2> <div class="contents"> <pre><code></code></pre> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-5">Entity へ Identifier を追加する。</h1> <h2 class="subtitle"></h2> <section class="section"> <div class="container"> <h1 class="title is-6">Naive な Identifier の追加</h1> <h2 class="subtitle"></h2> <div class="contents"> <div class="contents"> <pre><code>(tx-add-identifier-2-entity ter.db:*graph*\n                            :campus-code :rbp\n                            :entity-code :user\n                            :code        :image\n                            :name        "更新日時 (エンドユーザー)"\n                            :data-type   "datetime")</code></pre> </div> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-6">Foreigner な Identifier の追加</h1> <h2 class="subtitle"></h2> <div class="contents"> <div class="contents"> <pre><code>(tx-add-identifier-2-entity ter.db:*graph*\n                            :campus-code :rbp\n                            :entity-code :user\n                            :code        :image\n                            :name        "更新日時 (エンドユーザー)"\n                            :data-type   "datetime"\n                            :type        :foreigner)</code></pre> </div> </div> </div> </section> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-5">Entity へ Attribute を追加する。</h1> <h2 class="subtitle"></h2> <div class="contents"> <pre><code>(tx-add-attribute-2-entity ter.db:*graph*\n                           :campus-code :rbp\n                           :entity-code :user\n                           :code        :image\n                           :name        "更新日時 (エンドユーザー)"\n                           :data-type   "datetime")</code></pre> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('function_tx-add-attribute-2-entity', '<section class="section"> <div class="container"> <h1 class="title"> <i style="font-weight:normal; font-size:14px;">Function</i> <b>tx-add-attribute-2-entity</b> </h1> <h2 class="subtitle"> <subtitle-breadcrumb></subtitle-breadcrumb> </h2> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Syntax:</h1> <div class="contents"> </div> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Arguments and Values:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Description:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Examples:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">See Also:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Notes:</h1> <h2 class="subtitle">None.</h2> </div> </section> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('function_tx-add-identifier-2-entity', '<section class="section"> <div class="container"> <h1 class="title"> <i style="font-weight:normal; font-size:14px;">Function</i> <b>tx-add-identifier-2-entity</b> </h1> <h2 class="subtitle"> <subtitle-breadcrumb></subtitle-breadcrumb> </h2> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Syntax:</h1> <div class="contents"> </div> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Arguments and Values:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Description:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Examples:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">See Also:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Notes:</h1> <h2 class="subtitle">None.</h2> </div> </section> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('generic-function_tx-make-relationship', '<section class="section"> <div class="container"> <h1 class="title"> <i style="font-weight:normal; font-size:14px;">Standard Generic Function</i> <b>tx-make-relationship</b> </h1> <h2 class="subtitle"> <subtitle-breadcrumb></subtitle-breadcrumb> </h2> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Syntax:</h1> <div class="contents"> <p style="padding:22px 22px; background:#eeeeee; border-radius:3px; font-size:33px;"> <i style="color:#888;">tx-make-relationship</i> <b>graph</b> <b>from</b> <b>to</b> <i style="color:#888;">&key</i> <b>type</b> </p> </div> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Method Signatures:</h1> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead><tr><th>graph</th><th>from</th><th>to</th></tr></thead> <tbody> <tr> <td>t</td> <td>RESOURCE</td> <td>RESOURCE</td> </tr> <tr> <td>t</td> <td>RESOURCE</td> <td>EVENT</td> </tr> <tr> <td>t</td> <td>EVENT</td> <td>EVENT</td> </tr> <tr> <td>t</td> <td>IDENTIFIER-INSTANCE</td> <td>IDENTIFIER-INSTANCE</td> </tr> <tr> <td>t</td> <td>t</td> <td>t</td> </tr> </tbody> </table> </div> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Arguments and Values:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Description:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Examples:</h1> <h2 class="subtitle"></h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Side Effects:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Affected By:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Exceptional Situations:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">See Also:</h1> <h2 class="subtitle">None.</h2> </div> </section> <section class="section clhs-section"> <div class="container"> <h1 class="title is-5">Notes:</h1> <h2 class="subtitle">None.</h2> </div> </section> </div> </section>', 'generic-function_tx-make-relationship .clhs-section { padding-top: 11px; } generic-function_tx-make-relationship .clhs-section > .container > .contents { padding-left: 22px; }', '', function(opts) {
 });
 
 riot.tag2('home', '', '', '', function(opts) {

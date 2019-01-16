@@ -20,6 +20,9 @@ class Store extends Vanilla_Redux_Store {
                 home_section: 'root',
                 sections: [
                     { code: 'root', tag: 'core_page_root', name: 'root' },
+                    { code: 'tx-make-relationship',       tag: 'generic-function_tx-make-relationship' },
+                    { code: 'tx-add-identifier-2-entity', tag: 'function_tx-add-identifier-2-entity' },
+                    { code: 'tx-add-attribute-2-entity',  tag: 'function_tx-add-attribute-2-entity' },
                 ],
                 stye: {
                     color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }

@@ -845,13 +845,8 @@ class Entity {
             });
     }
     // ports
-    drawPorts (groups) {
-        groups.selectAll('circle.entity-port')
-            .data((d) => {
-                return d.ports.items.list;
-            })
-            .enter()
-            .append('circle')
+    drawPortsCore (ports) {
+        ports
             .attr('class', 'entity-port')
             .attr('cx', (d) => {
                 return d.position.x;
@@ -869,6 +864,17 @@ class Entity {
             .attr('port-id', (d) => {
                 return d._core._id;
             });
+    }
+    drawPorts (groups) {
+        let ports = groups
+            .selectAll('circle.entity-port')
+            .data((d) => {
+                return d.ports.items.list;
+            })
+            .enter()
+            .append('circle');
+
+        this.drawPortsCore(ports);
     }
     // entity
     reDrawEntity (groups) {
@@ -894,17 +900,8 @@ class Entity {
         this.drawPorts(groups);
     }
     // edges
-    drawEdges (place) {
-        let edges = this._edges.list.filter((edge) => {
-            return edge.from_class=='PORT-TER' && edge.to_class=='PORT-TER';
-        });
-
-        place
-            .selectAll('line.connector')
-            .data(edges, (d) => { return d._id; })
-            .enter()
-            .append('line')
-            .attr('class', 'connector')
+    drawEdgesCore (edges) {
+        edges
             .attr('x1', (d) => {
                 let port = d._from._element;
                 let entity = port._entity;
@@ -932,6 +929,20 @@ class Entity {
             .attr('stroke', '#888888')
             .attr('stroke-width', 1);
     }
+    drawEdges (place) {
+        let data = this._edges.list.filter((edge) => {
+            return edge.from_class=='PORT-TER' && edge.to_class=='PORT-TER';
+        });
+
+        let edges = place
+            .selectAll('line.connector')
+            .data(data, (d) => { return d._id; })
+            .enter()
+            .append('line')
+            .attr('class', 'connector');
+
+        this.drawEdgesCore(edges);
+    }
     // main
     draw (forground, background, callbacks) {
         this._place = forground;
@@ -940,5 +951,42 @@ class Entity {
 
         this.drawEntity(this.drawGroup(forground));
         this.drawEdges(background);
+    }
+    /* **************************************************************** *
+     *  move port
+     * **************************************************************** */
+    movePort (entity_core, port_core) {
+        let entity = this._data.find((d) => {
+            return d._id == entity_core._id;
+        });
+        let port = entity.ports.items.ht[port_core._id];
+
+        this.positioningPort(entity, port);
+
+        // redraw ports
+        let ports = this._place
+            .selectAll('circle.entity-port')
+            .data([port], (d) => { return d._id; });
+
+        this.drawPortsCore(ports);
+
+
+        // redraw edge
+        let edges     = [];
+        let add_edges = (ht) => {
+            for (let k in ht) {
+                let edge = ht[k];
+                if (edge.from_class=="PORT-TER" && edge.to_class=="PORT-TER")
+                    edges.push(edge);
+            }
+        };
+        add_edges(this._edges.indexes.from[port._id]);
+        add_edges(this._edges.indexes.to[port._id]);
+
+        let elements = this._background
+            .selectAll('line.connector')
+            .data(edges, (d) => { return d._id; });
+
+        this.drawEdgesCore(elements);
     }
 }

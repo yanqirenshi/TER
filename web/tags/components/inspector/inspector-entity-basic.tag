@@ -1,6 +1,5 @@
 <inspector-entity-basic>
     <div style="margin-top:22px;">
-        <h1 class="title is-6">基本情報</h1>
         <table class="table is-bordered is-narrow is-hoverable">
             <tbody>
                 <tr>

@@ -5,26 +5,32 @@
   (shinra:find-vertex graph 'port-ter))
 
 (defun get-port (graph &key %id code)
+  (warn "これは非推奨オペレータです。 get-port-ter を利用してください。")
   (cond (%id (shinra:get-vertex-at graph 'port-ter :%id %id))
         (code (car (shinra:find-vertex graph 'port-ter :slot 'code :value code)))))
 
-(defun tx-make-port (graph)
-  (shinra:tx-make-vertex graph 'port-ter '()))
+(defun get-port-ter (graph &key %id code)
+  (cond (%id (shinra:get-vertex-at graph 'port-ter :%id %id))
+        (code (car (shinra:find-vertex graph 'port-ter :slot 'code :value code)))))
 
-(defun %add-port (graph from)
-  (let ((port (tx-make-port graph)))
+
+(defun tx-make-port (graph direction)
+  (shinra:tx-make-vertex graph 'port-ter
+                         `((direction ,direction))))
+
+(defun %add-port (graph from direction)
+  (let ((port (tx-make-port graph direction)))
     (shinra:tx-make-edge graph 'edge-ter from port :have-to)
     port))
 
-(defgeneric add-port (graph from)
-  (:method (graph (from resource))            (%add-port graph from))
-  (:method (graph (from event))               (%add-port graph from))
-  (:method (graph (from comparative))         (%add-port graph from))
-  (:method (graph (from correspondence))      (%add-port graph from))
-  (:method (graph (from recursion))           (%add-port graph from))
-  (:method (graph (from recursion))           (%add-port graph from))
-  (:method (graph (from identifier-instance)) (%add-port graph from)))
-
+(defgeneric add-port (graph from direction)
+  (:method (graph (from resource)            direction) (%add-port graph from direction))
+  (:method (graph (from event)               direction) (%add-port graph from direction))
+  (:method (graph (from comparative)         direction) (%add-port graph from direction))
+  (:method (graph (from correspondence)      direction) (%add-port graph from direction))
+  (:method (graph (from recursion)           direction) (%add-port graph from direction))
+  (:method (graph (from recursion)           direction) (%add-port graph from direction))
+  (:method (graph (from identifier-instance) direction) (%add-port graph from direction)))
 
 (defun find-identifier-ports (graph identifer-instance)
   (shinra:find-r-vertex graph 'edge-ter

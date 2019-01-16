@@ -22,6 +22,7 @@
            #:find-attributes-instances
            #:find-edge-ters
            #:save-entity-position
-           #:find-entities-ports)
+           #:find-entities-ports
+           #:save-port-ter-location)
   (:export #:find-graph))
 (in-package :ter.api.controller)

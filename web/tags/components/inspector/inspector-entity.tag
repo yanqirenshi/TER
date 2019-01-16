@@ -1,10 +1,32 @@
 <inspector-entity>
-    <div>
+    <div style="margin-bottom:11px;">
         <h1 class="title is-5">{entityName()}</h1>
     </div>
 
-    <inspector-entity-basic entity={entityData()}></inspector-entity-basic>
-    <inspector-entity-ports entity={entityData()}></inspector-entity-ports>
+    <page-tabs core={page_tabs} callback={clickTab}></page-tabs>
+
+    <div class="tabs">
+        <inspector-entity-basic class="hide" entity={entityData()}></inspector-entity-basic>
+        <inspector-entity-ports class="hide" entity={entityData()}></inspector-entity-ports>
+    </div>
+
+    <script>
+     this.page_tabs = new PageTabs([
+         {code: 'basic', label: 'Basic', tag: 'inspector-entity-basic' },
+         {code: 'ports', label: 'Ports', tag: 'inspector-entity-ports' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+    </script>
+
 
     <script>
      this.entityName = () => {

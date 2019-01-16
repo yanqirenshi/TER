@@ -1,6 +1,5 @@
 <inspector-entity-ports-relationships>
     <div style="margin-top:22px;">
-        <h1 class="title is-7">Relationships</h1>
         <table class="table is-bordered is-striped is-narrow is-hoverable">
             <thead>
                 <tr>
@@ -113,4 +112,8 @@
          return identifier ? identifier._entity._core.name : '';
      }
     </script>
+
+    <style>
+     inspector-entity-ports-relationships { display: block;}
+    </style>
 </inspector-entity-ports-relationships>

@@ -196,6 +196,15 @@
     (let ((campus (get-campus graph campus-code)))
       (render-json (find-entities-ports campus)))))
 
+(defroute ("/ter/:campus-code/ports/:port-id/location" :method :post) (&key campus-code port-id |degree|)
+  (with-graph-modeler (graph modeler)
+    (let ((campus (get-campus graph campus-code))
+          (degree |degree|))
+      (render-json (save-port-ter-location campus
+                                           (parse-integer port-id)
+                                           degree)))))
+
+
 ;;;
 ;;; edges
 ;;;

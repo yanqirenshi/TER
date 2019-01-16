@@ -86,5 +86,5 @@
 
   (:method (graph (from identifier-instance) (to identifier-instance))
     (tx-make-relationships2 graph
-                            (add-port graph from)
-                            (add-port graph to))))
+                            (add-port graph from :out)
+                            (add-port graph to   :in))))

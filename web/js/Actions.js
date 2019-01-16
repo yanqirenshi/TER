@@ -396,12 +396,19 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Fetch TER
      * **************************************************************** */
+    mergeStateDataObject (source, target) {
+        if (source._id!=target._id)
+            throw new Error('not eq object');
+
+        for (let key in source)
+            target[key] = source[key];
+    }
     mergeStateData (source, target) {
         let ht = target.ht;
 
         for (let obj of source)
             if (ht[obj._id]) {
-                ht[obj._id] = obj;
+                this.mergeStateDataObject(obj, ht[obj._id]);
             } else {
                 ht[obj._id] = obj;
                 target.list.push(obj);
@@ -566,6 +573,27 @@ class Actions extends Vanilla_Redux_Actions {
 
         let data = entity.position;
         API.post(path, data, ()=>{});
+    }
+    saveTerPortPosition (schema, port, position) {
+        let path = "/ter/%s/ports/%d/location".format(schema.code, port._id);
+        let post_data = { degree: position };
+
+        API.post(path, post_data, (response)=>{
+            STORE.dispatch(this.savedTerPortPosition(response));
+        });
+    }
+    savedTerPortPosition (response) {
+        let new_state = STORE.get('ter');
+
+        new_state.ports = this.mergeStateData([response], new_state.ports);
+
+        return {
+            type: 'SAVED-TER-PORT-POSITION',
+            data: {
+                ter: new_state,
+            },
+            target: response,
+        };
     }
     /* **************************************************************** *
      *  Inspector

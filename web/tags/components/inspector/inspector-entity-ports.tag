@@ -1,5 +1,5 @@
 <inspector-entity-ports>
-    <h1 class="title is-6">Ports</h1>
+
     <inspector-entity-ports-relationships ports={portsData()}></inspector-entity-ports-relationships>
     <inspector-entity-ports-positions     ports={portsData()}></inspector-entity-ports-positions>
 
@@ -17,6 +17,9 @@
     <style>
      inspector-entity-ports {
          display: block;
+     }
+     inspector-entity-ports > * {
+         margin-bottom: 22px;
      }
     </style>
 </inspector-entity-ports>

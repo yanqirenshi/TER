@@ -14,13 +14,14 @@
      this.svg   = null;
 
      this.ter = new Ter();
+     this.entity = new Entity();
 
      this.draw = () => {
          let forground = this.svg.selectAll('g.base.forground');
          let background = this.svg.selectAll('g.base.background');
          let state     = STORE.get('ter');
 
-         new Entity()
+         this.entity
              .data(state)
              .sizing()
              .positioning()
@@ -72,6 +73,21 @@
      STORE.subscribe((action) => {
          if(action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST') {
              this.draw();
+         }
+
+         if(action.type=='SAVED-TER-PORT-POSITION') {
+             let state = STORE.get('ter');
+
+             let port_id = action.target._id;
+             let edges = state.relationships.indexes.to[port_id];
+             let edge = null;
+             for (let key in edges) {
+                 let edge_tmp = edges[key];
+                 if (edge_tmp.from_class=="IDENTIFIER-INSTANCE")
+                     edge = edge_tmp;
+             }
+
+             this.entity.movePort(edge._from._entity, action.target);
          }
      });
 

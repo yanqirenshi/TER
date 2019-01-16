@@ -342,7 +342,7 @@ riot.tag2('inspector-column', '<section class="section"> <div class="container">
      });
 });
 
-riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <h1 class="title is-6">基本情報</h1> <table class="table is-bordered is-narrow is-hoverable"> <tbody> <tr> <th>Type</th> <td>{dataType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable"> <tbody> <tr> <th>Type</th> <td>{dataType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
      this.entityName = () => {
          let data = this.opts.entity;
 
@@ -367,10 +367,29 @@ riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <h1 class="t
      }
 });
 
-riot.tag2('inspector-entity-ports-positions', '<div style="margin-top:22px;"> <h1 class="title is-7">Positions</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="2">ID</th> <th colspan="3">Position</th> </tr> <tr> <th>degree</th> <th>x</th> <th>y</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{port._core.position}</td> <td>{Math.floor(port.position.x * 100)/100}</td> <td>{Math.floor(port.position.y * 100)/100}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity-ports-positions', '<h1 class="title is-6" style="margin-bottom:11px;">Positions</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="2">ID</th> <th colspan="3">Position</th> </tr> <tr> <th>x</th> <th>y</th> <th>degree</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{Math.floor(port.position.x * 100)/100}</td> <td>{Math.floor(port.position.y * 100)/100}</td> <td> <input class="input" type="text" placeholder="Degree" riot-value="{port._core.position}" ref="degree-{port._core._id}"> <button class="button" onclick="{clickSaveDegree}" port-id="{port._core._id}">Save</button> </td> </tr> </tbody> </table>', 'inspector-entity-ports-positions { display: block; } inspector-entity-ports-positions .table td { vertical-align: middle; } inspector-entity-ports-positions .table td .input { text-align: right; width:66px; }', '', function(opts) {
+         this.getDegree = (port_id) => {
+             let key = 'degree-'+port_id;
+             let str = this.refs[key].value;
+
+             return parseFloat(str);
+         };
+         this.clickSaveDegree = (e) => {
+             let port_id = e.target.getAttribute('port-id');
+
+             let port = opts.ports.find((d) => { return d._id = port_id; });
+             let degree = this.getDegree(port_id);
+
+             let schemas = STORE.get('schemas');
+             let schema  = schemas.list.find((d) => {
+                 return d.code == schemas.active;
+             });
+
+             ACTIONS.saveTerPortPosition(schema, port, degree);
+         };
 });
 
-riot.tag2('inspector-entity-ports-relationships', '<div style="margin-top:22px;"> <h1 class="title is-7">Relationships</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3">ID</th> <th colspan="3">Relationship</th> </tr> <tr> <th rowspan="2">from</th> <th colspan="2">to</th> </tr> <tr> <th>entity</th> <th>identifier</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{fromIdentiferName(port)}</td> <td>{toEntity(port)}</td> <td>{toIdentiferName(port)}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity-ports-relationships', '<div style="margin-top:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3">ID</th> <th colspan="3">Relationship</th> </tr> <tr> <th rowspan="2">from</th> <th colspan="2">to</th> </tr> <tr> <th>entity</th> <th>identifier</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{fromIdentiferName(port)}</td> <td>{toEntity(port)}</td> <td>{toIdentiferName(port)}</td> </tr> </tbody> </table> </div>', 'inspector-entity-ports-relationships { display: block;}', '', function(opts) {
      this.getEdge = (port) => {
          let port_id = port._core._id;
          let port_direction = port._core.direction;
@@ -449,7 +468,7 @@ riot.tag2('inspector-entity-ports-relationships', '<div style="margin-top:22px;"
      }
 });
 
-riot.tag2('inspector-entity-ports', '<h1 class="title is-6">Ports</h1> <inspector-entity-ports-relationships ports="{portsData()}"></inspector-entity-ports-relationships> <inspector-entity-ports-positions ports="{portsData()}"></inspector-entity-ports-positions>', 'inspector-entity-ports { display: block; }', '', function(opts) {
+riot.tag2('inspector-entity-ports', '<inspector-entity-ports-relationships ports="{portsData()}"></inspector-entity-ports-relationships> <inspector-entity-ports-positions ports="{portsData()}"></inspector-entity-ports-positions>', 'inspector-entity-ports { display: block; } inspector-entity-ports > * { margin-bottom: 22px; }', '', function(opts) {
      this.portsData = () => {
          let data = this.opts.entity;
 
@@ -460,7 +479,22 @@ riot.tag2('inspector-entity-ports', '<h1 class="title is-6">Ports</h1> <inspecto
      };
 });
 
-riot.tag2('inspector-entity', '<div> <h1 class="title is-5">{entityName()}</h1> </div> <inspector-entity-basic entity="{entityData()}"></inspector-entity-basic> <inspector-entity-ports entity="{entityData()}"></inspector-entity-ports>', '', '', function(opts) {
+riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="title is-5">{entityName()}</h1> </div> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div class="tabs"> <inspector-entity-basic class="hide" entity="{entityData()}"></inspector-entity-basic> <inspector-entity-ports class="hide" entity="{entityData()}"></inspector-entity-ports> </div>', '', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         {code: 'basic', label: 'Basic', tag: 'inspector-entity-basic' },
+         {code: 'ports', label: 'Ports', tag: 'inspector-entity-ports' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+
      this.entityName = () => {
          let data = this.entityData();
 
@@ -835,13 +869,14 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      this.svg   = null;
 
      this.ter = new Ter();
+     this.entity = new Entity();
 
      this.draw = () => {
          let forground = this.svg.selectAll('g.base.forground');
          let background = this.svg.selectAll('g.base.background');
          let state     = STORE.get('ter');
 
-         new Entity()
+         this.entity
              .data(state)
              .sizing()
              .positioning()
@@ -893,6 +928,21 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      STORE.subscribe((action) => {
          if(action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST') {
              this.draw();
+         }
+
+         if(action.type=='SAVED-TER-PORT-POSITION') {
+             let state = STORE.get('ter');
+
+             let port_id = action.target._id;
+             let edges = state.relationships.indexes.to[port_id];
+             let edge = null;
+             for (let key in edges) {
+                 let edge_tmp = edges[key];
+                 if (edge_tmp.from_class=="IDENTIFIER-INSTANCE")
+                     edge = edge_tmp;
+             }
+
+             this.entity.movePort(edge._from._entity, action.target);
          }
      });
 

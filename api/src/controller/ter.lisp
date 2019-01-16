@@ -92,3 +92,15 @@
     (nconc (find-all-edges graph entities)
            (find-all-edges graph identifers)
            (find-all-edges graph ports))))
+
+;;;
+;;; save-port-ter-location
+;;;
+(defun save-port-ter-location (campus port-id new-location)
+  (let* ((graph (ter::get-campus-graph campus))
+         (port (ter::get-port-ter graph :%id port-id)))
+    (unless port (caveman2:throw-code 404))
+    (up:execute-transaction
+     (up:tx-change-object-slots graph (class-name (class-of port))
+                                (up:%id port)
+                                `((ter::location ,new-location))))))

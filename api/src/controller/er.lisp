@@ -44,11 +44,11 @@
     (unless table (caveman2:throw-code 404))
     (ter::save-position graph table position)))
 
-(defun save-er-size (schema code size)
+(defun save-er-size (schema code w h)
   (let* ((graph (ter::get-schema-graph schema))
          (table (ter::get-table graph :code code)))
     (unless table (caveman2:throw-code 404))
-    (ter::save-size graph table size)))
+    (ter::save-size graph table w h)))
 
 
 (defun save-config-at-default-schema (graph schema)

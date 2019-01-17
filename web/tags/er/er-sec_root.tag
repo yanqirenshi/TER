@@ -128,7 +128,7 @@
      };
 
      STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ER-EDGES') {
+         if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
              let d3svg = this.getD3Svg();
 
              this.ter.clear(d3svg);
@@ -149,6 +149,14 @@
              this.modal_target_table = null;
              this.update();
          }
+     });
+
+     this.on('mount', () => {
+         let d3svg = this.getD3Svg();
+         let state = STORE.state().get('er');
+
+         if (STORE.get('ter.first_loaded'))
+             this.ter.drawTables(d3svg, state);
      });
     </script>
 </er-sec_root>

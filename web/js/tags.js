@@ -813,7 +813,7 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
      };
 
      STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ER-EDGES') {
+         if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
              let d3svg = this.getD3Svg();
 
              this.ter.clear(d3svg);
@@ -835,6 +835,14 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
              this.update();
          }
      });
+
+     this.on('mount', () => {
+         let d3svg = this.getD3Svg();
+         let state = STORE.state().get('er');
+
+         if (STORE.get('ter.first_loaded'))
+             this.ter.drawTables(d3svg, state);
+     });
 });
 
 riot.tag2('er', '', '', '', function(opts) {
@@ -844,10 +852,34 @@ riot.tag2('er', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('page01-sec_root', '', '', '', function(opts) {
+riot.tag2('home-sec_root', '<div class="hero-body"> <div class="container"> <h1 class="title">Home</h1> <h2 class="subtitle"></h2> </div> </div> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div class="tabs"> <home-sec_root_tab-contents1 class="hide"></home-sec_root_tab-contents1> <home-sec_root_tab-ter class="hide"></home-sec_root_tab-ter> <home-sec_root_tab-er class="hide"></home-sec_root_tab-er> </div>', 'home-sec_root { display: block; margin-left: 55px; } home-sec_root page-tabs li:first-child { margin-left: 8%; }', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         {code: 'home', label: 'Home', tag: 'home-sec_root_tab-contents1' },
+         {code: 'ter',  label: 'TER',  tag: 'home-sec_root_tab-ter' },
+         {code: 'er',   label: 'ER',   tag: 'home-sec_root_tab-er' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
 });
 
-riot.tag2('page01', '', '', '', function(opts) {
+riot.tag2('home-sec_root_tab-contents1', '', '', '', function(opts) {
+});
+
+riot.tag2('home-sec_root_tab-er', '', '', '', function(opts) {
+});
+
+riot.tag2('home-sec_root_tab-ter', '', '', '', function(opts) {
+});
+
+riot.tag2('home', '', '', '', function(opts) {
      this.mixin(MIXINS.page);
 
      this.on('mount', () => { this.draw(); });
@@ -941,6 +973,9 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      this.on('mount', () => {
          this.d3svg = this.makeD3Svg();
          this.svg = this.d3svg.Svg();
+
+         if (STORE.get('ter.first_loaded'))
+             this.draw();
      });
 });
 

@@ -247,16 +247,19 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErEdges (mode, response) {
-        let er               = STORE.state().get('er');
-        let relashonships    = er.relashonships;
-        let ports            = er.ports;
+        let new_state        = STORE.state().get('er');
+        let relashonships    = new_state.relashonships;
+        let ports            = new_state.ports;
 
-        er.edges = this.makeGraphData(this.makeEdges(relashonships, ports));
+        new_state.edges = this.makeGraphData(this.makeEdges(relashonships, ports));
+
+        if (mode=='FIRST')
+            new_state.first_loaded = true;
 
         return {
             type: 'FETCHED-ER-EDGES',
             mode: mode,
-            data: { er: er }
+            data: { er: new_state }
         };
     }
     saveTableDescription (schema_code, table, description, from) {
@@ -561,6 +564,9 @@ class Actions extends Vanilla_Redux_Actions {
             index_from[edge.from_id][edge._id] = edge;
             index_to[edge.to_id][edge._id]     = edge;
         }
+
+        if (mode=='FIRST')
+            new_state.first_loaded = true;
 
         return {
             type: 'FETCHED-TER-EDGES',

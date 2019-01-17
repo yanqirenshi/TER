@@ -63,9 +63,9 @@
       (render-json (ter.api.controller::save-camera-look-at graph camera look-at)))))
 
 
-(defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code _parsed)
+(defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code |magnification|)
   (with-graph-modeler (graph modeler)
-    (let* ((val (getf (jojo:parse (caar _parsed)) :|magnification|))
+    (let* ((val |magnification|)
            (camera (ter::get-camera graph :code (str2keyword camera_code))))
       (unless camera (throw-code 404))
       (render-json (ter.api.controller::save-camera-magnification graph camera val)))))

@@ -38,11 +38,11 @@
           (find-er-edges schema)))
 
 
-(defun save-er-position (schema code position)
+(defun save-er-position (schema code x y z)
   (let* ((graph (ter::get-schema-graph schema))
          (table (ter::get-table graph :code code)))
     (unless table (caveman2:throw-code 404))
-    (ter::save-position graph table position)))
+    (ter::save-position graph table x y z)))
 
 (defun save-er-size (schema code w h)
   (let* ((graph (ter::get-schema-graph schema))

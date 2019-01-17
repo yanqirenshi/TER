@@ -41,6 +41,7 @@
   (with-graph-modeler (graph modeler)
     (render-json (ter.api.controller::environments))))
 
+
 (defroute ("/environment/er/schema/active" :method :POST) (&key _parsed)
   (with-graph-modeler (graph modeler)
     (let* ((schema-code (getf (jojo:parse (caar _parsed)) :|schema_code|))
@@ -48,16 +49,19 @@
       (unless schema (throw-code 404))
       (render-json (ter.api.controller::set-active-schema schema)))))
 
+
 (defun str2keyword (str)
   (when str
     (alexandria:make-keyword (string-upcase str))))
 
-(defroute ("/camera/:camera_code/look-at" :method :POST) (&key camera_code _parsed)
+
+(defroute ("/camera/:camera_code/look-at" :method :POST) (&key camera_code |x| |y| |z|)
   (with-graph-modeler (graph modeler)
-    (let* ((look-at (jojo:parse (caar _parsed)))
+    (let* ((look-at (list :x |x| :y |y| :z |z|))
            (camera (ter::get-camera graph :code (str2keyword camera_code))))
       (unless camera (throw-code 404))
       (render-json (ter.api.controller::save-camera-look-at graph camera look-at)))))
+
 
 (defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code _parsed)
   (with-graph-modeler (graph modeler)
@@ -70,12 +74,11 @@
 ;;;
 ;;; er
 ;;;
-(defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code _parsed)
+(defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code |x| |y| |z|)
   (with-graph-modeler (graph modeler)
-    (let ((position (jojo:parse (car (first _parsed))))
-          (code (alexandria:make-keyword code))
+    (let ((code (alexandria:make-keyword code))
           (schema (ter:get-schema graph :code (str2keyword schema_code))))
-      (render-json (save-er-position schema code position)))))
+      (render-json (save-er-position schema code |x| |y| |z|)))))
 
 
 (defroute ("/er/:schema_code/tables/:code/size" :method :POST) (&key schema_code code |w| |h|)
@@ -107,9 +110,9 @@
 
 
 (defroute ("/er/:schema-code/tables/:table-code/columns/:column-code/logical-name" :method :POST)
-    (&key schema-code table-code column-code _parsed)
+    (&key schema-code table-code column-code |logical_name|)
   (with-graph-modeler (graph modeler)
-    (let* ((logical-name (jojo:parse (caar _parsed)))
+    (let* ((logical-name |logical_name|)
            (schema (ter:get-schema graph :code (str2keyword schema-code))))
       (unless schema (throw-code 404))
       (render-json (save-column-instance-logical-name schema
@@ -121,11 +124,11 @@
 ;;;;; table description
 ;;;;;
 (defroute ("/er/:schema-code/tables/:table-code/description" :method :POST)
-    (&key schema-code table-code _parsed)
+    (&key schema-code table-code |contents|)
   (with-graph-modeler (graph modeler)
     (let* ((schema (ter:get-schema graph :code (str2keyword schema-code)))
            (table-code (str2keyword table-code))
-           (description (getf (jojo:parse (caar _parsed)) :|contents|)))
+           (description |contents|))
       (unless schema (throw-code 404))
       (render-json (save-table-description schema table-code description)))))
 
@@ -134,11 +137,11 @@
 ;;;;; column description
 ;;;;;
 (defroute ("/er/:schema-code/columns/instance/:id/description" :method :POST)
-    (&key schema-code id _parsed)
+    (&key schema-code id |contents|)
   (with-graph-modeler (graph modeler)
     (let* ((schema (ter:get-schema graph :code (str2keyword schema-code)))
            (%id (parse-integer id))
-           (description (getf (jojo:parse (caar _parsed)) :|contents|)))
+           (description |contents|))
       (unless schema (throw-code 404))
       (render-json (save-column-instance-description schema %id description)))))
 

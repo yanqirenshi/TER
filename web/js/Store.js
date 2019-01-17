@@ -4,16 +4,18 @@ class Store extends Vanilla_Redux_Store {
     }
     site () {
         return {
-            active_page: 'page01',
-            home_page: 'page01',
+            active_page: 'home',
+            home_page: 'home',
             pages: [
                 {
-                    code: "page01",
-                    title: "GRAPH",
-                    menu_label: 'All',
+                    code: "home",
+                    title: "Home",
+                    menu_label: 'H',
                     active_section: 'root',
                     home_section: 'root',
-                    sections: [{ code: 'root', tag: 'page01-sec_root', title: 'Section: root', description: '' }],
+                    sections: [
+                        { code: 'root', tag: 'home-sec_root', title: 'Section: root', description: '' }
+                    ],
                     stye: {color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }}
                 },
                 {

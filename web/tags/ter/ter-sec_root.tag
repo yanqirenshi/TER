@@ -93,6 +93,9 @@
      this.on('mount', () => {
          this.d3svg = this.makeD3Svg();
          this.svg = this.d3svg.Svg();
+
+         if (STORE.get('ter.first_loaded'))
+             this.draw();
      });
     </script>
 </ter-sec_root>

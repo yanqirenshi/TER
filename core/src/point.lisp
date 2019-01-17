@@ -10,11 +10,11 @@
                                     (z ,(getf data :|z|)))))
       obj)))
 
-(defgeneric save-size (graph obj data)
-  (:method (graph (obj point) (data list))
+(defgeneric save-size (graph obj w h)
+  (:method (graph (obj point) (w number) (h number))
     (let ((class (class-name (class-of obj))))
       (up:execute-transaction
        (up:tx-change-object-slots graph class (up:%id obj)
-                                  `((w ,(getf data :|w|))
-                                    (h ,(getf data :|h|)))))
+                                  `((w ,w)
+                                    (h ,h))))
       obj)))

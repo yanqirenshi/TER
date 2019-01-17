@@ -844,14 +844,7 @@ riot.tag2('er', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('page01-sec_root', '<svg></svg>', '', '', function(opts) {
-     this.d3svg = null;
-     this.ter = new Ter();
-
-     STORE.subscribe((action) => {
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
-             this.d3svg = this.ter.makeD3svg('page01-sec_root > svg');
-     });
+riot.tag2('page01-sec_root', '', '', '', function(opts) {
 });
 
 riot.tag2('page01', '', '', '', function(opts) {

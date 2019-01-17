@@ -361,7 +361,9 @@ class Actions extends Vanilla_Redux_Actions {
         let table_code = table.code.toLowerCase();
 
         let path = '/er/' + scheme_code + '/tables/' + table_code + '/size';
-        let data = {w: table.w, y:table.h};
+
+        let data = { w: table.w, h: 0 };
+
         API.post(path, data, ()=>{});
     }
     saveCameraLookAt (camera, look_at) {

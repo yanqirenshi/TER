@@ -316,7 +316,7 @@ class Ter {
         entity.size.w = contents_area_w > name_area_w ? contents_area_w : name_area_w;
 
         // fix size for attr area
-        if (entity._max_w.attribute==0) {
+        if (entity._max_w.attribute==0 || contents_area_w < name_area_w) {
             entity.attributes.size.w =
                 entity.size.w -
                 entity.identifiers.size.w -

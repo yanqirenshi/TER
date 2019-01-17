@@ -289,7 +289,7 @@ class Actions extends Vanilla_Redux_Actions {
         let fmt = '/er/%s/tables/%s/columns/%s/logical-name';
         let path = fmt.format(data.schema_code, data.table_code, data.column_instance_code);
 
-        let post_data = data.logical_name;
+        let post_data = { logical_name: data.logical_name };
 
         API.post(path, post_data, (response)=>{
             STORE.dispatch(this.savedColumnInstanceLogicalName(response, from));

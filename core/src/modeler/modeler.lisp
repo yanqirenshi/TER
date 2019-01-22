@@ -29,9 +29,12 @@
                         :vertex-class 'modeler
                         :edge-type :have-to))
 
+(defun get-all-modelers (graph)
+  (shinra:find-vertex graph 'modeler))
 
-(defun get-modeler (graph &key ghost-id ghost-shadow)
-  (cond (ghost-id
+(defun get-modeler (graph &key ghost-id ghost-shadow %id)
+  (cond (%id (shinra:get-vertex-at graph 'modeler :%id %id))
+        (ghost-id
          (let ((ghost-shadow (get-ghost-shadow graph :ghost-id ghost-id)))
            (get-modeler graph :ghost-shadow ghost-shadow)))
         (ghost-shadow

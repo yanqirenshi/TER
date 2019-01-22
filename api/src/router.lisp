@@ -153,6 +153,11 @@
   (or (ter:get-campus graph :code (str2keyword campus-code))
       (throw-code 404)))
 
+(defroute "/ter/:campus-code/environment" (&key campus-code)
+  (with-graph-modeler (graph modeler)
+    (let ((campus (get-campus graph campus-code)))
+      (render-json (list :cameras (ter:find-ter-camera graph :campus campus :modeler modeler))))))
+
 ;;;
 ;;; entity
 ;;;

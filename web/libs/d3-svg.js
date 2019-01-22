@@ -37,7 +37,7 @@ class D3Svg {
 
         let self = this;
         this._svg.call(d3.drag()
-                       .on('start', function () { self.setSvgGrabMoveStart(d3.event); })
+                       .on('start', function ()     { self.setSvgGrabMoveStart(d3.event); })
                        .on("drag",  function (d, i) { self.setSvgGrabMoveDrag(d3.event); })
                        .on('end',   function (d, i) { self.setSvgGrabMoveEnd(); }));
 
@@ -136,7 +136,6 @@ class D3Svg {
                 y: this._y,
                 z: 0
             });
-
     }
     /** **************************************************************** *
      * ZOOM Camera

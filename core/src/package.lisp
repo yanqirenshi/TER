@@ -27,7 +27,8 @@
            #:find-identifier-instance
            #:find-ter-all-edges
            #:find-entity-identifiers
-           #:find-identifier-ports)
+           #:find-identifier-ports
+           #:find-ter-cameras)
   ;; modeler
   (:export #:tx-make-modeler-with-ghost
            #:get-modeler)

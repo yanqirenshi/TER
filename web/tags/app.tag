@@ -84,7 +84,6 @@
 
          if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST') {
              ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
-             ACTIONS.fetchTerEntities(action.mode);
          }
 
          /////
@@ -100,21 +99,6 @@
              ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
              return;
          }
-
-         /////
-         ///// ER
-         /////
-         if (action.type=='FETCHED-TER-ENTITIES')
-             ACTIONS.fetchTerIdentifiers(action.mode);
-
-         if (action.type=='FETCHED-TER-IDENTIFIERS')
-             ACTIONS.fetchTerAttributes(action.mode);
-
-         if (action.type=='FETCHED-TER-ATTRIBUTES')
-             ACTIONS.fetchTerPorts(action.mode);
-
-         if (action.type=='FETCHED-TER-PORTS')
-             ACTIONS.fetchTerEdges(action.mode);
 
          /////
          ///// common

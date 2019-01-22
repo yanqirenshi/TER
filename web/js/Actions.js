@@ -421,6 +421,27 @@ class Actions extends Vanilla_Redux_Actions {
 
         return target;
     }
+    fetchTerEnvironment (mode) {
+        let graph = 'RBP';
+        let path = '/ter/%s/environment'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedTerEnvironment(mode, response));
+        }.bind(this));
+    }
+    fetchedTerEnvironment (mode, response) {
+        let new_state = STORE.get('ter');
+        dump(response);
+        // this.mergeStateData(response, new_state.entities);
+
+        return {
+            type: 'FETCHED-TER-ENVIRONMENT',
+            mode: mode,
+            data: {
+                ter: new_state,
+            }
+        };
+    }
     fetchTerEntities (mode) {
         let graph = 'RBP';
         let path = '/ter/%s/entities'.format(graph);
@@ -602,6 +623,24 @@ class Actions extends Vanilla_Redux_Actions {
             },
             target: response,
         };
+    }
+    saveTerCameraLookAt (schema, position) {
+        let path = '/ter/%s/camera/look-at'.format(schema.code);
+        let post_data = {
+            x: position.x || 0,
+            y: position.y || 0,
+            z: position.z || 0
+        };
+
+        API.post(path, post_data, ()=>{});
+    }
+    saveTerCameraLookMagnification (schema, magnification) {
+        let path = '/ter/%s/camera/magnification'.format(schema.code);
+        let post_data = {
+            magnification: magnification || 1
+        };
+
+        API.post(path, post_data, ()=>{});
     }
     /* **************************************************************** *
      *  Inspector

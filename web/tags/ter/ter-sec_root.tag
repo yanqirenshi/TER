@@ -66,6 +66,18 @@
                  clickSvg: () => {
                      STORE.dispatch(ACTIONS.setDataToInspector(null));
                      d3.event.stopPropagation();
+                 },
+                 moveEndSvg: (position) => {
+                     let state = STORE.get('schemas');
+                     let schema = state.list.find((d) => { return d.code==state.active; });
+
+                     ACTIONS.saveTerCameraLookAt(schema, position);
+                 },
+                 zoomSvg: (scale) => {
+                     let state = STORE.get('schemas');
+                     let schema = state.list.find((d) => { return d.code==state.active; });
+
+                     ACTIONS.saveTerCameraLookMagnification(schema, scale);
                  }
              }
          });
@@ -75,10 +87,6 @@
          return d3svg;
      }
      STORE.subscribe((action) => {
-         if(action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST') {
-             this.draw();
-         }
-
          if(action.type=='SAVED-TER-PORT-POSITION') {
              let state = STORE.get('ter');
 
@@ -93,6 +101,26 @@
 
              this.ter.movePort(edge._from._entity, action.target);
          }
+
+         if (action.mode=='FIRST') {
+             if (action.type=='FETCHED-TER-ENVIRONMENT')
+                 ACTIONS.fetchTerEntities(action.mode);
+
+             if (action.type=='FETCHED-TER-ENTITIES')
+                 ACTIONS.fetchTerIdentifiers(action.mode);
+
+             if (action.type=='FETCHED-TER-IDENTIFIERS')
+                 ACTIONS.fetchTerAttributes(action.mode);
+
+             if (action.type=='FETCHED-TER-ATTRIBUTES')
+                 ACTIONS.fetchTerPorts(action.mode);
+
+             if (action.type=='FETCHED-TER-PORTS')
+                 ACTIONS.fetchTerEdges(action.mode);
+
+             if(action.type=='FETCHED-ER-EDGES')
+                 this.draw();
+         }
      });
 
      this.on('mount', () => {
@@ -101,6 +129,8 @@
 
          if (STORE.get('ter.first_loaded'))
              this.draw();
+
+         ACTIONS.fetchTerEnvironment('FIRST');
      });
     </script>
 </ter-sec_root>

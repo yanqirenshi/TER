@@ -67,7 +67,8 @@ This file is a part of ter project.
                                             (:file "relationship")
                                             (:file "er")))
                  ;; ter
-                 (:module "ter" :components ((:file "identifier")
+                 (:module "ter" :components ((:file "camera")
+                                             (:file "identifier")
                                              (:file "identifier-instance")
                                              (:file "attribute")
                                              (:file "attribute-instance")

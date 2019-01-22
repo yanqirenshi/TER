@@ -3,8 +3,10 @@
 (defun find-camera (graph)
   (shinra:find-vertex graph 'camera))
 
-(defun get-camera (graph &key code)
-  (car (shinra:find-vertex graph 'camera :slot 'code :value code)))
+(defun get-camera (graph &key code %id)
+  (let ((camera-class 'camera))
+    (cond (code (car (shinra:find-vertex graph camera-class :slot 'code :value code)))
+          (%id  (shinra:get-vertex-at graph camera-class :%id %id)))))
 
 (defgeneric tx-make-camera (graph code &key name description magnification look-at)
   (:method (graph code &key name description

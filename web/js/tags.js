@@ -883,9 +883,12 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      this.ter = new Ter();
 
      this.draw = () => {
-         let forground = this.svg.selectAll('g.base.forground');
+         let forground  = this.svg.selectAll('g.base.forground');
          let background = this.svg.selectAll('g.base.background');
-         let state     = STORE.get('ter');
+         let state      = STORE.get('ter');
+
+         let camera = state.camera.look_at;
+         this.d3svg.lookAt(camera.X, camera.Y);
 
          this.ter
              .data(state)

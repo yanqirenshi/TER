@@ -431,15 +431,17 @@ class Actions extends Vanilla_Redux_Actions {
     }
     fetchedTerEnvironment (mode, response) {
         let new_state = STORE.get('ter');
-        dump(response);
-        // this.mergeStateData(response, new_state.entities);
+        this.mergeStateData(response.cameras, new_state.cameras);
+
+        let cameras = new_state.cameras.list;
+        new_state.camera = cameras.length==0 ? null : cameras[0];
 
         return {
             type: 'FETCHED-TER-ENVIRONMENT',
-            mode: mode,
             data: {
-                ter: new_state,
-            }
+                ter:  new_state,
+            },
+            mode: mode,
         };
     }
     fetchTerEntities (mode) {

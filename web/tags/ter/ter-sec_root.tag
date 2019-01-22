@@ -3,7 +3,6 @@
 
     <inspector callback={inspectorCallback}></inspector>
 
-
     <script>
      this.inspectorCallback = (type, data) => {
      };
@@ -62,7 +61,13 @@
              y: 0,
              w: w,
              h: h,
-             scale: 1
+             scale: 1,
+             callbacks: {
+                 clickSvg: () => {
+                     STORE.dispatch(ACTIONS.setDataToInspector(null));
+                     d3.event.stopPropagation();
+                 }
+             }
          });
 
          this.makeBases(d3svg);

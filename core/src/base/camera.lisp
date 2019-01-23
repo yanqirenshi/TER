@@ -20,3 +20,15 @@
                                  (description ,description)
                                  (magnification ,magnification)
                                  (look-at ,look-at))))))
+
+
+(defun tx-update-camera-look-at (graph camera &key x y z)
+  (let ((look-at (list :x (or x (getf (look-at camera) :x))
+                       :y (or y (getf (look-at camera) :y))
+                       :z (or z (getf (look-at camera) :z)))))
+    (up:tx-change-object-slots graph 'camera (up:%id camera) `((look-at ,look-at)))))
+
+(defun tx-update-camera-magnification (graph camera magnification)
+  (up:tx-change-object-slots graph 'camera
+                             (up:%id camera)
+                             `((magnification ,magnification))))

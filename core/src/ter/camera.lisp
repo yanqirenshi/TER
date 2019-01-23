@@ -13,6 +13,10 @@
                    campus
                    (shinra:find-r graph 'edge-ter :from modeler :vertex-class 'camera :edge-type :have-to)))
 
+(defun get-ter-camera (graph &key campus modeler code)
+  (find-if #'(lambda (camera) (eq code (code camera)))
+           (find-ter-cameras graph :campus campus :modeler modeler)))
+
 (defun %assert-not-exist-ter-camera (code cameras)
   (when cameras
     (let ((camera (car cameras)))

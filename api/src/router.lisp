@@ -153,10 +153,31 @@
   (or (ter:get-campus graph :code (str2keyword campus-code))
       (throw-code 404)))
 
+(defun get-camera (graph camera-code)
+  ;; TODO: modeler との関係で見ないとね
+  (or (ter::get-camera graph :code (str2keyword camera-code))
+      (throw-code 404)))
+
+
 (defroute "/ter/:campus-code/environment" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
       (render-json (list :|cameras| (ter:find-ter-cameras graph :campus campus :modeler modeler))))))
+
+(defroute ("/ter/:campus-code/cameras/:camera-code/look-at" :method :post)
+    (&key campus-code camera-code |x| |y|)
+  (with-graph-modeler (graph modeler)
+    (let ((campus (get-campus graph campus-code))
+          (camera-code (str2keyword camera-code)))
+      (render-json (save-ter-camera-look-at campus modeler camera-code |x| |y|)))))
+
+(defroute ("/ter/:campus-code/cameras/:camera-code/magnification" :method :post)
+    (&key campus-code camera-code |magnification|)
+  (with-graph-modeler (graph modeler)
+    (let ((campus (get-campus graph campus-code))
+          (camera-code (str2keyword camera-code)))
+      (render-json (save-ter-camera-magnification campus modeler camera-code |magnification|)))))
+
 
 ;;;
 ;;; entity
@@ -178,6 +199,7 @@
       (unless campus (throw-code 404))
       (unless entity (throw-code 404))
       (render-json (save-entity-position campus entity x y z)))))
+
 
 
 ;;;

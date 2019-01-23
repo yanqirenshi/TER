@@ -23,6 +23,8 @@
            #:find-edge-ters
            #:save-entity-position
            #:find-entities-ports
-           #:save-port-ter-location)
+           #:save-port-ter-location
+           #:save-ter-camera-look-at
+           #:save-ter-camera-magnification)
   (:export #:find-graph))
 (in-package :ter.api.controller)

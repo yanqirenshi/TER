@@ -19,9 +19,6 @@
          let background = this.svg.selectAll('g.base.background');
          let state      = STORE.get('ter');
 
-         let camera = state.camera.look_at;
-         this.d3svg.lookAt(camera.X, camera.Y);
-
          this.ter
              .data(state)
              .sizing()
@@ -57,14 +54,16 @@
          svg_tag.setAttribute('height',h);
          svg_tag.setAttribute('width',w);
 
+         let camera = STORE.get('ter.camera');
+
          let d3svg = new D3Svg({
              d3: d3,
              svg: d3.select("#ter-sec_root-svg"),
-             x: 0,
-             y: 0,
+             x: camera.look_at.X,
+             y: camera.look_at.Y,
              w: w,
              h: h,
-             scale: 1,
+             scale: camera.magnification,
              callbacks: {
                  clickSvg: () => {
                      STORE.dispatch(ACTIONS.setDataToInspector(null));
@@ -73,14 +72,16 @@
                  moveEndSvg: (position) => {
                      let state = STORE.get('schemas');
                      let schema = state.list.find((d) => { return d.code==state.active; });
+                     let camera = STORE.get('ter.camera');
 
-                     ACTIONS.saveTerCameraLookAt(schema, position);
+                     ACTIONS.saveTerCameraLookAt(schema, camera, position);
                  },
                  zoomSvg: (scale) => {
                      let state = STORE.get('schemas');
                      let schema = state.list.find((d) => { return d.code==state.active; });
+                     let camera = STORE.get('ter.camera');
 
-                     ACTIONS.saveTerCameraLookMagnification(schema, scale);
+                     ACTIONS.saveTerCameraLookMagnification(schema, camera, scale);
                  }
              }
          });
@@ -121,18 +122,16 @@
              if (action.type=='FETCHED-TER-PORTS')
                  ACTIONS.fetchTerEdges(action.mode);
 
-             if(action.type=='FETCHED-ER-EDGES')
+             if(action.type=='FETCHED-ER-EDGES') {
+                 this.d3svg = this.makeD3Svg();
+                 this.svg = this.d3svg.Svg();
+
                  this.draw();
+             }
          }
      });
 
      this.on('mount', () => {
-         this.d3svg = this.makeD3Svg();
-         this.svg = this.d3svg.Svg();
-
-         if (STORE.get('ter.first_loaded'))
-             this.draw();
-
          ACTIONS.fetchTerEnvironment('FIRST');
      });
     </script>

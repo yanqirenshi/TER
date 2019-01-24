@@ -42,9 +42,9 @@
     (render-json (ter.api.controller::environments))))
 
 
-(defroute ("/environment/er/schema/active" :method :POST) (&key _parsed)
+(defroute ("/environment/er/schema/active" :method :POST) (&key |schema_code|)
   (with-graph-modeler (graph modeler)
-    (let* ((schema-code (getf (jojo:parse (caar _parsed)) :|schema_code|))
+    (let* ((schema-code |schema_code|)
            (schema (ter:get-schema graph :code schema-code)))
       (unless schema (throw-code 404))
       (render-json (ter.api.controller::set-active-schema schema)))))

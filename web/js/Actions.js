@@ -369,9 +369,9 @@ class Actions extends Vanilla_Redux_Actions {
 
         API.post(path, data, ()=>{});
     }
-    saveCameraLookAt (camera, look_at) {
+    saveErCameraLookAt (schema, camera, look_at) {
         let _look_at = Object.assign({}, look_at);
-        let path = '/camera/' + camera.code + '/look-at';
+        let path = '/er/schemas/%s/camera/%s/look-at'.format(schema.code, camera.code);
         let data = {
             x: _look_at.x || 0,
             y: _look_at.y || 0,
@@ -379,8 +379,9 @@ class Actions extends Vanilla_Redux_Actions {
         };
         API.post(path, data, ()=>{});
     }
-    saveCameraLookMagnification (camera, magnification) {
-        let path = '/camera/' + camera.code + '/magnification';
+    saveErCameraLookMagnification (schema, camera, magnification) {
+        let path = '/er/schemas/%s/camera/%s/magnification'.format(schema.code, camera.code);
+
         let data = {
             magnification: magnification || 1
         };

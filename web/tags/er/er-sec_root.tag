@@ -111,11 +111,21 @@
          let callbacks = {
              moveEndSvg: (point) => {
                  let camera = this.state().cameras[0];
-                 ACTIONS.saveCameraLookAt(camera, point);
+                 let state = STORE.get('schemas');
+                 let schema = state.list.find((d) => {
+                     return d.code==state.active;
+                 });
+
+                 ACTIONS.saveErCameraLookAt(schema, camera, point);
              },
              zoomSvg: (scale) => {
                  let camera = this.state().cameras[0];
-                 ACTIONS.saveCameraLookMagnification(camera, scale);
+                 let state = STORE.get('schemas');
+                 let schema = state.list.find((d) => {
+                     return d.code==state.active;
+                 });
+
+                 ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
              },
              clickSvg: () => {
                  STORE.dispatch(ACTIONS.closeAllSubPanels());

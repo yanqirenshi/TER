@@ -55,25 +55,41 @@
     (alexandria:make-keyword (string-upcase str))))
 
 
-(defroute ("/camera/:camera_code/look-at" :method :POST) (&key camera_code |x| |y| |z|)
-  (with-graph-modeler (graph modeler)
-    (let* ((look-at (list :x |x| :y |y| :z |z|))
-           (camera (ter::get-camera graph :code (str2keyword camera_code))))
-      (unless camera (throw-code 404))
-      (render-json (ter.api.controller::save-camera-look-at graph camera look-at)))))
-
-
-(defroute ("/camera/:camera_code/magnification" :method :POST) (&key camera_code |magnification|)
-  (with-graph-modeler (graph modeler)
-    (let* ((val |magnification|)
-           (camera (ter::get-camera graph :code (str2keyword camera_code))))
-      (unless camera (throw-code 404))
-      (render-json (ter.api.controller::save-camera-magnification graph camera val)))))
 
 
 ;;;
 ;;; er
 ;;;
+(defgeneric get-schema (graph schema-code)
+  (:method (graph (schema-code symbol))
+    (or (ter::get-schema graph :code schema-code)
+        (caveman2:throw-code 404)))
+  (:method (graph (schema-code string))
+    (get-schema graph (str2keyword schema-code))))
+
+
+(defroute ("/er/schemas/:schema-code/camera/:camera-code/look-at" :method :POST)
+    (&key schema-code camera-code |x| |y| |z|)
+  (with-graph-modeler (graph modeler)
+    (let* ((look-at (list :x |x| :y |y| :z |z|))
+           (schema (get-schema graph schema-code))
+           (camera (ter::get-camera graph :code (str2keyword camera-code))))
+      (declare (ignore schema))
+      (unless camera (throw-code 404))
+      (render-json (save-er-camera-look-at graph camera look-at)))))
+
+
+(defroute ("/er/schemas/:schema-code/camera/:camera-code/magnification" :method :POST)
+    (&key schema-code camera-code |magnification|)
+  (with-graph-modeler (graph modeler)
+    (let* ((val |magnification|)
+           (schema (get-schema graph schema-code))
+           (camera (ter::get-camera graph :code (str2keyword camera-code))))
+      (declare (ignore schema))
+      (unless camera (throw-code 404))
+      (render-json (save-er-camera-magnification graph camera val)))))
+
+
 (defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code |x| |y| |z|)
   (with-graph-modeler (graph modeler)
     (let ((code (alexandria:make-keyword code))

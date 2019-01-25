@@ -14,7 +14,9 @@
            #:find-er-edges
            #:save-table-description
            #:save-column-instance-logical-name
-           #:save-column-instance-description)
+           #:save-column-instance-description
+           #:save-er-camera-look-at
+           #:save-er-camera-magnification)
   (:export #:find-ter ;; TODO: こらはもういらんやろ。
            #:find-entities
            #:get-entity

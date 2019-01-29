@@ -629,6 +629,7 @@ class Actions extends Vanilla_Redux_Actions {
     }
     saveTerCameraLookAt (schema, camera, position) {
         let path = '/ter/%s/cameras/%s/look-at'.format(schema.code, camera.code);
+
         let post_data = {
             x: position.x || 0,
             y: position.y || 0,

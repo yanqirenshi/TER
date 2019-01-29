@@ -14,7 +14,7 @@
 
     <script>
      this.d3svg = null;
-     this.ter = new Sketcher();
+     this.ter = new SketcherEr();
      this.modal_target_table = null;
 
      this.modalData = () => {

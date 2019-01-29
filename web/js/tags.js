@@ -685,9 +685,9 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
 });
 
 riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <er-modal-logical-name data="{modalData()}" callback="{modalCallback}"></er-modal-logical-name> <er-modal-description data="{modal_target_table}" callback="{modalCallback}"></er-modal-description>', '', '', function(opts) {
+     this.sketcher = null;
      this.painter = new Er();
 
-     this.d3svg = null;
      this.modal_target_table = null;
 
      this.modalData = () => {
@@ -776,45 +776,18 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
              return;
          }
      };
-     this.getD3Svg = () => {
-         if (this.d3svg) return this.d3svg
-
-         let camera = this.state().cameras[0];
-
-         let callbacks = {
-             moveEndSvg: (point) => {
-                 let camera = this.state().cameras[0];
-                 let state = STORE.get('schemas');
-                 let schema = state.list.find((d) => {
-                     return d.code==state.active;
-                 });
-
-                 ACTIONS.saveErCameraLookAt(schema, camera, point);
-             },
-             zoomSvg: (scale) => {
-                 let camera = this.state().cameras[0];
-                 let state = STORE.get('schemas');
-                 let schema = state.list.find((d) => {
-                     return d.code==state.active;
-                 });
-
-                 ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
-             },
-             clickSvg: () => {
-                 STORE.dispatch(ACTIONS.closeAllSubPanels());
-             }
-         };
-
-         this.d3svg = this.painter.makeD3svg('er-sec_root > svg', camera, callbacks);
-
-         return this.d3svg
-     };
 
      STORE.subscribe((action) => {
          if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
-             let d3svg = this.getD3Svg();
+             if (!this.sketcher) {
+                 this.sketcher = this.makeSketcher();
+                 this.sketcher.makeCampus();
+             } else {
+                 this.painter.clear(this.sketcher._d3svg);
+             }
 
-             this.painter.clear(d3svg);
+             let d3svg = this.sketcher._d3svg;
+
              this.painter.drawTables(d3svg, STORE.state().get('er'));
          }
 
@@ -834,13 +807,45 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          }
      });
 
-     this.on('mount', () => {
-         let d3svg = this.getD3Svg();
-         let state = STORE.state().get('er');
+     this.makeSketcher = () => {
+         let camera = this.state().cameras[0];
 
-         if (STORE.get('ter.first_loaded'))
-             this.painter.drawTables(d3svg, state);
-     });
+         return new Sketcher({
+             selector: 'er-sec_root > svg',
+             x: camera.look_at.X,
+             y: camera.look_at.Y,
+             w: window.innerWidth,
+             h: window.innerHeight,
+             scale: camera.magnification,
+             callbacks: {
+                 svg: {
+                     click: () => {
+                         STORE.dispatch(ACTIONS.closeAllSubPanels());
+                     },
+                     move: {
+                         end: (position) => {
+                             let camera = this.state().cameras[0];
+                             let state = STORE.get('schemas');
+                             let schema = state.list.find((d) => {
+                                 return d.code==state.active;
+                             });
+
+                             ACTIONS.saveErCameraLookAt(schema, camera, point);
+                         },
+                     },
+                     zoom: (scale) => {
+                         let camera = this.state().cameras[0];
+                         let state = STORE.get('schemas');
+                         let schema = state.list.find((d) => {
+                             return d.code==state.active;
+                         });
+
+                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
+                     }
+                 }
+             }
+         });
+     };
 });
 
 riot.tag2('er', '', '', '', function(opts) {

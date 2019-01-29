@@ -685,8 +685,9 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
 });
 
 riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <er-modal-logical-name data="{modalData()}" callback="{modalCallback}"></er-modal-logical-name> <er-modal-description data="{modal_target_table}" callback="{modalCallback}"></er-modal-description>', '', '', function(opts) {
+     this.painter = new Er();
+
      this.d3svg = null;
-     this.ter = new SketcherEr();
      this.modal_target_table = null;
 
      this.modalData = () => {
@@ -804,7 +805,7 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
              }
          };
 
-         this.d3svg = this.ter.makeD3svg('er-sec_root > svg', camera, callbacks);
+         this.d3svg = this.painter.makeD3svg('er-sec_root > svg', camera, callbacks);
 
          return this.d3svg
      };
@@ -813,13 +814,13 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
              let d3svg = this.getD3Svg();
 
-             this.ter.clear(d3svg);
-             this.ter.drawTables(d3svg, STORE.state().get('er'));
+             this.painter.clear(d3svg);
+             this.painter.drawTables(d3svg, STORE.state().get('er'));
          }
 
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
              this.update();
-             this.ter.reDrawTable (action.redraw);
+             this.painter.reDrawTable (action.redraw);
          }
 
          if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
@@ -838,7 +839,7 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          let state = STORE.state().get('er');
 
          if (STORE.get('ter.first_loaded'))
-             this.ter.drawTables(d3svg, state);
+             this.painter.drawTables(d3svg, state);
      });
 });
 
@@ -888,9 +889,8 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      };
 
      this.sketcher = null;
-     this.svg   = null;
 
-     this.ter = new Ter();
+     this.painter = new Ter();
 
      this.makeSketcher = () => {
          let camera = STORE.get('ter.camera');
@@ -928,13 +928,13 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
          });
      };
      this.draw = () => {
-         this.svg = this.sketcher.svg();
+         let svg = this.sketcher.svg();
 
-         let forground  = this.svg.selectAll('g.base.forground');
-         let background = this.svg.selectAll('g.base.background');
+         let forground  = svg.selectAll('g.base.forground');
+         let background = svg.selectAll('g.base.background');
          let state      = STORE.get('ter');
 
-         this.ter
+         this.painter
              .data(state)
              .sizing()
              .positioning()
@@ -958,7 +958,7 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
                      edge = edge_tmp;
              }
 
-             this.ter.movePort(edge._from._entity, action.target);
+             this.painter.movePort(edge._from._entity, action.target);
          }
 
          if (action.mode=='FIRST') {

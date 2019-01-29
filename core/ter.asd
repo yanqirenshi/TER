@@ -28,6 +28,7 @@ This file is a part of ter project.
                   :components ((:file "common")
                                (:file "edge")
                                (:module "base" :components ((:file "drawing")
+                                                            (:file "system")
                                                             (:file "schema")
                                                             (:file "camera")))
                                (:module "er" :components ((:file "column")

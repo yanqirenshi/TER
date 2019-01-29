@@ -1,4 +1,4 @@
-class Sketcher {
+class SketcherEr {
     constructor (reducer) {
         this._table = null;
     }

@@ -686,7 +686,7 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
 
 riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector> <er-modal-logical-name data="{modalData()}" callback="{modalCallback}"></er-modal-logical-name> <er-modal-description data="{modal_target_table}" callback="{modalCallback}"></er-modal-description>', '', '', function(opts) {
      this.d3svg = null;
-     this.ter = new Sketcher();
+     this.ter = new SketcherEr();
      this.modal_target_table = null;
 
      this.modalData = () => {
@@ -887,12 +887,49 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
      this.inspectorCallback = (type, data) => {
      };
 
-     this.d3svg = null;
+     this.sketcher = null;
      this.svg   = null;
 
      this.ter = new Ter();
 
+     this.makeSketcher = () => {
+         let camera = STORE.get('ter.camera');
+
+         return new Sketcher({
+             selector: 'ter-sec_root svg',
+             x: camera.look_at.X,
+             y: camera.look_at.Y,
+             w: window.innerWidth,
+             h: window.innerHeight,
+             scale: camera.magnification,
+             callbacks: {
+                 svg: {
+                     click: () => {
+                         STORE.dispatch(ACTIONS.setDataToInspector(null));
+                     },
+                     move: {
+                         end: (position) => {
+                             let state = STORE.get('schemas');
+                             let schema = state.list.find((d) => { return d.code==state.active; });
+                             let camera = STORE.get('ter.camera');
+
+                             ACTIONS.saveTerCameraLookAt(schema, camera, position);
+                         },
+                     },
+                     zoom: (scale) => {
+                         let state = STORE.get('schemas');
+                         let schema = state.list.find((d) => { return d.code==state.active; });
+                         let camera = STORE.get('ter.camera');
+
+                         ACTIONS.saveTerCameraLookMagnification(schema, camera, scale);
+                     }
+                 }
+             }
+         });
+     };
      this.draw = () => {
+         this.svg = this.sketcher.svg();
+
          let forground  = this.svg.selectAll('g.base.forground');
          let background = this.svg.selectAll('g.base.background');
          let state      = STORE.get('ter');
@@ -908,66 +945,6 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
                          d3.event.stopPropagation();
                      }}});
      };
-     this.makeBases = (d3svg) => {
-         let svg = d3svg.Svg();
-
-         let base = [
-             { _id: -10, code: 'background' },
-             { _id: -15, code: 'forground' },
-         ];
-
-         svg.selectAll('g.base')
-            .data(base, (d) => { return d._id; })
-            .enter()
-            .append('g')
-            .attr('class', (d) => {
-                return 'base ' + d.code;
-            });
-     }
-     this.makeD3Svg = () => {
-         let w = window.innerWidth;
-         let h = window.innerHeight;
-
-         let svg_tag = this.refs['svg'];
-         svg_tag.setAttribute('height',h);
-         svg_tag.setAttribute('width',w);
-
-         let camera = STORE.get('ter.camera');
-
-         let d3svg = new D3Svg({
-             d3: d3,
-             svg: d3.select("#ter-sec_root-svg"),
-             x: camera.look_at.X,
-             y: camera.look_at.Y,
-             w: w,
-             h: h,
-             scale: camera.magnification,
-             callbacks: {
-                 clickSvg: () => {
-                     STORE.dispatch(ACTIONS.setDataToInspector(null));
-                     d3.event.stopPropagation();
-                 },
-                 moveEndSvg: (position) => {
-                     let state = STORE.get('schemas');
-                     let schema = state.list.find((d) => { return d.code==state.active; });
-                     let camera = STORE.get('ter.camera');
-
-                     ACTIONS.saveTerCameraLookAt(schema, camera, position);
-                 },
-                 zoomSvg: (scale) => {
-                     let state = STORE.get('schemas');
-                     let schema = state.list.find((d) => { return d.code==state.active; });
-                     let camera = STORE.get('ter.camera');
-
-                     ACTIONS.saveTerCameraLookMagnification(schema, camera, scale);
-                 }
-             }
-         });
-
-         this.makeBases(d3svg);
-
-         return d3svg;
-     }
      STORE.subscribe((action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {
              let state = STORE.get('ter');
@@ -1001,8 +978,8 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
                  ACTIONS.fetchTerEdges(action.mode);
 
              if(action.type=='FETCHED-ER-EDGES') {
-                 this.d3svg = this.makeD3Svg();
-                 this.svg = this.d3svg.Svg();
+                 this.sketcher = this.makeSketcher();
+                 this.sketcher.makeCampus();
 
                  this.draw();
              }

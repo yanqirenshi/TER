@@ -10,9 +10,8 @@
 
     <script>
      this.sketcher = null;
-     this.svg   = null;
 
-     this.ter = new Ter();
+     this.painter = new Ter();
 
      this.makeSketcher = () => {
          let camera = STORE.get('ter.camera');
@@ -50,13 +49,13 @@
          });
      };
      this.draw = () => {
-         this.svg = this.sketcher.svg();
+         let svg = this.sketcher.svg();
 
-         let forground  = this.svg.selectAll('g.base.forground');
-         let background = this.svg.selectAll('g.base.background');
+         let forground  = svg.selectAll('g.base.forground');
+         let background = svg.selectAll('g.base.background');
          let state      = STORE.get('ter');
 
-         this.ter
+         this.painter
              .data(state)
              .sizing()
              .positioning()
@@ -80,7 +79,7 @@
                      edge = edge_tmp;
              }
 
-             this.ter.movePort(edge._from._entity, action.target);
+             this.painter.movePort(edge._from._entity, action.target);
          }
 
          if (action.mode=='FIRST') {

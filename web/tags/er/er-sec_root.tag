@@ -13,8 +13,9 @@
                           callback={modalCallback}></er-modal-description>
 
     <script>
+     this.painter = new Er();
+
      this.d3svg = null;
-     this.ter = new SketcherEr();
      this.modal_target_table = null;
 
      this.modalData = () => {
@@ -132,7 +133,7 @@
              }
          };
 
-         this.d3svg = this.ter.makeD3svg('er-sec_root > svg', camera, callbacks);
+         this.d3svg = this.painter.makeD3svg('er-sec_root > svg', camera, callbacks);
 
          return this.d3svg
      };
@@ -141,13 +142,13 @@
          if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
              let d3svg = this.getD3Svg();
 
-             this.ter.clear(d3svg);
-             this.ter.drawTables(d3svg, STORE.state().get('er'));
+             this.painter.clear(d3svg);
+             this.painter.drawTables(d3svg, STORE.state().get('er'));
          }
 
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
              this.update();
-             this.ter.reDrawTable (action.redraw);
+             this.painter.reDrawTable (action.redraw);
          }
 
          if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
@@ -166,7 +167,7 @@
          let state = STORE.state().get('er');
 
          if (STORE.get('ter.first_loaded'))
-             this.ter.drawTables(d3svg, state);
+             this.painter.drawTables(d3svg, state);
      });
     </script>
 </er-sec_root>

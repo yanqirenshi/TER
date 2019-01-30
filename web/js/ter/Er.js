@@ -1,6 +1,7 @@
 class Er {
-    constructor (reducer) {
+    constructor (options) {
         this._table = null;
+        this._callbacks = options.callbacks;
     }
     // Common
     random (v, type) {
@@ -17,32 +18,6 @@ class Er {
         }
         return Math.floor( Math.random() * (max + 1 - min) ) + min ;
     }
-    makeD3svg (selector, camera, callbacks) {
-        let _camera = Object.assign({}, camera);
-        let look_at = (camera, name) => {
-            if (camera && camera.look_at)
-                return camera.look_at[name];
-            else
-                return 0;
-        };
-
-        let d3svg = new D3Svg({
-            d3: d3,
-            svg: d3.select(selector),
-            x: look_at(_camera, 'x'),
-            y: look_at(_camera, 'y'),
-            w: window.innerWidth,
-            h: window.innerHeight,
-            scale: _camera.magnification || 1,
-            callbacks: callbacks ? callbacks : {
-                moveEndSvg: null,
-                zoomSvg: null,
-                clickSvg: null
-            }
-        });
-
-        return d3svg;
-    }
     // ER
     clear (d3svg) {
         if (!this._table) this._table = new Table({ d3svg:d3svg });
@@ -50,7 +25,11 @@ class Er {
         this._table.removeAll();
     }
     drawTables (d3svg, state) {
-        if (!this._table) this._table = new Table({ d3svg:d3svg });
+        if (!this._table)
+            this._table = new Table({
+                d3svg:d3svg,
+                callbacks: this._callbacks.table,
+            });
 
         let tables = state.tables.list;
 

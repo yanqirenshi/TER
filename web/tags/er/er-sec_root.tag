@@ -14,7 +14,38 @@
 
     <script>
      this.sketcher = null;
-     this.painter = new Er();
+     this.painter = new Er({
+         callbacks: {
+             table: {
+                 move: {
+                     end: (d) => {
+                         let state = STORE.state().get('schemas');
+                         let code = state.active;
+                         let schema = state.list.find((d) => { return d.code == code; });
+
+                         ACTIONS.savePosition(schema, d);
+                     }
+                 },
+                 resize: (table) => {
+                     let state = STORE.state().get('schemas');
+                     let code = state.active;
+                     let schema = state.list.find((d) => { return d.code == code; });
+
+                     ACTIONS.saveTableSize(schema, table);
+                 },
+                 header: {
+                     click: (d) => {
+                         STORE.dispatch(ACTIONS.setDataToInspector(d));
+                     }
+                 },
+                 columns: {
+                     click: (d) => {
+                         STORE.dispatch(ACTIONS.setDataToInspector(d));
+                     }
+                 },
+             }
+         }
+     });
 
      this.modal_target_table = null;
 

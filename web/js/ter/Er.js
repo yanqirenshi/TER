@@ -20,20 +20,42 @@ class Er {
     }
     // ER
     clear (d3svg) {
-        if (!this._table) this._table = new Table({ d3svg:d3svg });
+        if (!this._table) this._table = new ErTable({ d3svg:d3svg });
 
         this._table.removeAll();
     }
-    drawTables (d3svg, state) {
+    drawEdges (d3svg) {
+        let svg = d3svg._svg;
+
+        this._Edge = new Edge();
+        this._Edge.draw(svg, STORE.state().get('er').edges.list);
+    }
+    moveEdges (d3svg, tables) {
+        let svg = d3svg._svg;
+
+        this._Edge = new Edge();
+        this._Edge.moveEdges(svg, ([[]].concat(tables)).reduce((a,b) => {
+            return b._edges ? a.concat(b._edges) : a;
+        }));
+    }
+    drawTablesCore (d3svg, state) {
         if (!this._table)
-            this._table = new Table({
+            this._table = new ErTable({
                 d3svg:d3svg,
                 callbacks: this._callbacks.table,
             });
 
         let tables = state.tables.list;
-
         this._table.draw(tables);
+
+        return tables;
+    }
+    drawTables (d3svg, state) {
+        this.drawEdges(d3svg);
+
+        let tables = this.drawTablesCore(d3svg, state);
+
+        this.moveEdges(d3svg, tables);
     }
     reDrawTable (table) {
         if (table)

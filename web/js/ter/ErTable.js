@@ -1,4 +1,4 @@
-class Table {
+class ErTable {
     constructor(options) {
         this._d3svg = options.d3svg;
         this._padding = 11;
@@ -9,9 +9,9 @@ class Table {
 
         this._callbacks = options.callbacks;
     }
-    ///// ////////////////////////////////////////
-    /////  util
-    ///// ////////////////////////////////////////
+    /* **************************************************************** *
+     *  util
+     * **************************************************************** */
     getCallbak (keys_str) {
         if (!this._callbacks || !keys_str)
             return null;
@@ -37,10 +37,15 @@ class Table {
 
         callback.apply(thisArg, argsArray);
     }
-    ///// ////////////////////////////////////////
-    /////  Sizing
-    ///// ////////////////////////////////////////
-    /// header
+    /* **************************************************************** *
+     *  Data manegement
+     * **************************************************************** */
+    ///
+    /// 未実装
+    ///
+    /* **************************************************************** *
+     *  Sizing
+     * **************************************************************** */
     headerWidth (d) {
         let padding = this._padding;
         return d.w - padding * 2;
@@ -57,9 +62,15 @@ class Table {
     baseHeight (d) {
         return this.headerHight(d) + this._TableColumn.columnsHeight(d);
     }
-    ///// ////////////////////////////////////////
-    /////  Draw
-    ///// ////////////////////////////////////////
+    /* **************************************************************** *
+     *  Positioning
+     * **************************************************************** */
+    ///
+    /// 未実装
+    ///
+    /* **************************************************************** *
+     *  Draw ※これはインスタンスメソッドより、クラスメソッド的な。
+     * **************************************************************** */
     removeAll () {
         let svg = this._d3svg._svg;
 
@@ -187,9 +198,6 @@ class Table {
 
         let svg = this._d3svg._svg;
 
-        // TODO: g.lines が利用できればエンティティの後ろに移動。
-        this._Edge.draw(svg, STORE.state().get('er').edges.list);
-
         this.removeG(svg, data);
         let g = this.drawG(svg, data);
 
@@ -209,14 +217,12 @@ class Table {
 
         this._Port.draw(g);
 
-        // TODO: g.lines が利用できれば不要
-        this._Edge.moveEdges(svg, ([[]].concat(data)).reduce((a,b) => {
-            return b._edges ? a.concat(b._edges) : a;
-        }));
-
         this.resize();
     }
     reDraw (data) {
         let svg = this._d3svg._svg;
     }
+    /* **************************************************************** *
+     *  Drag & Drop
+     * **************************************************************** */
 }

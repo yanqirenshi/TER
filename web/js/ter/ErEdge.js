@@ -1,8 +1,6 @@
 class Edge {
     constructor() {}
-    draw (svg, edges, g) {
-        let area = svg.selectAll('#lines');
-
+    drawCore (selection) {
         let val = (port, name) => {
             try {
                 if (!port[name])
@@ -14,15 +12,7 @@ class Edge {
             }
         };
 
-        svg.selectAll('line')
-            .data(edges, (d) => { return d._id; })
-            .exit()
-            .remove();
-
-        svg.selectAll('line')
-            .data(edges, (d) => { return d._id; })
-            .enter()
-            .append('line')
+        selection
             .attr('x1', (d) => { return val(d._port_from, 'x'); })
             .attr('y1', (d) => { return val(d._port_from, 'y'); })
             .attr('x2', (d) => { return val(d._port_to,   'x'); })
@@ -33,8 +23,24 @@ class Edge {
             })
             .attr('stroke-width', 1);
     }
+    draw (svg, edges, g) {
+        let area = svg.selectAll('#lines');
+
+        svg.selectAll('line.er')
+            .data(edges, (d) => { return d._id; })
+            .exit()
+            .remove();
+
+        let selection = svg.selectAll('line.er')
+            .data(edges, (d) => { return d._id; })
+            .enter()
+            .append('line')
+            .attr('class', 'er');
+
+        this.drawCore (selection);
+    }
     removeEdgeAll (svg) {
-        svg.selectAll('line')
+        svg.selectAll('line.er')
             .data([], (d) => { return d._id; })
             .exit()
             .remove();

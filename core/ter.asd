@@ -59,7 +59,10 @@ This file is a part of ter project.
                                               (:file "drawing")
                                               (:file "camera")
                                               (:file "campus")
-                                              (:file "common")))
+                                              (:file "common")
+                                              (:file "system")
+                                              (:file "system-schema")
+                                              (:file "system-campus")))
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

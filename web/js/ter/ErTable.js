@@ -154,21 +154,9 @@ class ErTable {
             .attr('x', (d) => { return d.x; })
             .attr('y', (d) => { return d.y; })
             .call(d3.drag()
-                  .on("start", (d,i,arr)=>{
-                      d.drag = {
-                          start: {x: d.x, y:d.y}
-                      };
-                  })
-                  .on("drag",  (d,i,arr)=>{
-                      d.x = Math.floor(d.x + d3.event.dx);
-                      d.y = Math.floor(d.y + d3.event.dy);
-                      this.move([d]);
-                  })
-                  .on("end",   (d,i,arr)=>{
-                      this.callCallbak(this, 'move.end', d);
-
-                      delete d.drag;
-                  }));
+                  .on("start", (d) => { this.moveTableStart(d); })
+                  .on("drag",  (d) => { this.moveTable(d); })
+                  .on("end",   (d) => { this.moveTableEnd(d); }));
     }
     move(tables) {
         let svg = this._d3svg._svg;
@@ -225,4 +213,18 @@ class ErTable {
     /* **************************************************************** *
      *  Drag & Drop
      * **************************************************************** */
+    moveTableStart (table) {
+        table.drag = {
+            start: {x: table.x, y:table.y}
+        };
+    }
+    moveTable (table) {
+        table.x = Math.floor(table.x + d3.event.dx);
+        table.y = Math.floor(table.y + d3.event.dy);
+        this.move([table]);
+    }
+    moveTableEnd (table) {
+        this.callCallbak(this, 'move.end', table);
+        delete table.drag;
+    }
 }

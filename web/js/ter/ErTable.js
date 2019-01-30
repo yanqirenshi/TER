@@ -1,11 +1,41 @@
 class Table {
-    constructor(param) {
-        this._d3svg = param.d3svg;
+    constructor(options) {
+        this._d3svg = options.d3svg;
         this._padding = 11;
 
         this._TableColumn = new TableColumn({ padding: this._padding });
         this._Edge = new Edge();
         this._Port = new Port();
+
+        this._callbacks = options.callbacks;
+    }
+    ///// ////////////////////////////////////////
+    /////  util
+    ///// ////////////////////////////////////////
+    getCallbak (keys_str) {
+        if (!this._callbacks || !keys_str)
+            return null;
+
+        let keys = keys_str.split('.');
+        let callbacks = this._callbacks;
+        for (let key of keys) {
+            let val = callbacks[key];
+            if (typeof val == "function")
+                return val;
+            callbacks = val;
+        }
+        return null;
+    }
+    callCallbak (thisArg, keys_str) {
+        let args_arr = Array.prototype.slice.call(arguments);
+        let argsArray = args_arr.slice(2);
+
+        let callback = this.getCallbak(keys_str);
+
+        if (!callback)
+            return;
+
+        callback.apply(thisArg, argsArray);
     }
     ///// ////////////////////////////////////////
     /////  Sizing
@@ -75,7 +105,8 @@ class Table {
                     resize_tables[table._id].max_w = w;
 
             }).on("click", (d) => {
-                STORE.dispatch(ACTIONS.setDataToInspector(d));
+                this.callCallbak(this, 'header.click', d);
+
                 d3.event.stopPropagation();
             }).on("dblclick", (d) => {
                 d3.event.stopPropagation();
@@ -123,11 +154,8 @@ class Table {
                       this.move([d]);
                   })
                   .on("end",   (d,i,arr)=>{
-                      let state = STORE.state().get('schemas');
-                      let code = state.active;
-                      let schema = state.list.find((d) => { return d.code == code; });
+                      this.callCallbak(this, 'move.end', d);
 
-                      ACTIONS.savePosition(schema, d);
                       delete d.drag;
                   }));
     }
@@ -141,6 +169,18 @@ class Table {
             });
 
         this._Edge.moveEdges(svg, tables[0]._edges);
+    }
+    resize () {
+        for (var k in this.resize_tables) {
+            let data = this.resize_tables[k];
+            let table = data.table;
+            if (table.w == data.max_w)
+                continue;
+
+            table.w = data.max_w;
+
+            this.callCallbak(this, 'resize', table);
+        }
     }
     draw (data) {
         this.resize_tables = {};
@@ -157,7 +197,7 @@ class Table {
 
         this._TableColumn.draw(g, this, {
             click: (d) => {
-                STORE.dispatch(ACTIONS.setDataToInspector(d));
+                this.callCallbak(this, 'columns.click', d);
                 d3.event.stopPropagation();
             },
             dblclick: (d) => {
@@ -174,18 +214,7 @@ class Table {
             return b._edges ? a.concat(b._edges) : a;
         }));
 
-        let schemas = STORE.state().get('schemas');
-        let schema = schemas.list.find((s)=>{ return s.code == schemas.active;});
-
-        for (var k in this.resize_tables) {
-            let data = this.resize_tables[k];
-            let table = data.table;
-            if (table.w == data.max_w)
-                continue;
-
-            table.w = data.max_w;
-            ACTIONS.saveTableSize(schema, table);
-        }
+        this.resize();
     }
     reDraw (data) {
         let svg = this._d3svg._svg;

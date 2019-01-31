@@ -2,7 +2,6 @@
 
 (defun get-r-system2schema (graph system schema)
   (find-if #'(lambda (r)
-               (print r)
                (let ((schema_tmp (getf r :vertex)))
                  (eq (code schema_tmp) (code schema))))
            (shinra:find-r graph 'edge :from system

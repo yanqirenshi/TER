@@ -2,7 +2,6 @@
 
 (defun get-r-system2campus (graph system campus)
   (find-if #'(lambda (r)
-               (print r)
                (let ((campus_tmp (getf r :vertex)))
                  (eq (code campus_tmp) (code campus))))
            (shinra:find-r graph 'edge :from system

@@ -24,10 +24,12 @@
 
 
 (defun find-modeler (graph &key ghost-shadow)
-  (shinra:find-r-vertex graph 'edge
-                        :from ghost-shadow
-                        :vertex-class 'modeler
-                        :edge-type :have-to))
+  (cond (ghost-shadow
+         (shinra:find-r-vertex graph 'edge
+                               :from ghost-shadow
+                               :vertex-class 'modeler
+                               :edge-type :have-to))
+        (t (shinra:find-vertex graph 'modeler))))
 
 (defun get-all-modelers (graph)
   (shinra:find-vertex graph 'modeler))

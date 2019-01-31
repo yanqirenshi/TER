@@ -54,6 +54,7 @@ This file is a part of ter project.
                   :components ((:file "ghost-shadow")
                                (:file "ghost-shadow-to-modeler")
                                (:file "modeler")))
+                 (:file "modeler_system")
                  ;; base
                  (:module "base" :components ((:file "schema")
                                               (:file "drawing")
@@ -61,8 +62,8 @@ This file is a part of ter project.
                                               (:file "campus")
                                               (:file "common")
                                               (:file "system")
-                                              (:file "system-schema")
-                                              (:file "system-campus")))
+                                              (:file "system_schema")
+                                              (:file "system_campus")))
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

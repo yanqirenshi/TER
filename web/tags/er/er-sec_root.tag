@@ -136,7 +136,7 @@
          }
      };
 
-     STORE.subscribe((action) => {
+     STORE.subscribe(this, (action) => {
          if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
              if (!this.sketcher) {
                  this.sketcher = this.makeSketcher();

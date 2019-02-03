@@ -66,7 +66,7 @@
                          d3.event.stopPropagation();
                      }}});
      };
-     STORE.subscribe((action) => {
+     STORE.subscribe(this, (action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {
              let state = STORE.get('ter');
 

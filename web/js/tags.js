@@ -808,7 +808,7 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          }
      };
 
-     STORE.subscribe((action) => {
+     STORE.subscribe(this, (action) => {
          if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
              if (!this.sketcher) {
                  this.sketcher = this.makeSketcher();
@@ -981,7 +981,7 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
                          d3.event.stopPropagation();
                      }}});
      };
-     STORE.subscribe((action) => {
+     STORE.subscribe(this, (action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {
              let state = STORE.get('ter');
 

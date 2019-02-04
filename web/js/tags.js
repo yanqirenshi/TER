@@ -1,4 +1,11 @@
 riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#5BBBE7" color="#ffffff"></github-link> <menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <div ref="page-area"></div>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+     this.getActiveSchema = () => {
+         let state = STORE.state().get('schemas');
+         let code = state.active;
+
+         return state.list.find((d) => { return d.code == code; });
+     };
+
      this.brand = () => {
          let brand = this.getActiveSchema();
 
@@ -41,13 +48,6 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
          ACTIONS.fetchEnvironment('FIRST');
      });
 
-     this.getActiveSchema = () => {
-         let state = STORE.state().get('schemas');
-         let code = state.active;
-
-         return state.list.find((d) => { return d.code == code; });
-     };
-
      STORE.subscribe((action) => {
          if (action.type=='MOVE-PAGE') {
              let tags= this.tags;
@@ -56,25 +56,8 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
              ROUTER.switchPage(this, this.refs['page-area'], this.site());
          }
 
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              this.tags['menu-bar'].update();
-             ACTIONS.fetchGraph('FIRST');
-         }
-
-         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST') {
-             ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
-         }
-
-         if (action.type=='FETCHED-ER-NODES')
-             ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
-
-         if (action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST')
-             ;
-
-         if (action.type=='CHANGE-SCHEMA') {
-             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
-             return;
-         }
 
          if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
              this.tags['menu-bar'].update();
@@ -808,36 +791,6 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          }
      };
 
-     STORE.subscribe(this, (action) => {
-         if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
-             if (!this.sketcher) {
-                 this.sketcher = this.makeSketcher();
-                 this.sketcher.makeCampus();
-             } else {
-                 this.painter.clear(this.sketcher._d3svg);
-             }
-
-             let d3svg = this.sketcher._d3svg;
-
-             this.painter.drawTables(d3svg, STORE.state().get('er'));
-         }
-
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
-             this.update();
-             this.painter.reDrawTable (action.redraw);
-         }
-
-         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-
-         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-     });
-
      this.makeSketcher = () => {
          let camera = this.state().cameras[0];
 
@@ -877,6 +830,61 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
              }
          });
      };
+
+     this.getActiveSchema = () => {
+         let state = STORE.state().get('schemas');
+         let code = state.active;
+
+         return state.list.find((d) => { return d.code == code; });
+     };
+
+     STORE.subscribe(this, (action) => {
+         if (action.mode=='FIRST') {
+             if (action.type=='FETCHED-GRAPH')
+                 ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-NODES')
+                 ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-EDGES') {
+                 if (!this.sketcher) {
+                     this.sketcher = this.makeSketcher();
+                     this.sketcher.makeCampus();
+                 } else {
+                     this.painter.clear(this.sketcher._d3svg);
+                 }
+
+                 let d3svg = this.sketcher._d3svg;
+
+                 this.painter.drawTables(d3svg, STORE.state().get('er'));
+             }
+         }
+
+         if (action.type=='CHANGE-SCHEMA') {
+             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
+             return;
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
+             this.update();
+             this.painter.reDrawTable (action.redraw);
+         }
+
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+     });
+
+     this.on('mount', () => {
+         ACTIONS.fetchGraph('FIRST');
+     });
 });
 
 riot.tag2('er', '', '', '', function(opts) {
@@ -998,6 +1006,7 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
          }
 
          if (action.mode=='FIRST') {
+
              if (action.type=='FETCHED-TER-ENVIRONMENT')
                  ACTIONS.fetchTerEntities(action.mode);
 
@@ -1013,7 +1022,7 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
              if (action.type=='FETCHED-TER-PORTS')
                  ACTIONS.fetchTerEdges(action.mode);
 
-             if(action.type=='FETCHED-ER-EDGES') {
+             if(action.type=='FETCHED-TER-EDGES') {
                  this.sketcher = this.makeSketcher();
                  this.sketcher.makeCampus();
 

@@ -20,6 +20,13 @@
     </style>
 
     <script>
+     this.getActiveSchema = () => {
+         let state = STORE.state().get('schemas');
+         let code = state.active;
+
+         return state.list.find((d) => { return d.code == code; });
+     };
+
      this.brand = () => {
          let brand = this.getActiveSchema();
 
@@ -62,13 +69,6 @@
          ACTIONS.fetchEnvironment('FIRST');
      });
 
-     this.getActiveSchema = () => {
-         let state = STORE.state().get('schemas');
-         let code = state.active;
-
-         return state.list.find((d) => { return d.code == code; });
-     };
-
      STORE.subscribe((action) => {
          if (action.type=='MOVE-PAGE') {
              let tags= this.tags;
@@ -77,32 +77,9 @@
              ROUTER.switchPage(this, this.refs['page-area'], this.site());
          }
 
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              this.tags['menu-bar'].update();
-             ACTIONS.fetchGraph('FIRST');
-         }
 
-         if (action.type=='FETCHED-GRAPH' && action.mode=='FIRST') {
-             ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
-         }
-
-         /////
-         ///// ER
-         /////
-         if (action.type=='FETCHED-ER-NODES')
-             ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
-
-         if (action.type=='FETCHED-ER-EDGES' && action.mode=='FIRST')
-             ;
-
-         if (action.type=='CHANGE-SCHEMA') {
-             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
-             return;
-         }
-
-         /////
-         ///// common
-         /////
          if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
              this.tags['menu-bar'].update();
      })

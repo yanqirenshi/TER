@@ -136,36 +136,6 @@
          }
      };
 
-     STORE.subscribe(this, (action) => {
-         if (action.type=='FETCHED-ER-EDGES'  && action.mode=='FIRST') {
-             if (!this.sketcher) {
-                 this.sketcher = this.makeSketcher();
-                 this.sketcher.makeCampus();
-             } else {
-                 this.painter.clear(this.sketcher._d3svg);
-             }
-
-             let d3svg = this.sketcher._d3svg;
-
-             this.painter.drawTables(d3svg, STORE.state().get('er'));
-         }
-
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
-             this.update();
-             this.painter.reDrawTable (action.redraw);
-         }
-
-         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-
-         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-     });
-
      this.makeSketcher = () => {
          let camera = this.state().cameras[0];
 
@@ -205,5 +175,60 @@
              }
          });
      };
+
+     this.getActiveSchema = () => {
+         let state = STORE.state().get('schemas');
+         let code = state.active;
+
+         return state.list.find((d) => { return d.code == code; });
+     };
+
+     STORE.subscribe(this, (action) => {
+         if (action.mode=='FIRST') {
+             if (action.type=='FETCHED-GRAPH')
+                 ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-NODES')
+                 ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-EDGES') {
+                 if (!this.sketcher) {
+                     this.sketcher = this.makeSketcher();
+                     this.sketcher.makeCampus();
+                 } else {
+                     this.painter.clear(this.sketcher._d3svg);
+                 }
+
+                 let d3svg = this.sketcher._d3svg;
+
+                 this.painter.drawTables(d3svg, STORE.state().get('er'));
+             }
+         }
+
+         if (action.type=='CHANGE-SCHEMA') {
+             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
+             return;
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
+             this.update();
+             this.painter.reDrawTable (action.redraw);
+         }
+
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+     });
+
+     this.on('mount', () => {
+         ACTIONS.fetchGraph('FIRST');
+     });
     </script>
 </er-sec_root>

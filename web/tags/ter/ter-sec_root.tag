@@ -83,6 +83,7 @@
          }
 
          if (action.mode=='FIRST') {
+
              if (action.type=='FETCHED-TER-ENVIRONMENT')
                  ACTIONS.fetchTerEntities(action.mode);
 
@@ -98,7 +99,7 @@
              if (action.type=='FETCHED-TER-PORTS')
                  ACTIONS.fetchTerEdges(action.mode);
 
-             if(action.type=='FETCHED-ER-EDGES') {
+             if(action.type=='FETCHED-TER-EDGES') {
                  this.sketcher = this.makeSketcher();
                  this.sketcher.makeCampus();
 

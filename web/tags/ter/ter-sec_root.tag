@@ -59,12 +59,15 @@
              .data(state)
              .sizing()
              .positioning()
-             .draw(forground, background, {
-                 entity: {
-                     click: (d) => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(d));
-                         d3.event.stopPropagation();
-                     }}});
+             .draw(forground,
+                   background, 
+                   {
+                       entity: {
+                           click: (d) => {
+                               STORE.dispatch(ACTIONS.setDataToInspector(d));
+                               d3.event.stopPropagation();
+                           }}
+                   });
      };
      STORE.subscribe(this, (action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {

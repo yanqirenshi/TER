@@ -11,7 +11,7 @@ var API = new Vanilla_Ajax({
     credentials: 'include',
     callback: {
         401: function (r, api) {
-            location.hash = '#sign-in';
+            location.pathname = '/galapagos/';
         }
     }
 });

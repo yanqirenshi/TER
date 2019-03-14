@@ -1,10 +1,28 @@
 <ter-sec_root>
     <svg id="ter-sec_root-svg" ref="svg"></svg>
 
+    <operators data={operators()}
+               callbak={clickOperator}></operators>
+
     <inspector callback={inspectorCallback}></inspector>
 
     <script>
      this.inspectorCallback = (type, data) => {
+     };
+    </script>
+
+    <script>
+     this.operators = () => {
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
+         return state.operators;
+     };
+
+     this.clickOperator = (code, e) => {
+         if (code=='download') {
+             let erapp = new ErApp();
+
+             erapp.downloadJson('ter', erapp.stateTER2Json(STORE.state().get('ter')));
+         }
      };
     </script>
 

@@ -12,6 +12,9 @@ class Store extends Vanilla_Redux_Store {
             sections: [
                 { code: 'root', tag: 'ter-sec_root' },
             ],
+            operators: [
+                { code: 'download',    name: 'Download',    color: '' },
+            ],
             stye: {
                 color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
             }

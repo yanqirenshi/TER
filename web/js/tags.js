@@ -729,7 +729,7 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          if (code=='download') {
              let erapp = new ErApp();
 
-             erapp.downloadJson(erapp.stateER2Json(STORE.state().get('er')));
+             erapp.downloadJson('er', erapp.stateER2Json(STORE.state().get('er')));
          }
      };
      this.inspectorCallback = (type, data) => {
@@ -934,8 +934,21 @@ riot.tag2('home', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
+riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
      this.inspectorCallback = (type, data) => {
+     };
+
+     this.operators = () => {
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
+         return state.operators;
+     };
+
+     this.clickOperator = (code, e) => {
+         if (code=='download') {
+             let erapp = new ErApp();
+
+             erapp.downloadJson('ter', erapp.stateTER2Json(STORE.state().get('ter')));
+         }
      };
 
      this.sketcher = null;

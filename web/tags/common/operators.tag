@@ -23,7 +23,7 @@
 
     <script>
      this.click = (e) => {
-         this.opts.callbak(e.target.getAttribute('code'));
+         this.opts.callbak(e.target.getAttribute('code'), e);
      };
     </script>
 </operators>

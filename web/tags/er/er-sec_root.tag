@@ -64,12 +64,18 @@
          let state = STORE.state().get('site').pages.find((d) => { return d.code=='er'; });
          return state.operators;
      };
-     this.clickOperator = (code) => {
+     this.clickOperator = (code, e) => {
          if (code=='move-center')
              return;
 
          if (code=='save-graph')
              ACTIONS.snapshotAll();
+
+         if (code=='download') {
+             let erapp = new ErApp();
+
+             erapp.downloadJson(erapp.stateER2Json(STORE.state().get('er')));
+         }
      };
      this.inspectorCallback = (type, data) => {
          let page_code = 'er';

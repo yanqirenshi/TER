@@ -168,7 +168,7 @@ riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" on
 
 riot.tag2('operators', '<div> <a each="{opts.data}" class="button {color}" code="{code}" onclick="{click}"> {name} </a> </div>', 'operators > div { position: fixed; right: 11px; bottom: 11px; } operators .button { display: block; margin-top: 11px; }', '', function(opts) {
      this.click = (e) => {
-         this.opts.callbak(e.target.getAttribute('code'));
+         this.opts.callbak(e.target.getAttribute('code'), e);
      };
 });
 
@@ -719,12 +719,18 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
          let state = STORE.state().get('site').pages.find((d) => { return d.code=='er'; });
          return state.operators;
      };
-     this.clickOperator = (code) => {
+     this.clickOperator = (code, e) => {
          if (code=='move-center')
              return;
 
          if (code=='save-graph')
              ACTIONS.snapshotAll();
+
+         if (code=='download') {
+             let erapp = new ErApp();
+
+             erapp.downloadJson(erapp.stateER2Json(STORE.state().get('er')));
+         }
      };
      this.inspectorCallback = (type, data) => {
          let page_code = 'er';
@@ -982,12 +988,15 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <inspecto
              .data(state)
              .sizing()
              .positioning()
-             .draw(forground, background, {
-                 entity: {
-                     click: (d) => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(d));
-                         d3.event.stopPropagation();
-                     }}});
+             .draw(forground,
+                   background,
+                   {
+                       entity: {
+                           click: (d) => {
+                               STORE.dispatch(ACTIONS.setDataToInspector(d));
+                               d3.event.stopPropagation();
+                           }}
+                   });
      };
      STORE.subscribe(this, (action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {

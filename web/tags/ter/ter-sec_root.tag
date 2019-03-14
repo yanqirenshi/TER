@@ -60,7 +60,7 @@
              .sizing()
              .positioning()
              .draw(forground,
-                   background, 
+                   background,
                    {
                        entity: {
                            click: (d) => {

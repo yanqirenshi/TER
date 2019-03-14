@@ -32,4 +32,11 @@
              this.update();
      };
     </script>
+
+    <style>
+     api_page_root > page-tabs {
+         display: block;
+         margin-top:22px;
+     }
+    </style>
 </api_page_root>

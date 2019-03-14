@@ -5,7 +5,7 @@ riot.tag2('api', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('api_page_root', '<section-header title="TER: API"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <api_page_tab_readme class="hide"></api_page_tab_readme> <api_page_tab_tab1 class="hide"></api_page_tab_tab1> <api_page_tab_tab2 class="hide"></api_page_tab_tab2> <api_page_tab_tab3 class="hide"></api_page_tab_tab3> <api_page_tab_help class="hide"></api_page_tab_help> </div> <section-footer></section-footer>', '', '', function(opts) {
+riot.tag2('api_page_root', '<section-header title="TER: API"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <api_page_tab_readme class="hide"></api_page_tab_readme> <api_page_tab_tab1 class="hide"></api_page_tab_tab1> <api_page_tab_tab2 class="hide"></api_page_tab_tab2> <api_page_tab_tab3 class="hide"></api_page_tab_tab3> <api_page_tab_help class="hide"></api_page_tab_help> </div> <section-footer></section-footer>', 'api_page_root > page-tabs { display: block; margin-top:22px; }', '', function(opts) {
      this.page_tabs = new PageTabs([
          {code: 'readme', label: 'README', tag: 'api_page_tab_readme' },
          {code: 'tab1',   label: 'TAB1',   tag: 'api_page_tab_tab1' },
@@ -339,7 +339,11 @@ riot.tag2('home', '', '', '', function(opts) {
      this.on('update', () => { this.draw(); });
 });
 
-riot.tag2('home_page_root', '<section-header title="TER Docs"></section-header>', '', '', function(opts) {
+riot.tag2('home_page_root', '<section-header title="TER Docs"></section-header> <section class="section"> <div class="container"> <h1 class="title">CDN</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>Version</th> <th>Url</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{rec in cdn}"> <td>{rec.version}</td> <td><a href="{rec.url}">{rec.url}</a></td> <td>{rec.description}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
+     this.cdn = [
+         { version: 'beta',  description: '0.0.2に向けて開発中のもの。', url: 'https://yanqirenshi.github.io/TER/dist/beta/Er.js' },
+         { version: '0.0.1', description: '',                            url: 'https://yanqirenshi.github.io/TER/dist/0.0.1/Er.js' },
+     ];
 });
 
 riot.tag2('web', '', '', '', function(opts) {

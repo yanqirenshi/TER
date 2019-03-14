@@ -74,7 +74,7 @@
          if (code=='download') {
              let erapp = new ErApp();
 
-             erapp.downloadJson(erapp.stateER2Json(STORE.state().get('er')));
+             erapp.downloadJson('er', erapp.stateER2Json(STORE.state().get('er')));
          }
      };
      this.inspectorCallback = (type, data) => {

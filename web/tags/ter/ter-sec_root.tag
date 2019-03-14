@@ -20,8 +20,9 @@
      this.clickOperator = (code, e) => {
          if (code=='download') {
              let erapp = new ErApp();
+             let file_name = STORE.get('schemas.active') + '.ter';
 
-             erapp.downloadJson('ter', erapp.stateTER2Json(STORE.state().get('ter')));
+             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
          }
      };
     </script>

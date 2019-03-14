@@ -728,8 +728,9 @@ riot.tag2('er-sec_root', '<svg></svg> <operators data="{operators()}" callbak="{
 
          if (code=='download') {
              let erapp = new ErApp();
+             let file_name = STORE.get('schemas.active') + '.er';
 
-             erapp.downloadJson('er', erapp.stateER2Json(STORE.state().get('er')));
+             erapp.downloadJson(file_name, erapp.stateER2Json(STORE.state().get('er')));
          }
      };
      this.inspectorCallback = (type, data) => {
@@ -946,8 +947,9 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <operator
      this.clickOperator = (code, e) => {
          if (code=='download') {
              let erapp = new ErApp();
+             let file_name = STORE.get('schemas.active') + '.ter';
 
-             erapp.downloadJson('ter', erapp.stateTER2Json(STORE.state().get('ter')));
+             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
          }
      };
 

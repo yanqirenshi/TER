@@ -95,8 +95,8 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedErEdges (mode, response) {
         let new_state        = STORE.state().get('er');
 
+        // TODO: response つこてないんじゃけど。
         new_state.edges = new ErDataManeger().responseEdge2Data(
-            response,
             new_state.relashonships,
             new_state.ports);
 

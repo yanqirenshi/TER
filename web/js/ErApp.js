@@ -57,30 +57,38 @@ class ErApp {
     stateER2Json (state) {
         let out = {};
 
+        out.tables  = state.tables.list.map((obj) => {
+            let new_data = Object.assign({}, obj);
+
+            delete new_data._column_instances;
+            delete new_data._edges;
+            delete new_data._ports;
+
+            return new_data;
+        });
         out.columns = state.columns.list.slice();
         out.cameras = state.cameras.slice();
         out.column_instances = state.column_instances.list.map((obj) => {
             let new_data = Object.assign({}, obj);
 
-            new_data._table = this.ht2linkHt(new_data._table);
+            delete new_data._table;
+
             return new_data;
         });
 
         out.ports = state.ports.list.map((obj) => {
             let new_data = Object.assign({}, obj);
 
-            new_data._column_instance = this.ht2linkHt(obj._column_instance);
+            delete new_data._column_instance;
+
             return new_data;
         });
 
         out.relashonships = state.relashonships.list.map((obj) => {
             let new_data = Object.assign({}, obj);
 
-            if (obj._port_from)
-                new_data._port_from = this.ht2linkHt(obj._port_from);
-
-            if (obj._port_to)
-                new_data._port_to = this.ht2linkHt(obj._port_to);
+            delete new_data._port_from;
+            delete new_data._port_to;
 
             return new_data;
         });
@@ -88,11 +96,8 @@ class ErApp {
         out.edges = state.edges.list.map((obj) => {
             let new_data = Object.assign({}, obj);
 
-            if (obj._port_from)
-                new_data._port_from = this.ht2linkHt(obj._port_from);
-
-            if (obj._port_to)
-                new_data._port_to = this.ht2linkHt(obj._port_to);
+            delete new_data._port_from;
+            delete new_data._port_to;
 
             return new_data;
         });

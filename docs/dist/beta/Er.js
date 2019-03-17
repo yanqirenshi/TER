@@ -123,7 +123,7 @@ class ErDataManeger {
             cameras:          response.CAMERAS
         };
     }
-    responseEdge2Data (response, relashonships, ports) {
+    responseEdge2Data (relashonships, ports) {
         return this.makeGraphData(this.makeEdges(relashonships, ports));
     }
     /////

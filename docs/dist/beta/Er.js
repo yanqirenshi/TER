@@ -138,7 +138,28 @@ class Er extends ErDataManeger {
         super();
 
         this._table = null;
-        this._callbacks = options.callbacks;
+        this._callbacks = this.initCallbacks(options.callbacks);
+    }
+    initCallbacks (options) {
+        let default_callbacks = {
+            table: {
+                move: {
+                    end: (d) => {}
+                },
+                resize: (table) => {},
+                header: {
+                    click: (d) => {}
+                },
+                columns: {
+                    click: (d) => {}
+                },
+            }
+        };
+
+        if (!options.callbacks)
+            return default_callbacks;
+
+        return options.callbacks;
     }
     // Common
     random (v, type) {
@@ -161,11 +182,11 @@ class Er extends ErDataManeger {
 
         this._table.removeAll();
     }
-    drawEdges (d3svg) {
+    drawEdges (d3svg, state) {
         let svg = d3svg._svg;
 
         this._Edge = new Edge();
-        this._Edge.draw(svg, STORE.state().get('er').edges.list);
+        this._Edge.draw(svg, state.edges.list);
     }
     moveEdges (d3svg, tables) {
         let svg = d3svg._svg;
@@ -188,7 +209,7 @@ class Er extends ErDataManeger {
         return tables;
     }
     drawTables (d3svg, state) {
-        this.drawEdges(d3svg);
+        this.drawEdges(d3svg, state);
 
         let tables = this.drawTablesCore(d3svg, state);
 

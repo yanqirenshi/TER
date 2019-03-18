@@ -121,7 +121,10 @@
              if (action.type=='FETCHED-TER-PORTS')
                  ACTIONS.fetchTerEdges(action.mode);
 
-             if(action.type=='FETCHED-TER-EDGES') {
+             if(action.type=='FETCHED-TER-EDGES')
+                 ACTIONS.fetchedAllDatas(action.mode);
+
+             if(action.type=='FETCHED-ALL-DATAS') {
                  this.sketcher = this.makeSketcher();
                  this.sketcher.makeCampus();
 

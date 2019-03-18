@@ -7,17 +7,29 @@ class TerDataManeger {
             target[key] = source[key];
     }
     mergeStateData (source, target) {
-        let ht = target.ht;
+        let new_target = {
+            ht: Object.assign({}, target.ht),
+            list: target.list.slice(),
+        };
 
+        if (target.indexes) {
+            new_target.indexes = {
+                from: Object.assign({}, target.indexes.from),
+                to:   Object.assign({}, target.indexes.to),
+            };
+        }
+
+
+        let ht = new_target.ht;
         for (let obj of source)
             if (ht[obj._id]) {
                 this.mergeStateDataObject(obj, ht[obj._id]);
             } else {
                 ht[obj._id] = obj;
-                target.list.push(obj);
+                new_target.list.push(obj);
             }
 
-        return target;
+        return new_target;
     }
     /////
     /////
@@ -71,11 +83,20 @@ class TerDataManeger {
         }
     }
     state2state(new_state) {
-
         let edges_fixed = this.fixEdgesData(new_state);
 
         this.injectEdgeData(edges_fixed, new_state);
 
+    }
+    json2state(json) {
+        return {
+            camera:               json.camera,
+            entities:             this.mergeStateData(json.entities),
+            identifier_instances: this.mergeStateData(json.identifier_instances),
+            relationships:        this.mergeStateData(json.relationships),
+            ports:                this.mergeStateData(json.ports),
+            attribute_instances:  this.mergeStateData(json.attribute_instances),
+        };
     }
 };
 

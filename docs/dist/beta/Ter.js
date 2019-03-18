@@ -89,13 +89,14 @@ class TerDataManeger {
 
     }
     json2state(json) {
+        let state = { ht: {}, list: [] };
         return {
             camera:               json.camera,
-            entities:             this.mergeStateData(json.entities),
-            identifier_instances: this.mergeStateData(json.identifier_instances),
-            relationships:        this.mergeStateData(json.relationships),
-            ports:                this.mergeStateData(json.ports),
-            attribute_instances:  this.mergeStateData(json.attribute_instances),
+            entities:             this.mergeStateData(json.entities, state),
+            identifier_instances: this.mergeStateData(json.identifier_instances, state),
+            relationships:        this.mergeStateData(json.relationships, state),
+            ports:                this.mergeStateData(json.ports, state),
+            attribute_instances:  this.mergeStateData(json.attribute_instances, state),
         };
     }
 };

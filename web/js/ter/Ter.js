@@ -31,9 +31,9 @@ class TerDataManeger {
 
         return new_target;
     }
-    /////
-    /////
-    /////
+    /**
+     * relationship の _from と _to に値をセットします。
+     */
     fixEdgesData (state) {
         let out = [];
         let edges = state.relationships.list;
@@ -70,6 +70,9 @@ class TerDataManeger {
 
         return out;
     }
+    /**
+     * Relationship の index を作成します。
+     */
     injectEdgeData (edges, new_state) {
         for (let edge of edges) {
             let index_from = new_state.relationships.indexes.from;
@@ -82,26 +85,33 @@ class TerDataManeger {
             index_to[edge.to_id][edge._id]     = edge;
         }
     }
+    /**
+     * API で取得した response で作成した state もどきを、正式な state に変換する。たぶん
+     * これは responses2state がイケてる気がする。
+     */
     state2state(new_state) {
-        dump(new_state);
         let edges_fixed = this.fixEdgesData(new_state);
-        dump(edges_fixed);
 
         this.injectEdgeData(edges_fixed, new_state);
-
     }
+    /**
+     * Json でロードしたデータを state に変換する。
+     */
     json2state(json) {
-        let state = { ht: {}, list: [] };
-        let state_relationships = Object.assign({}, state, { indexes: { from: {}, to: {} } });
-
-        return {
+        let pool = { ht: {}, list: [] };
+        let pool_relationships = Object.assign({}, pool, { indexes: { from: {}, to: {} } });
+        let state = {
             camera:               json.cameras,
-            entities:             this.mergeStateData(json.entities, state),
-            relationships:        this.mergeStateData(json.relationships, state_relationships),
-            ports:                this.mergeStateData(json.ports, state),
-            identifier_instances: this.mergeStateData(json.identifier_instances, state),
-            attribute_instances:  this.mergeStateData(json.attribute_instances, state),
+            entities:             this.mergeStateData(json.entities,             pool),
+            relationships:        this.mergeStateData(json.relationships,        pool_relationships),
+            ports:                this.mergeStateData(json.ports,                pool),
+            identifier_instances: this.mergeStateData(json.identifier_instances, pool),
+            attribute_instances:  this.mergeStateData(json.attribute_instances,  pool),
         };
+
+        this.injectEdgeData(this.fixEdgesData(state), state);
+
+        return state;
     }
 };
 

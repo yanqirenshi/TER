@@ -22,9 +22,9 @@ class TerDataManeger {
     /////
     /////
     /////
-    fetchedTerEdgesFixData (state) {
+    fixEdgesData (state) {
         let out = [];
-        let edges = state.edges;
+        let edges = state.relationships.list;
         let keys = {
             'RESOURCE':            'entities',
             'EVENT':               'entities',
@@ -58,13 +58,8 @@ class TerDataManeger {
 
         return out;
     }
-    state2state(new_state) {
-        let response = null; // dummy
-        let edges_fixed = this.fetchedTerEdgesFixData(new_state);
-
-        this.mergeStateData(edges_fixed, new_state.relationships);
-
-        for (let edge of response) {
+    injectEdgeData (edges, new_state) {
+        for (let edge of edges) {
             let index_from = new_state.relationships.indexes.from;
             let index_to   = new_state.relationships.indexes.to;
 
@@ -74,8 +69,13 @@ class TerDataManeger {
             index_from[edge.from_id][edge._id] = edge;
             index_to[edge.to_id][edge._id]     = edge;
         }
+    }
+    state2state(new_state) {
 
-        return new_state;
+        let edges_fixed = this.fixEdgesData(new_state);
+
+        this.injectEdgeData(edges_fixed, new_state);
+
     }
 };
 

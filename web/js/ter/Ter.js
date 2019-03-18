@@ -83,7 +83,9 @@ class TerDataManeger {
         }
     }
     state2state(new_state) {
+        dump(new_state);
         let edges_fixed = this.fixEdgesData(new_state);
+        dump(edges_fixed);
 
         this.injectEdgeData(edges_fixed, new_state);
 
@@ -91,11 +93,11 @@ class TerDataManeger {
     json2state(json) {
         let state = { ht: {}, list: [] };
         return {
-            camera:               json.camera,
+            camera:               json.cameras,
             entities:             this.mergeStateData(json.entities, state),
-            identifier_instances: this.mergeStateData(json.identifier_instances, state),
             relationships:        this.mergeStateData(json.relationships, state),
             ports:                this.mergeStateData(json.ports, state),
+            identifier_instances: this.mergeStateData(json.identifier_instances, state),
             attribute_instances:  this.mergeStateData(json.attribute_instances, state),
         };
     }

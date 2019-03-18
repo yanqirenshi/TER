@@ -365,41 +365,6 @@ class Actions extends Vanilla_Redux_Actions {
             STORE.dispatch(this.fetchedTerEdges(mode, response));
         }.bind(this));
     }
-    fetchedTerEdgesFixData (edges, state) {
-        let out = [];
-        let keys = {
-            'RESOURCE':            'entities',
-            'EVENT':               'entities',
-            'COMPARATIVE':         'entities',
-            'IDENTIFIER-INSTANCE': 'identifier_instances',
-            'ATTRIBUTE-INSTANCE':  'attribute_instances',
-            'PORT-TER':            'ports',
-
-        };
-        let getNode = (node_class, _id) => {
-            let key = keys[node_class];
-
-            if (!key)
-                throw new Error('対応していない node_class です。 node_class=' + node_class);
-
-            return state[key].ht[_id];
-        };
-
-        for (let edge of edges) {
-            let from = getNode(edge.from_class, edge.from_id);
-            let to   = getNode(edge.to_class,   edge.to_id);
-
-            if (!from || !to)
-                continue;
-
-            edge._from = from;
-            edge._to   = to;
-
-            out.push(edge);
-        }
-
-        return out;
-    }
     fetchedTerEdges (mode, response) {
         let new_state   = STORE.get('ter');
 

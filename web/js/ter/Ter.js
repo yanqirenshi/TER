@@ -92,10 +92,12 @@ class TerDataManeger {
     }
     json2state(json) {
         let state = { ht: {}, list: [] };
+        let state_relationships = Object.assign({}, state, { indexes: { from: {}, to: {} } });
+
         return {
             camera:               json.cameras,
             entities:             this.mergeStateData(json.entities, state),
-            relationships:        this.mergeStateData(json.relationships, state),
+            relationships:        this.mergeStateData(json.relationships, state_relationships),
             ports:                this.mergeStateData(json.ports, state),
             identifier_instances: this.mergeStateData(json.identifier_instances, state),
             attribute_instances:  this.mergeStateData(json.attribute_instances, state),

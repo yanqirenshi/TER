@@ -20,11 +20,8 @@ class ErApp {
         let modifyColumns = (obj) => {
             let new_data = Object.assign({}, obj);
 
-            if (new_data._entity)
-                new_data._entity = this.ht2linkHt(obj._entity);
-
-            if (new_data._parent)
-                delete new_data._parent;
+            delete new_data._entity;
+            delete new_data._parent;
 
             return new_data;
         };
@@ -35,11 +32,8 @@ class ErApp {
         out.relationships = state.relationships.list.map((obj) => {
             let new_data = Object.assign({}, obj);
 
-            if (new_data._from)
-                new_data._from = this.ht2linkHt(new_data._from);
-
-            if (new_data._to)
-                new_data._to = this.ht2linkHt(new_data._to);
+            delete new_data._from;
+            delete new_data._to;
 
             return new_data;
         });

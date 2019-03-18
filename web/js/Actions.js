@@ -435,18 +435,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedAllDatas (mode) {
         let new_state   = STORE.get('ter');
 
-        let edges_fixed = this.fetchedTerEdgesFixData(new_state.relationships.list, new_state);
-
-        for (let edge of edges_fixed) {
-            let index_from = new_state.relationships.indexes.from;
-            let index_to   = new_state.relationships.indexes.to;
-
-            if (!index_from[edge.from_id]) index_from[edge.from_id] = {};
-            if (!index_to[edge.to_id])     index_to[edge.to_id]     = {};
-
-            index_from[edge.from_id][edge._id] = edge;
-            index_to[edge.to_id][edge._id]     = edge;
-        }
+        new TerDataManeger().state2state(new_state);
 
         if (mode=='FIRST')
             new_state.first_loaded = true;

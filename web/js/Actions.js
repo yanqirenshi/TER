@@ -249,26 +249,6 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Fetch TER
      * **************************************************************** */
-    mergeStateDataObject (source, target) {
-        if (source._id!=target._id)
-            throw new Error('not eq object');
-
-        for (let key in source)
-            target[key] = source[key];
-    }
-    mergeStateData (source, target) {
-        let ht = target.ht;
-
-        for (let obj of source)
-            if (ht[obj._id]) {
-                this.mergeStateDataObject(obj, ht[obj._id]);
-            } else {
-                ht[obj._id] = obj;
-                target.list.push(obj);
-            }
-
-        return target;
-    }
     fetchTerEnvironment (mode) {
         let graph = 'RBP';
         let path = '/ter/%s/environment'.format(graph);
@@ -279,7 +259,8 @@ class Actions extends Vanilla_Redux_Actions {
     }
     fetchedTerEnvironment (mode, response) {
         let new_state = STORE.get('ter');
-        this.mergeStateData(response.cameras, new_state.cameras);
+
+        new_state.cameras = new TerDataManeger().mergeStateData(response.cameras, new_state.cameras);
 
         let cameras = new_state.cameras.list;
         new_state.camera = cameras.length==0 ? null : cameras[0];
@@ -303,7 +284,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerEntities (mode, response) {
         let new_state = STORE.get('ter');
 
-        this.mergeStateData(response, new_state.entities);
+        new_state.entities = new TerDataManeger().mergeStateData(response, new_state.entities);
 
         return {
             type: 'FETCHED-TER-ENTITIES',
@@ -324,7 +305,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerIdentifiers (mode, response) {
         let new_state = STORE.get('ter');
 
-        this.mergeStateData(response, new_state.identifier_instances);
+        new_state.identifier_instances = new TerDataManeger().mergeStateData(response, new_state.identifier_instances);
 
         return {
             type: 'FETCHED-TER-IDENTIFIERS',
@@ -345,7 +326,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerAttributes (mode, response) {
         let new_state = STORE.get('ter');
 
-        this.mergeStateData(response, new_state.attribute_instances);
+        new_state.attribute_instances = new TerDataManeger().mergeStateData(response, new_state.attribute_instances);
 
         return {
             type: 'FETCHED-TER-ATTRIBUTES',
@@ -366,7 +347,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerPorts (mode, response) {
         let new_state = STORE.get('ter');
 
-        new_state.ports = this.mergeStateData(response, new_state.ports);
+        new_state.ports = new TerDataManeger().mergeStateData(response, new_state.ports);
 
         return {
             type: 'FETCHED-TER-PORTS',
@@ -422,7 +403,7 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerEdges (mode, response) {
         let new_state   = STORE.get('ter');
 
-        this.mergeStateData(response, new_state.relationships);
+        new_state.relationships = new TerDataManeger().mergeStateData(response, new_state.relationships);
 
         return {
             type: 'FETCHED-TER-EDGES',
@@ -465,7 +446,7 @@ class Actions extends Vanilla_Redux_Actions {
     savedTerPortPosition (response) {
         let new_state = STORE.get('ter');
 
-        new_state.ports = this.mergeStateData([response], new_state.ports);
+        new_state.ports = new TerDataManeger().mergeStateData([response], new_state.ports);
 
         return {
             type: 'SAVED-TER-PORT-POSITION',

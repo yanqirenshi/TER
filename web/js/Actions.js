@@ -421,11 +421,23 @@ class Actions extends Vanilla_Redux_Actions {
     }
     fetchedTerEdges (mode, response) {
         let new_state   = STORE.get('ter');
-        let edges_fixed = this.fetchedTerEdgesFixData(response, new_state);
 
-        this.mergeStateData(edges_fixed, new_state.relationships);
+        this.mergeStateData(response, new_state.relationships);
 
-        for (let edge of response) {
+        return {
+            type: 'FETCHED-TER-EDGES',
+            mode: mode,
+            data: {
+                ter: new_state,
+            }
+        };
+    }
+    fetchedAllDatas (mode) {
+        let new_state   = STORE.get('ter');
+
+        let edges_fixed = this.fetchedTerEdgesFixData(new_state.relationships.list, new_state);
+
+        for (let edge of edges_fixed) {
             let index_from = new_state.relationships.indexes.from;
             let index_to   = new_state.relationships.indexes.to;
 
@@ -439,13 +451,13 @@ class Actions extends Vanilla_Redux_Actions {
         if (mode=='FIRST')
             new_state.first_loaded = true;
 
-        return {
-            type: 'FETCHED-TER-EDGES',
+        STORE.dispatch({
+            type: 'FETCHED-ALL-DATAS',
             mode: mode,
             data: {
                 ter: new_state,
             }
-        };
+        });
     }
     saveTerEntityPosition (schema, entity) {
         let path = '/ter/%s/entities/%d/location'.format(schema.code, entity._id);

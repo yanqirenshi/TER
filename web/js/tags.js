@@ -1032,19 +1032,19 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <operator
          if (action.mode=='FIRST') {
 
              if (action.type=='FETCHED-TER-ENVIRONMENT')
-                 ACTIONS.fetchTerEntities(action.mode);
+                 ACTIONS.fetchTerEntities(action.schema, action.mode);
 
              if (action.type=='FETCHED-TER-ENTITIES')
-                 ACTIONS.fetchTerIdentifiers(action.mode);
+                 ACTIONS.fetchTerIdentifiers(action.schema, action.mode);
 
              if (action.type=='FETCHED-TER-IDENTIFIERS')
-                 ACTIONS.fetchTerAttributes(action.mode);
+                 ACTIONS.fetchTerAttributes(action.schema, action.mode);
 
              if (action.type=='FETCHED-TER-ATTRIBUTES')
-                 ACTIONS.fetchTerPorts(action.mode);
+                 ACTIONS.fetchTerPorts(action.schema, action.mode);
 
              if (action.type=='FETCHED-TER-PORTS')
-                 ACTIONS.fetchTerEdges(action.mode);
+                 ACTIONS.fetchTerEdges(action.schema, action.mode);
 
              if(action.type=='FETCHED-TER-EDGES')
                  ACTIONS.fetchedAllDatas(action.mode);
@@ -1059,7 +1059,9 @@ riot.tag2('ter-sec_root', '<svg id="ter-sec_root-svg" ref="svg"></svg> <operator
      });
 
      this.on('mount', () => {
-         ACTIONS.fetchTerEnvironment('FIRST');
+         let schema = STORE.get('schemas.active')
+         if (schema)
+             ACTIONS.fetchTerEnvironment(schema, 'FIRST');
      });
 });
 

@@ -249,15 +249,15 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Fetch TER
      * **************************************************************** */
-    fetchTerEnvironment (mode) {
-        let graph = 'RBP';
+    fetchTerEnvironment (schema, mode) {
+        let graph = schema;
         let path = '/ter/%s/environment'.format(graph);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerEnvironment(mode, response));
+            STORE.dispatch(this.fetchedTerEnvironment(schema, mode, response));
         }.bind(this));
     }
-    fetchedTerEnvironment (mode, response) {
+    fetchedTerEnvironment (schema, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.cameras = new TerDataManeger().mergeStateData(response.cameras, new_state.cameras);
@@ -270,108 +270,114 @@ class Actions extends Vanilla_Redux_Actions {
             data: {
                 ter:  new_state,
             },
+            schema: schema,
             mode: mode,
         };
     }
-    fetchTerEntities (mode) {
-        let graph = 'RBP';
+    fetchTerEntities (schema, mode) {
+        let graph = schema;
         let path = '/ter/%s/entities'.format(graph);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerEntities(mode, response));
+            STORE.dispatch(this.fetchedTerEntities(schema, mode, response));
         }.bind(this));
     }
-    fetchedTerEntities (mode, response) {
+    fetchedTerEntities (schema, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.entities = new TerDataManeger().mergeStateData(response, new_state.entities);
 
         return {
             type: 'FETCHED-TER-ENTITIES',
+            schema: schema,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerIdentifiers (mode) {
-        let graph = 'RBP';
+    fetchTerIdentifiers (schema, mode) {
+        let graph = schema;
         let path = '/ter/%s/identifiers'.format(graph);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerIdentifiers(mode, response));
+            STORE.dispatch(this.fetchedTerIdentifiers(schema, mode, response));
         }.bind(this));
     }
-    fetchedTerIdentifiers (mode, response) {
+    fetchedTerIdentifiers (schema, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.identifier_instances = new TerDataManeger().mergeStateData(response, new_state.identifier_instances);
 
         return {
             type: 'FETCHED-TER-IDENTIFIERS',
+            schema: schema,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerAttributes (mode) {
-        let graph = 'RBP';
+    fetchTerAttributes (schema, mode) {
+        let graph = schema;
         let path = '/ter/%s/attributes'.format(graph);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerAttributes(mode, response));
+            STORE.dispatch(this.fetchedTerAttributes(schema, mode, response));
         }.bind(this));
     }
-    fetchedTerAttributes (mode, response) {
+    fetchedTerAttributes (schema, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.attribute_instances = new TerDataManeger().mergeStateData(response, new_state.attribute_instances);
 
         return {
             type: 'FETCHED-TER-ATTRIBUTES',
+            schema: schema,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerPorts (mode) {
-        let graph = 'RBP';
+    fetchTerPorts (schema, mode) {
+        let graph = schema;
         let path = '/ter/%s/ports'.format(graph);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerPorts(mode, response));
+            STORE.dispatch(this.fetchedTerPorts(schema, mode, response));
         }.bind(this));
     }
-    fetchedTerPorts (mode, response) {
+    fetchedTerPorts (schema, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.ports = new TerDataManeger().mergeStateData(response, new_state.ports);
 
         return {
             type: 'FETCHED-TER-PORTS',
+            schema: schema,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerEdges (mode) {
-        let graph = 'RBP';
+    fetchTerEdges (schema, mode) {
+        let graph = schema;
         let path = '/ter/%s/edges'.format(graph);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerEdges(mode, response));
+            STORE.dispatch(this.fetchedTerEdges(schema, mode, response));
         }.bind(this));
     }
-    fetchedTerEdges (mode, response) {
+    fetchedTerEdges (schema, mode, response) {
         let new_state   = STORE.get('ter');
 
         new_state.relationships = new TerDataManeger().mergeStateData(response, new_state.relationships);
 
         return {
             type: 'FETCHED-TER-EDGES',
+            schema: schema,
             mode: mode,
             data: {
                 ter: new_state,

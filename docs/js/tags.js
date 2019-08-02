@@ -378,6 +378,64 @@ riot.tag2('home_page_root', '<section-header title="TER Docs"></section-header> 
      ];
 });
 
+riot.tag2('page-core_tab-assembly', '<section class="section"> <div class="container"> <h1 class="title is-4">準備</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(in-package :ter)</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">System - Schema</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(let* ((graph ter.db:*graph*)\n       (system (get-system graph :code :my-system))\n       (schema (get-schema graph :code :my-system)))\n  (up:execute-transaction\n   (tx-make-edge-system2schema graph system schema)))</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">System - Campus</h1> <h2 class="subtitle"></h2> <div class="contents"> <p>これがほんとうなのかな？ schema - campus じゃないかな。。。。。</p> <p><pre>(let* ((graph ter.db:*graph*)\n       (system (get-system graph :code :my-system))\n       (campus (get-campus graph :code :my-system)))\n  (up:execute-transaction\n   (tx-make-edge-system2campus graph system campus)))</pre></p> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-core_tab-camera', '<section class="section"> <div class="container"> <h1 class="title is-4">準備</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(in-package :ter)</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">作成</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(let ((graph ter.db:*graph*))\n  (up:execute-transaction\n   (tx-make-camera graph :my-system-1 :name "My System #1")))</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">一覧取得</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre></pre></p>\n            </div>\n        </div>\n    </section>\n\n    <section class="section">\n        <div class="container">\n            <h1 class="title is-4">取得</h1>\n            <h2 class="subtitle"></h2>\n\n            <div class="contents">\n                <p><pre>(let ((graph ter.db:*graph*))\n  (get-camera graph :code :my-system-1))</pre></p> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-core_tab-campus', '<section class="section"> <div class="container"> <h1 class="title is-4">準備</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(in-package :ter)</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">作成</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(let ((graph ter.db:*graph*))\n  (up:execute-transaction\n   (tx-make-campus graph\n                   :my-system\n                   :name "My System"\n                   :description "")))</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">一覧取得</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre></pre></p>\n            </div>\n        </div>\n    </section>\n\n    <section class="section">\n        <div class="container">\n            <h1 class="title is-4">取得</h1>\n            <h2 class="subtitle"></h2>\n\n            <div class="contents">\n                <p><pre>(let ((graph ter.db:*graph*))\n  (get-campus graph :code :my-system))</pre></p> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-core_tab-modeler', '<section class="section"> <div class="container"> <h1 class="title is-4">準備</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre></pre></p>\n            </div>\n        </div>\n    </section>\n\n    <section class="section">\n        <div class="container">\n            <h1 class="title is-4">作成</h1>\n            <h2 class="subtitle"></h2>\n\n            <div class="contents">\n                <p><pre></pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">一覧取得</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre></pre></p>\n            </div>\n        </div>\n    </section>\n\n    <section class="section">\n        <div class="container">\n            <h1 class="title is-4">作成</h1>\n            <h2 class="subtitle"></h2>\n\n            <div class="contents">\n                <p><pre></pre></p> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-core_tab-readme', '<section class="section"> <div class="container"> <h1 class="title is-4">データの構成(基礎)</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>今はこれ. ちょっと混乱ぎみ。\n---------------------------\nghost-shadow                       +---1:n---> schema ---1:n---+\n     |                             |  (have)            (have) |\n    1:1      +---1:n---> system ---|                           +---> camera\n     |       |  (selected)         |                           |       ^\n     V       |                     `---1:n---> campus ---1:n---+       |\n  modeler ---+                        (have)            (have)         |\n             |                                                         |\n             |                                                         |\n             +---1:n---------------------------------------------------+\n                (selected)\n\n\n最終はこれ. がいいな。\n-----------------------\nghost-shadow\n     |\n    1:1\n     |       +---1:n---> system ---1:n---> schema ---1:n---> campus\n     V       |  (selected)        (have)            (have)     |\n  modeler ---+                                                1:n (have)\n             |                                                 |\n             +---1:n---> camera <------------------------------+\n                (selected)</pre></p> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-usage_tab-schema', '<section class="section"> <div class="container"> <h1 class="title is-4"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-usage_tab-system', '<section class="section"> <div class="container"> <h1 class="title is-4">準備</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(in-package :ter)</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">System の作成</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(up:execute-transaction\n (tx-make-system ter.db:*graph* :my-system :name "My System"))</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">System の一覧取得</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(find-systems ter.db:*graph*)</pre></p> </div> </div> </section> <section class="section"> <div class="container"> <h1 class="title is-4">System の作成</h1> <h2 class="subtitle"></h2> <div class="contents"> <p><pre>(get-system ter.db:*graph* :code :my-system)</pre></p> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-usage_root', '<section-header title="TER: Core"></section-header> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div> <page-core_tab-readme class="hide"></page-core_tab-readme> <page-core_tab-modeler class="hide"></page-core_tab-modeler> <page-usage_tab-system class="hide"></page-usage_tab-system> <page-usage_tab-schema class="hide"></page-usage_tab-schema> <page-core_tab-campus class="hide"></page-core_tab-campus> <page-core_tab-camera class="hide"></page-core_tab-camera> <page-core_tab-assembly class="hide"></page-core_tab-assembly> <page-usage_tab-ter class="hide"></page-usage_tab-ter> <page-usage_tab-er class="hide"></page-usage_tab-er> </div> <section-footer></section-footer>', 'page-usage_root > page-tabs { display: block; margin-top:22px; }', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         {code: 'readme',   label: 'Readme',      tag: 'page-core_tab-readme' },
+         {code: 'modeler',  label: 'Modeler',     tag: 'page-core_tab-modeler' },
+         {code: 'system',   label: 'System',      tag: 'page-usage_tab-system' },
+         {code: 'schema',   label: 'Schema',      tag: 'page-usage_tab-schema' },
+         {code: 'campus',   label: 'Campus',      tag: 'page-core_tab-campus' },
+         {code: 'camera',   label: 'Camera',      tag: 'page-core_tab-camera' },
+         {code: 'assembly', label: 'Base の組立', tag: 'page-core_tab-assembly' },
+         {code: 'ter',      label: 'TER',         tag: 'page-usage_tab-ter' },
+         {code: 'er',       label: 'ER',          tag: 'page-usage_tab-er' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+});
+
+riot.tag2('page-usage_tab-er', '<section class="section"> <div class="container"> <h1 class="title is-4"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-usage_tab-ter', '<section class="section"> <div class="container"> <h1 class="title is-4"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('usage', '', '', '', function(opts) {
+     this.mixin(MIXINS.page);
+
+     this.on('mount', () => { this.draw(); });
+     this.on('update', () => { this.draw(); });
+});
+
 riot.tag2('web', '', '', '', function(opts) {
      this.mixin(MIXINS.page);
 

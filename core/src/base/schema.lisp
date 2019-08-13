@@ -41,6 +41,14 @@
       (setf (gethash code *er-schema-graphs*)
             (shinra:make-banshou 'shinra:banshou store-dir)))))
 
+(defgeneric stop-schema-graph (schema)
+  (:method ((schema schema))
+    (let* ((code (code schema))
+           (graph (gethash code *er-schema-graphs*)))
+      (when graph
+        (shinra::stop graph)
+        (remhash  code *er-schema-graphs*)))))
+
 (defgeneric snapshot-schema-graph (schema)
   (:method ((schema schema))
     (let ((code (code schema)))

@@ -2,6 +2,17 @@
 
     <section class="section">
         <div class="container">
+            <h1 class="title is-4">概要</h1>
+            <h2 class="subtitle"></h2>
+
+            <div class="contents">
+                <p>Campus は TER の図を管理する単位です。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
             <h1 class="title is-4">準備</h1>
             <h2 class="subtitle"></h2>
 

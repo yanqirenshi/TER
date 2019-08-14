@@ -41,6 +41,14 @@
       (or graph
           (start-campus-graph campus)))))
 
+(defgeneric stop-campus-graph (campus)
+  (:method ((campus campus))
+    (let* ((code (code campus))
+           (graph (gethash code *ter-campus-graphs*)))
+      (when graph
+        (shinra::stop graph)
+        (remhash code *ter-campus-graphs*)))))
+
 (defgeneric snapshot-campus-graph (campus)
   (:method ((campus campus))
     (let ((code (code campus)))

@@ -117,3 +117,59 @@
 (defgeneric tx-add-port-ter (entity port-ter)
   (:method ((entity entity) (port-ter port-ter))
     (list entity port-ter)))
+
+
+;;;;;
+;;;;;
+;;;;;
+(defgeneric tx-build-identifier (graph type code name)
+  (:method (graph (type symbol) (code symbol) (name string))
+    (assert (and graph type code name))
+    (assert (or (eq :ev type) (eq :rs type)))
+    (flet ((str2keyword (str)
+             (alexandria:make-keyword (string-upcase str))))
+      (let* ((identifier-code-str (concatenate 'string (symbol-name code) "-id"))
+             (identifier-code     (str2keyword identifier-code-str))
+             (identifier-name     (concatenate 'string name "ID"))
+             (identifier-data-type :integer)
+             (identifier-instance-code :id)
+             (entity-code code))
+        (let ((identifier          (tx-make-identifier graph
+                                                       identifier-code
+                                                       identifier-name
+                                                       identifier-data-type))
+              (identifier-instance (tx-make-identifier-instance graph
+                                                                identifier-instance-code
+                                                                identifier-name
+                                                                identifier-data-type))
+              (entity (if (eq :rs type)
+                          (tx-make-resource graph entity-code name)
+                          (tx-make-event    graph entity-code name))))
+          (declare (ignore identifier)) ;; TODO; create identifier to identifier-instance
+          (tx-add-identifier graph entity identifier-instance :type :native))))))
+
+;; (let ((graph (get-campus-graph (get-campus ter.db:*graph* :code "MANAGEMENT"))))
+;;   (mapcar #'(lambda (data)
+;;               (tx-build-identifier graph
+;;                                    (getf data :type)
+;;                                    (getf data :code)
+;;                                    (getf data :name)))
+;;           '((:type :rs :code :company                          :name "会社")
+;;             (:type :rs :code :project                          :name "プロジェクト")
+;;             (:type :rs :code :proposition                      :name "案件")
+;;             (:type :rs :code :resource                         :name "リソース")
+;;             (:type :rs :code :duty                             :name "職責")
+;;             (:type :rs :code :manage-order-proposition-item    :name "案件の発注管理項目")
+;;             (:type :rs :code :manage-plan-proposition-item     :name "案件の予定管理項目")
+;;             (:type :rs :code :manage-resource-proposition-item :name "案件のリソース管理項目")
+;;             (:type :ev :code :assign-project                   :name "プロジェクトへの担当者割当")
+;;             (:type :ev :code :assign-proposition               :name "案件への担当者割当")
+;;             (:type :ev :code :manage-order-proposition         :name "案件の発注管理")
+;;             (:type :ev :code :manage-order-proposition-dtl     :name "案件の発注管理明細")
+;;             (:type :ev :code :manage-plan-proposition          :name "案件の予定管理")
+;;             (:type :ev :code :manage-plan-proposition-dtl      :name "案件の予定管理明細")
+;;             (:type :ev :code :manage-resouce-proposition       :name "案件のリソース管理")
+;;             (:type :ev :code :manage-resouce-proposition-dtl   :name "案件のリソース管理明細")
+;;             (:type :ev :code :proposition-estimate             :name "案件の見積")
+;;             (:type :ev :code :proposition-estimate-dtl         :name "案件の見積明細")
+;;             (:type :ev :code :resource-estimate                :name "リソースの見積"))))

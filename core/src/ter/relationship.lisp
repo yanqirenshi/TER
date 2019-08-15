@@ -1,19 +1,24 @@
 (in-package :ter)
 
-(defgeneric tx-make-relationship (graph from to)
+(defgeneric tx-make-relationship (graph from to &key type)
 
-  (:method (graph (from resource) (to resource))
+  (:method (graph (from resource) (to resource)  &key type)
+    (declare (ignore type))
     (tx-make-relationship-rsc2rsc-th graph from to))
 
-  (:method (graph (from resource) (to event))
+  (:method (graph (from resource) (to event)  &key type)
+    (declare (ignore type))
     (tx-make-relationship-rsc2evt-to graph from to))
 
-  (:method (graph (from event) (to event))
-    ;;(tx-make-relationship-evt2evt-to graph from to)
-    (error "building now..."))
+  (:method (graph (from event) (to event)  &key type)
+    (cond ((eq :hdr-dtl type)
+           (tx-make-relationship-rsc2evt-to graph from to))
+          ((null type)
+           (error "Not Supported yet. Please wait build."))
+          (t (error "Bad type. type=~S" type))))
 
-  (:method (graph from to)
-    (error "Bad combination. from=~a, to=~a" from to)))
+  (:method (graph from to  &key type)
+    (error "Bad combination. from=~a, to=~a, type=~a" from to type)))
 
 
 ;;;;;

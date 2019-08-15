@@ -1,6 +1,7 @@
 (in-package :ter)
 
-(defclass attribute (shinra:shin) ())
+(defclass attribute (shinra:shin rsc)
+ ((data-type :accessor data-type :initarg :data-type :initform nil)))
 
 (defclass attribute-instance (shinra:shin rsc)
  ((data-type :accessor data-type :initarg :data-type :initform nil)))

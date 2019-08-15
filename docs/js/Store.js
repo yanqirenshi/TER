@@ -15,11 +15,33 @@ class Store extends Vanilla_Redux_Store {
                 }
             },
             {
-                code: "usage", menu_label: '使',
+                code: "usage-base", menu_label: '使:基',
                 active_section: 'root',
                 home_section: 'root',
                 sections: [
-                    { code: 'root', tag: 'page-usage_root', name: 'root' },
+                    { code: 'root', tag: 'page-usage-base', name: 'root' },
+                ],
+                stye: {
+                    color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
+                }
+            },
+            {
+                code: "usage-ter", menu_label: '使:TER',
+                active_section: 'root',
+                home_section: 'root',
+                sections: [
+                    { code: 'root', tag: 'page-usage-ter', name: 'root' },
+                ],
+                stye: {
+                    color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
+                }
+            },
+            {
+                code: "usage-er", menu_label: '使:ER',
+                active_section: 'root',
+                home_section: 'root',
+                sections: [
+                    { code: 'root', tag: 'page-usage-er', name: 'root' },
                 ],
                 stye: {
                     color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }

@@ -1,5 +1,5 @@
 <page-tabs>
-    <div class="tabs is-boxed" style="padding-left:55px;">
+    <div class="tabs is-boxed">
         <ul>
             <li each={opts.core.tabs}
                 class="{opts.core.active_tab==code ? 'is-active' : ''}">

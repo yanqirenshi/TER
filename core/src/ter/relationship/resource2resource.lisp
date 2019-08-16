@@ -10,5 +10,5 @@
                              :from from-identifier
                              :to   to-identifier)
       (declare (ignore th))
-      (tx-make-relationships2 graph from-identifier th-from-identifier)
-      (tx-make-relationships2 graph to-identifier   th-to-identifier))))
+      (tx-make-relationship graph from-identifier th-from-identifier)
+      (tx-make-relationship graph to-identifier   th-to-identifier))))

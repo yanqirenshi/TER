@@ -1,7 +1,13 @@
 (in-package :ter)
 
+(defun find-ter-all-edges (graph &key (class 'edge-ter))
+  (gethash (pool-key-ra class)
+           (up::root-objects graph)))
+
+
 (defun find-edge-ter (graph)
   (gethash :edge-ter-root (up::root-objects graph)))
+
 
 (defun find-edge-ter-port2port (graph)
   (remove-if #'(lambda (d)
@@ -9,9 +15,11 @@
                            (eq 'port-ter (shinra:to-class d)))))
           (find-edge-ter graph)))
 
+
 (defun get-from-vertex (graph edge)
   (shinra:get-vertex-at graph (shinra:from-class edge)
                         :%id (shinra:from-id edge)))
+
 
 (defun get-to-vertex (graph edge)
   (shinra:get-vertex-at graph (shinra:to-class edge)

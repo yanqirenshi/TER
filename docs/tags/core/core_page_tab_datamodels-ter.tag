@@ -13,16 +13,18 @@
 resource  event  comparative  correspondence  recursion  resouce-detail  event-detail
 
 
-  identifier ------1:n------> identifier-instance
-  attribute  ------1:n------> attribute-instance
+  identifier <-----(1:n, :subset-of)------ identifier-instance
+  attribute  <-----(1:n, :subset-of)------ attribute-instance
 
 
-  entity ------1:n------> identifier-instance
-  entity ------1:n------> attribute-instance
+  entity ------(1:n, :have-to-native)------> identifier-instance
+         ------(1:n, :have-to-foreigner)---> identifier-instance
+
+  entity ------(1:n, :have-to-native)------> attribute-instance
 
 
-  identifier-instance ------1:n------> port-ter-in
-  identifier-instance ------1:n------> port-ter-out
+  identifier-instance ------(1:n, :have-to)------> port-ter
+  identifier-instance ------(1:n, :have-to)------> port-ter
 
   recouece : recouece
   recouece : resouce-detail
@@ -31,7 +33,7 @@ resource  event  comparative  correspondence  recursion  resouce-detail  event-d
   event    : event-detail
   event    : event
 
-  port-ter-in ------1:n------> edge-ter ------1:n------> port-ter-out</pre></p>
+  port-ter(:out) ------(1:n, :->)------> port-ter(:in)</pre></p>
             </div>
         </div>
     </section>

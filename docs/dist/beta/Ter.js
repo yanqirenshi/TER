@@ -39,7 +39,9 @@ class TerDataManeger {
         let edges = state.relationships.list;
         let keys = {
             'RESOURCE':            'entities',
+            'RESOURCE-SUBSET':     'entities',
             'EVENT':               'entities',
+            'EVENT-SUBSET':        'entities',
             'COMPARATIVE':         'entities',
             'IDENTIFIER-INSTANCE': 'identifier_instances',
             'ATTRIBUTE-INSTANCE':  'attribute_instances',
@@ -128,11 +130,13 @@ class Ter {
             style: {
                 entity: {
                     background: {
-                        resource:       { color: '#2ca9e1' },
-                        event:          { color: '#ec6d71' },
-                        comparative:    { color: '#c8d5bb' },
-                        correspondence: { color: '#f2f2b0' },
-                        recursion:      { color: '#dbd0e6' },
+                        "resource":        { color: '#89c3eb' },
+                        "resource-subset": { color: '#a0d8ef' },
+                        "event":           { color: '#f09199' },
+                        "event-subset":    { color: '#f6bfbc' },
+                        "comparative":     { color: '#c8d5bb' },
+                        "correspondence":  { color: '#f2f2b0' },
+                        "recursion":       { color: '#dbd0e6' },
                     }
                 }
             }
@@ -195,14 +199,21 @@ class Ter {
     }
     entityTypeContents (entity) {
         switch (entity._class) {
-        case 'RESOURCE':    return 'Rsc';
-        case 'COMPARATIVE': return '対象';
-        case 'EVENT':       return 'Evt';
+        case 'RESOURCE':        return 'Rsc';
+        case 'RESOURCE-SUBSET': return 'Rsc';
+        case 'COMPARATIVE':     return '対象';
+        case 'EVENT':           return 'Evt';
+        case 'EVENT-SUBSET':    return 'Evt';
         }
         throw new Error(entity._class + " は知らないよ。");
     }
     isEntityClass (_class) {
-        let classes = ['RESOURCE', 'EVENT'];
+        let classes = [
+            'RESOURCE',
+            'RESOURCE-SUBSET',
+            'EVENT',
+            'EVENT-SUBSET',
+        ];
 
         return classes.indexOf(_class) > -1;
     }

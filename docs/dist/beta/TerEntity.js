@@ -63,14 +63,16 @@ class TerEntity {
      * **************************************************************** */
     entityTypeContents () {
         switch (this._class) {
-        case 'RESOURCE':    return 'Rsc';
-        case 'COMPARATIVE': return '対象';
-        case 'EVENT':       return 'Evt';
+        case 'RESOURCE':        return 'Rsc';
+        case 'RESOURCE-SUBSET': return 'Rsc';
+        case 'COMPARATIVE':     return '対象';
+        case 'EVENT':           return 'Evt';
+        case 'EVENT-SUBSET':    return 'Evt';
         }
         throw new Error(this._class + " は知らないよ。");
     }
     isEntityClass (_class) {
-        let classes = ['RESOURCE', 'EVENT'];
+        let classes = ['RESOURCE-SUBSET', 'RESOURCE', 'EVENT', 'EVENT-SUBSET'];
 
         return classes.indexOf(_class) > -1;
     }

@@ -47,7 +47,11 @@
          if (data._class == type.toUpperCase())
              return '';
 
-         if (data._class=='RESOURCE' || data._class=='EVENT' || data._class=='COMPARATIVE')
+         if (data._class=='RESOURCE' ||
+             data._class=='RESOURCE-SUBSET' ||
+             data._class=='EVENT' ||
+             data._class=='EVENT-SUBSET' ||
+             data._class=='COMPARATIVE')
              if (type=='entity')
                  return '';
 

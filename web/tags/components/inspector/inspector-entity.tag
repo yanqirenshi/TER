@@ -40,8 +40,12 @@
          let data = this.opts.source;
 
          if (!data) return null;
-
-         if (data._class=='RESOURCE' || data._class=='EVENT' || data._class=='COMPARATIVE')
+         dump(data._class);
+         if (data._class=='RESOURCE' ||
+             data._class=='RESOURCE-SUBSET' ||
+             data._class=='EVENT' ||
+             data._class=='EVENT-SUBSET' ||
+             data._class=='COMPARATIVE')
              return data;
 
          return null;

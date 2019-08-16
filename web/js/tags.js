@@ -476,8 +476,12 @@ riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="titl
          let data = this.opts.source;
 
          if (!data) return null;
-
-         if (data._class=='RESOURCE' || data._class=='EVENT' || data._class=='COMPARATIVE')
+         dump(data._class);
+         if (data._class=='RESOURCE' ||
+             data._class=='RESOURCE-SUBSET' ||
+             data._class=='EVENT' ||
+             data._class=='EVENT-SUBSET' ||
+             data._class=='COMPARATIVE')
              return data;
 
          return null;
@@ -558,7 +562,11 @@ riot.tag2('inspector', '<div class="{hide()}"> <inspector-table class="{hideCont
          if (data._class == type.toUpperCase())
              return '';
 
-         if (data._class=='RESOURCE' || data._class=='EVENT' || data._class=='COMPARATIVE')
+         if (data._class=='RESOURCE' ||
+             data._class=='RESOURCE-SUBSET' ||
+             data._class=='EVENT' ||
+             data._class=='EVENT-SUBSET' ||
+             data._class=='COMPARATIVE')
              if (type=='entity')
                  return '';
 

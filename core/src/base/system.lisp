@@ -8,9 +8,10 @@
                             :slot  'code
                             :value code)))
 
-(defun tx-make-system (graph code &key name)
+(defun tx-make-system (graph code &key name description)
   (assert (keywordp code))
   (assert (null (get-system graph :code code)))
   (shinra:tx-make-vertex graph 'system
                          `((code ,code)
-                           (name ,name))))
+                           (name ,name)
+                           (description ,description))))

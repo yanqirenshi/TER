@@ -10,6 +10,8 @@
 
 (defgeneric tx-add-camera (graph obj camera)
   (:method (graph (obj schema) (camera camera))
+    (shinra:tx-make-edge graph 'edge obj camera :have-to))
+  (:method (graph (obj campus) (camera camera))
     (shinra:tx-make-edge graph 'edge obj camera :have-to)))
 
 

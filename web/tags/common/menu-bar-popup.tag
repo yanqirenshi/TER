@@ -15,11 +15,16 @@
         </div>
 
         <div>
-            <button class="button is-danger" style="width:100%;">Create System</button>
+            <button class="button is-danger"
+                    style="width:100%;"
+                    onclick={clickCreateSystem}>Create System</button>
         </div>
     </div>
 
     <script>
+     this.clickCreateSystem = () => {
+         ACTIONS.openModalCreateSystem();
+     };
      this.clickMovePanelItem = (e) => {
          this.opts.callback('click-move-panel-item', e);
      };

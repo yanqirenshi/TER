@@ -97,6 +97,7 @@
            (find-all-edges graph identifers)
            (find-all-edges graph ports))))
 
+
 ;;;
 ;;; save-port-ter-location
 ;;;
@@ -108,3 +109,14 @@
      (up:tx-change-object-slots graph (class-name (class-of port))
                                 (up:%id port)
                                 `((ter::location ,new-location))))))
+
+
+;;;;;
+;;;;; System
+;;;;;
+(defun create-system (graph modeler &key code name description)
+  (up:execute-transaction
+   (ter:tx-create-system graph modeler
+                         :code code
+                         :name name
+                         :description description)))

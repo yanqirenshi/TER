@@ -8,6 +8,7 @@
                 #:find-vertex
                 #:tx-make-vertex
                 #:tx-make-edge)
+  (:export #:tx-create-system)
   ;; er
   (:export #:get-schema
            #:find-table

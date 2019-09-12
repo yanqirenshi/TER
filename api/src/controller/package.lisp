@@ -28,5 +28,6 @@
            #:save-port-ter-location
            #:save-ter-camera-look-at
            #:save-ter-camera-magnification)
+  (:export #:create-system)
   (:export #:find-graph))
 (in-package :ter.api.controller)

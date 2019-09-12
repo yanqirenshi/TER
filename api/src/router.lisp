@@ -252,6 +252,20 @@
 
 
 ;;;
+;;; system
+;;;
+(defroute ("/system" :method :post) (&key |code| |name| |description|)
+  (with-graph-modeler (graph modeler)
+    (let ((code (alexandria:make-keyword (string-upcase |code|)))
+          (name |name|)
+          (description |description|))
+      (render-json (create-system graph modeler
+                                  :code code
+                                  :name name
+                                  :description description)))))
+
+
+;;;
 ;;; edges
 ;;;
 (defroute "/ter/:campus-code/edges" (&key campus-code)

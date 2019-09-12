@@ -531,4 +531,48 @@ class Actions extends Vanilla_Redux_Actions {
             data: { site: site }
         };
     }
+    /* **************************************************************** *
+     *  Modal
+     * **************************************************************** */
+    openModalCreateSystem () {
+        let state = STORE.get('modals');
+
+        state['create-system'] = {
+            code: '',
+            name: '',
+            description: '',
+        };
+
+        STORE.dispatch({
+            type: 'OPEN-MODAL-CREATE-SYSTEM',
+            data: { modals: state },
+        });
+    }
+    closeModalCreateSystem () {
+        let state = STORE.get('modals');
+
+        state['create-system'] = null;
+
+        STORE.dispatch({
+            type: 'CLOSE-MODAL-CREATE-SYSTEM',
+            data: { modals: state },
+        });
+    }
+    /* **************************************************************** *
+     *  System
+     * **************************************************************** */
+    createSystem (data) {
+        let path = '/system';
+        let post_data = data;
+
+        API.post(path, post_data, function (response) {
+            STORE.dispatch(this.createdSystem(response));
+        }.bind(this));
+    }
+    createdSystem (response) {
+        return {
+            type: 'CREATED-SYSTEM',
+            data: {},
+        };
+    }
 }

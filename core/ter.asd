@@ -63,7 +63,8 @@ This file is a part of ter project.
                                               (:file "common")
                                               (:file "system")
                                               (:file "system_schema")
-                                              (:file "system_campus")))
+                                              (:file "system_campus")
+                                              (:file "base")))
                  ;; er
                  (:module "er" :components ((:file "column")
                                             (:file "column-instance")

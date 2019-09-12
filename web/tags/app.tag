@@ -9,6 +9,8 @@
 
     <div ref="page-area"></div>
 
+    <modal-pool></modal-pool>
+
     <style>
      app > .page {
          width: 100vw;
@@ -45,6 +47,8 @@
          let schema_code = e.target.getAttribute('CODE');
 
          STORE.dispatch(ACTIONS.changeSchema(schema_code));
+
+         this.tags['menu-bar'].update();
 
          ACTIONS.fetchErNodes(this.getActiveSchema());
      };

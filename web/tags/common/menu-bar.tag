@@ -16,9 +16,8 @@
     </aside>
 
     <div class="move-page-menu {movePanelHide()}" ref="move-panel">
-        <p each={opts.moves}>
-            <a href={href} code={code} onclick={clickMovePanelItem}>{label}</a>
-        </p>
+        <menu-bar-popup source={opts.moves}
+                        callback={childrenCallback()}></menu-bar-popup>
     </div>
 
     <style>
@@ -31,7 +30,6 @@
          min-width: 111px;
          height: 100vh;
          box-shadow: 2px 0px 8px 0px #e0e0e0;
-         padding: 22px 55px 22px 22px;
      }
      menu-bar .move-page-menu.hide {
          display: none;
@@ -112,6 +110,8 @@
      this.clickMovePanelItem = (e) => {
          this.opts.callback('click-move-panel-item', e);
      };
-
+     this.childrenCallback = () => {
+         return this.opts.callback;
+     };
     </script>
 </menu-bar>

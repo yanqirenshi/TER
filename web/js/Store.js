@@ -49,7 +49,7 @@ class Store extends Vanilla_Redux_Store {
                 {
                     code: "home",
                     title: "Home",
-                    menu_label: 'H',
+                    menu_label: '基',
                     active_section: 'root',
                     home_section: 'root',
                     sections: [
@@ -104,6 +104,9 @@ class Store extends Vanilla_Redux_Store {
                         open: false
                     }
                 }
+            },
+            modals: {
+                'create-system': null,
             }
         };
 

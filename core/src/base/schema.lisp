@@ -1,5 +1,7 @@
 (in-package :ter)
 
+(defvar *schema-directory-root* nil)
+
 (defun find-schema (graph)
   (shinra:find-vertex graph 'schema))
 
@@ -10,13 +12,20 @@
                                       (str2keyword code)
                                       code))))
 
+(defun schem-store-directory-pathname (code)
+  (assert *campus-directory-root*)
+  (assert code)
+  (assert (keywordp code))
+  (merge-pathnames *schema-directory-root* (string-downcase (symbol-name code))))
+
 (defgeneric tx-make-schema (graph code &key name description)
   (:method (graph code &key name description)
     (assert (not (get-schema graph)))
     (shinra:tx-make-vertex graph 'schema
                            `((code ,code)
                              (name ,name )
-                             (description ,description)))))
+                             (description ,description)
+                             (store-directory ,(schem-store-directory-pathname code))))))
 
 
 ;;;;;
@@ -36,6 +45,8 @@
   (:method ((schema schema))
     (let ((code (code schema))
           (store-dir (store-directory schema)))
+      (unless store-dir
+        (error "Empty store directory. store-dir=~S" store-dir))
       (when (gethash code *er-schema-graphs*)
         (error "この schema の graph は既に開始しています。"))
       (setf (gethash code *er-schema-graphs*)

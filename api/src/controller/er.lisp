@@ -43,7 +43,7 @@
 
 (defun find-er-edges (schema)
   (let ((graph (ter::get-schema-graph schema)))
-    (list :edges            (ter:find-er-all-edges graph))))
+    (list :edges (ter:find-er-all-edges graph))))
 
 (defun find-er (schema)
   (append (find-er-vertexes schema)

@@ -9,5 +9,7 @@
     (jojo:write-key-value "code"            (slot-value obj 'code))
     (jojo:write-key-value "name"            (or (slot-value obj 'name) ""))
     (jojo:write-key-value "description"     (or (slot-value obj 'description) ""))
-    (jojo:write-key-value "store-directory" (or (slot-value obj 'store-directory) ""))
+    (jojo:write-key-value "store-directory" (if (slot-value obj 'store-directory)
+                                                (princ-to-string (slot-value obj 'store-directory))
+                                                :null))
     (jojo:write-key-value "_class"          "SCHEMA")))

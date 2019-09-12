@@ -575,4 +575,20 @@ class Actions extends Vanilla_Redux_Actions {
             data: {},
         };
     }
+    /* **************************************************************** *
+     *  Page
+     * **************************************************************** */
+    fetchPagesBasic () {
+        let path = '/pages/basic';
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedPagesBasic(response));
+        }.bind(this));
+    }
+    fetchedPagesBasic (response) {
+        return {
+            type: 'FETCHED-PAGES-BASIC',
+            response: response,
+        };
+    }
 }

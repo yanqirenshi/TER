@@ -923,6 +923,18 @@ riot.tag2('er', '', '', '', function(opts) {
 });
 
 riot.tag2('home-sec_root', '', 'home-sec_root { display: block; width: 100vw; height: 100vh; padding-left: 55px; }', '', function(opts) {
+     this.on('mount', ()=>{
+         ACTIONS.fetchPagesBasic();
+     });
+
+     this.source = {};
+     STORE.subscribe((action)=>{
+         if (action.type=='FETCHED-PAGES-BASIC') {
+             this.source = action.response;
+             this.update();
+             return;
+         }
+     });
 });
 
 riot.tag2('home', '', '', '', function(opts) {

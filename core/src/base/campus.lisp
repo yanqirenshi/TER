@@ -1,5 +1,7 @@
 (in-package :ter)
 
+(defvar *campus-directory-root* nil)
+
 (defun find-campus (graph)
   (shinra:find-vertex graph 'campus))
 
@@ -10,13 +12,21 @@
                                       (str2keyword code)
                                       code))))
 
+(defun campus-store-directory-pathname (code)
+  (let ((root *campus-directory-root*))
+    (assert root)
+    (assert code)
+    (assert (keywordp code))
+    (merge-pathnames root (string-downcase (symbol-name code)))))
+
 (defgeneric tx-make-campus (graph code &key name description)
   (:method (graph code &key name description)
     (assert (not (get-campus graph)))
     (shinra:tx-make-vertex graph 'campus
                            `((code ,code)
                              (name ,name )
-                             (description ,description)))))
+                             (description ,description)
+                             (store-directory ,(campus-store-directory-pathname code))))))
 
 
 ;;;;;

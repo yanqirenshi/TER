@@ -29,5 +29,6 @@
            #:save-ter-camera-look-at
            #:save-ter-camera-magnification)
   (:export #:create-system)
-  (:export #:find-graph))
+  (:export #:find-graph)
+  (:export #:pages-basic))
 (in-package :ter.api.controller)

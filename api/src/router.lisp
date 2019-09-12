@@ -293,6 +293,14 @@
                          :end   (local-time:format-timestring nil (local-time:now)))))))
 
 
+;;;
+;;; pages
+;;;
+(defroute "/pages/basic" ()
+  (with-graph-modeler (graph modeler)
+    (render-json (pages-basic graph modeler))))
+
+
 ;;;;;
 ;;;;; Error pages
 ;;;;;

@@ -51,17 +51,18 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
          });
      };
 
+     this.on('mount', () => {
+         let route = location.hash.substring(1).split('/');
+
+         ACTIONS.movePage({ route: route });
+     });
+
      this.site = () => {
          return STORE.state().get('site');
      };
      this.menuBarData = () => {
          return STORE.state().get('global').menu;
      };
-
-     this.on('mount', function () {
-         Metronome.start();
-         ACTIONS.fetchEnvironment('FIRST');
-     });
 
      this.updateMenuBar = () => {
          if (this.tags['menu-bar'])
@@ -90,8 +91,11 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
          location.hash='#base'
 });
 
-riot.tag2('page-base', '', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 55px; }', '', function(opts) {
-     this.on('mount', ()=>{
+riot.tag2('page-base', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td>{obj._id}</td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 55px; }', '', function(opts) {
+     this.list = () => {
+         return this.source.systems || [];
+     };
+     this.on('mount', () => {
          ACTIONS.fetchPagesBasic();
      });
 

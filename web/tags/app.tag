@@ -61,17 +61,18 @@
          });
      };
 
+     this.on('mount', () => {
+         let route = location.hash.substring(1).split('/');
+
+         ACTIONS.movePage({ route: route });
+     });
+
      this.site = () => {
          return STORE.state().get('site');
      };
      this.menuBarData = () => {
          return STORE.state().get('global').menu;
      };
-
-     this.on('mount', function () {
-         Metronome.start();
-         ACTIONS.fetchEnvironment('FIRST');
-     });
 
      this.updateMenuBar = () => {
          if (this.tags['menu-bar'])

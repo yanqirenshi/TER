@@ -11,6 +11,17 @@ class Actions extends Vanilla_Redux_Actions {
             route: data.route,
         });
     }
+    list2Pool (list) {
+        if (!list)
+            return { ht: {}, list: [] };
+
+        let pool = { ht: {}, list: list };
+
+        for (let obj of list)
+            pool.ht[obj._id] = obj;
+
+        return pool;
+    }
     /* **************************************************************** *
      *  Save Config
      * **************************************************************** */
@@ -42,6 +53,7 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'FETCHED-ENVIRONMENT',
             mode: mode,
             data: {
+                systems: this.list2Pool(response.systems),
                 schemas: {
                     active: response.ER.SCHEMA.ACTIVE,
                     list: response.SCHEMAS

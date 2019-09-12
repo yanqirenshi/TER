@@ -1,7 +1,39 @@
 <page-base>
 
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Systems</h1>
+            <h2 class="subtitle"></h2>
+
+            <div class="contents">
+                <table class="table is-bordered is-striped is-narrow is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr each={obj in list()}>
+                            <td>{obj._id}</td>
+                            <td>{obj.code}</td>
+                            <td>{obj.name}</td>
+                            <td>{obj.description}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
     <script>
-     this.on('mount', ()=>{
+     this.list = () => {
+         return this.source.systems || [];
+     };
+     this.on('mount', () => {
          ACTIONS.fetchPagesBasic();
      });
     </script>

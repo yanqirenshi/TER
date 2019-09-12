@@ -63,6 +63,14 @@
 
         <app></app>
 
-        <script>riot.mount('app');</script>
+        <script>
+         ACTIONS.fetchEnvironment('FIRST');
+         STORE.subscribe((action) => {
+             if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+                 riot.mount('app');
+                 Metronome.start();
+             }
+         });
+        </script>
     </body>
 </html>

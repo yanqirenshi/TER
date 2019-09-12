@@ -45,7 +45,6 @@ var ROUTER = new VanillaRouterRiot(
                     location.hash = [STORE.get('site.home_page')];
                     return;
                 }
-
                 ACTIONS.movePage({
                     route: route,
                 });

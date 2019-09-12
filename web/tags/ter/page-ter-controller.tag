@@ -7,7 +7,16 @@
 
     <button class="button">Save Graph</button>
 
-    <button class="button">Download</button>
+    <button class="button" onclick={clickDownload}>Download</button>
+
+    <script>
+     this.clickDownload = () => {
+         let erapp = new ErApp();
+         let file_name = STORE.get('schemas.active') + '.ter';
+
+         erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+     }
+    </script>
 
     <script>
      this.clickCreateEntity = () => {

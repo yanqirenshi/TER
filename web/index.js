@@ -36,5 +36,20 @@ var Metronome = new Vanilla_metronome({
 /* ****** */
 /*  Router  */
 /* ****** */
-var ROUTER = new Router(STORE, ACTIONS);
+var ROUTER = new VanillaRouterRiot(
+    STORE.get('site.pages'),
+    {
+        callbacks: {
+            changed: (route) => {
+                if (route[0]=='') {
+                    location.hash = [STORE.get('site.home_page')];
+                    return;
+                }
+
+                ACTIONS.movePage({
+                    route: route,
+                });
+            },
+        }
+    });
 ROUTER.start();

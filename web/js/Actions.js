@@ -1,9 +1,15 @@
 class Actions extends Vanilla_Redux_Actions {
     movePage (data) {
-        return {
+        let state = STORE.get('site');
+
+        // Page は選択された route の根なので "[0]" を指定。
+        state.active_page = data.route[0];
+
+        STORE.dispatch({
             type: 'MOVE-PAGE',
-            data: data
-        };
+            data: { site: state },
+            route: data.route,
+        });
     }
     /* **************************************************************** *
      *  Save Config
@@ -558,6 +564,32 @@ class Actions extends Vanilla_Redux_Actions {
             data: { modals: state },
         });
     }
+    openModalCreateEntity () {
+        let state = STORE.get('modals');
+
+        state['create-entity'] = {
+            type: '',
+            code: '',
+            name: '',
+            description: '',
+        };
+
+        STORE.dispatch({
+            type: 'OPEN-MODAL-CREATE-ENTITY',
+            data: { modals: state },
+        });
+    }
+    closeModalCreateEntity () {
+
+        let state = STORE.get('modals');
+
+        state['create-entity'] = null;
+
+        STORE.dispatch({
+            type: 'CLOSE-MODAL-CREATE-ENTITY',
+            data: { modals: state },
+        });
+    }
     /* **************************************************************** *
      *  System
      * **************************************************************** */
@@ -570,6 +602,20 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     createdSystem (response) {
+        return {
+            type: 'CREATED-SYSTEM',
+            data: {},
+        };
+    }
+    createTerEntity (data) {
+        let path = '/system/:code/campus/:code/entities';
+        let post_data = data;
+
+        API.post(path, post_data, function (response) {
+            STORE.dispatch(this.createdTerEntity(response));
+        }.bind(this));
+    }
+    createdTerEntity (response) {
         return {
             type: 'CREATED-SYSTEM',
             data: {},

@@ -1,4 +1,6 @@
-<ter-sec_root>
+<page-ter>
+
+    <page-ter-controller></page-ter-controller>
 
     <div style="margin-left:55px; padding-top: 22px;">
         <page-tabs core={page_tabs} callback={clickTab}></page-tabs>
@@ -28,26 +30,36 @@
          if (this.page_tabs.switchTab(this.tags, data.code))
              this.update();
      };
+
+     this.clickOperator = (code, e) => {
+         if (code=='download') {
+             let erapp = new ErApp();
+             let file_name = STORE.get('schemas.active') + '.ter';
+
+
+             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+         }
+     }
     </script>
 
     <style>
-     ter-sec_root page-tabs {
+     page-ter page-tabs {
          display: flex;
          flex-direction: column;
      }
 
-     ter-sec_root page-tabs li:first-child {
+     page-ter page-tabs li:first-child {
          margin-left: 88px;
      }
-     ter-sec_root {
+     page-ter {
          display: flex;
          flex-direction: column;
          width: 100vw;
          height: 100vh;
      }
-     ter-sec_root .tabs {
+     page-ter .tabs {
          flex-grow: 1;
      }
     </style>
 
-</ter-sec_root>
+</page-ter>

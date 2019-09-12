@@ -1,4 +1,4 @@
-<home-sec_root>
+<page-base>
 
     <script>
      this.on('mount', ()=>{
@@ -19,7 +19,7 @@
 
 
     <style>
-     home-sec_root {
+     page-base {
          display: block;
          width: 100vw;
          height: 100vh;
@@ -28,4 +28,4 @@
      }
     </style>
 
-</home-sec_root>
+</page-base>

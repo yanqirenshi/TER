@@ -7,7 +7,7 @@
               data={menuBarData()}
               callback={callback}></menu-bar>
 
-    <div ref="page-area"></div>
+    <app-page-area></app-page-area>
 
     <modal-pool></modal-pool>
 
@@ -73,12 +73,16 @@
          ACTIONS.fetchEnvironment('FIRST');
      });
 
+     this.updateMenuBar = () => {
+         if (this.tags['menu-bar'])
+             this.tags['menu-bar'].update();
+     }
+
      STORE.subscribe((action) => {
          if (action.type=='MOVE-PAGE') {
-             let tags= this.tags;
+             this.updateMenuBar();
 
-             tags['menu-bar'].update();
-             ROUTER.switchPage(this, this.refs['page-area'], this.site());
+             this.tags['app-page-area'].update({ opts: { route: action.route }});
          }
 
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
@@ -93,6 +97,6 @@
      });
 
      if (location.hash=='')
-         location.hash='#page01'
+         location.hash='#base'
     </script>
 </app>

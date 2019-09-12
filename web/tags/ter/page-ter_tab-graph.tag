@@ -37,7 +37,7 @@
          let camera = STORE.get('ter.camera');
 
          return new Sketcher({
-             selector: 'ter-sec_root svg',
+             selector: 'page-ter_tab-graph svg',
              x: camera.look_at.X,
              y: camera.look_at.Y,
              w: window.innerWidth,

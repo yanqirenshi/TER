@@ -2,61 +2,33 @@ class Store extends Vanilla_Redux_Store {
     constructor(reducer) {
         super(reducer, Immutable.Map({}));
     }
+    siteBase () {
+        return {
+            menu_label: '基',
+            code: "base",
+            tag: 'page-base',
+        };
+    }
     siteTER () {
         return {
-            code: "ter",
-            title: "TER",
             menu_label: 'TER',
-            active_section: 'root',
-            home_section: 'root',
-            sections: [
-                { code: 'root', tag: 'ter-sec_root' },
-            ],
-            operators: [
-                { code: 'download',    name: 'Download',    color: '' },
-            ],
-            stye: {
-                color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }
-            }
+            code: "ter",
+            tag: 'page-ter',
         };
     }
     siteER () {
         return {
-            code: "er",
-            title: "ER",
             menu_label: 'ER',
-            active_section: 'root',
-            home_section: 'root',
-            sections: [{ code: 'root', tag: 'er-sec_root', title: 'Home', description: '' }],
-            operators: [
-                { code: 'move-center', name: 'Move Center', color: 'is-info' },
-                { code: 'save-graph',  name: 'Save Graph',  color: 'is-link' },
-                { code: 'download',    name: 'Download',    color: '' },
-            ],
-            stye: { color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' } },
-            modal: {
-                logical_name: {
-                    data: null
-                }
-            }
+            code: "er",
+            tag: 'page-er',
         };
     }
     site () {
         return {
-            active_page: 'home',
-            home_page: 'home',
+            active_page: 'base',
+            home_page: 'base',
             pages: [
-                {
-                    code: "home",
-                    title: "Home",
-                    menu_label: '基',
-                    active_section: 'root',
-                    home_section: 'root',
-                    sections: [
-                        { code: 'root', tag: 'home-sec_root', title: 'Section: root', description: '' }
-                    ],
-                    stye: {color: { 1: '#fdeff2', 2: '#e0e0e0', 3: '#e198b4', 4: '#ffffff', 5: '#eeeeee', 5: '#333333' }}
-                },
+                this.siteBase(),
                 this.siteTER(),
                 this.siteER(),
             ]
@@ -107,6 +79,7 @@ class Store extends Vanilla_Redux_Store {
             },
             modals: {
                 'create-system': null,
+                'create-entity': null,
             }
         };
 

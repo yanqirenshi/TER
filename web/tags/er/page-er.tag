@@ -1,4 +1,4 @@
-<er-sec_root>
+<page-er>
     <svg></svg>
 
     <operators data={operators()}
@@ -6,11 +6,11 @@
 
     <inspector callback={inspectorCallback}></inspector>
 
-    <er-modal-logical-name data={modalData()}
-                           callback={modalCallback}></er-modal-logical-name>
+    <!-- <er-modal-logical-name data={modalData()}
+         callback={modalCallback}></er-modal-logical-name>
 
-    <er-modal-description data={modal_target_table}
-                          callback={modalCallback}></er-modal-description>
+         <er-modal-description data={modal_target_table}
+         callback={modalCallback}></er-modal-description> -->
 
     <script>
      this.sketcher = null;
@@ -147,7 +147,7 @@
          let camera = this.state().cameras[0];
 
          return new Sketcher({
-             selector: 'er-sec_root > svg',
+             selector: 'page-er > svg',
              x: camera.look_at.X,
              y: camera.look_at.Y,
              w: window.innerWidth,
@@ -238,4 +238,4 @@
          ACTIONS.fetchGraph('FIRST');
      });
     </script>
-</er-sec_root>
+</page-er>

@@ -21,7 +21,9 @@
     (assert root)
     (assert code)
     (assert (keywordp code))
-    (merge-pathnames root (string-downcase (symbol-name code)))))
+    (concatenate 'string
+                 (princ-to-string (merge-pathnames root (string-downcase (symbol-name code))))
+                 "/")))
 
 (defgeneric tx-make-campus (graph code &key name description)
   (:method (graph code &key name description)

@@ -8,7 +8,8 @@
                 #:find-vertex
                 #:tx-make-vertex
                 #:tx-make-edge)
-  (:export #:*campus-directory-root*
+  (:export #:*graph-stor-dir*
+           #:*campus-directory-root*
            #:*schema-directory-root*)
   (:export #:tx-create-system)
   ;; er

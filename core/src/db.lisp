@@ -8,6 +8,7 @@
                 #:banshou
                 #:make-banshou)
   (:export #:*graph*
+           #:*graph-stor-dir*
            #:start
            #:stop
            #:snapshot

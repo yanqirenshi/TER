@@ -10,9 +10,9 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
-                 (:file "modeler")
-                 (:file "campus")
                  (:module "controller" :components ((:file "package")
+                                                    (:file "modeler")
+                                                    (:file "campus")
                                                     (:file "environment")
                                                     (:file "er")
                                                     (:file "ter")

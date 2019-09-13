@@ -8,9 +8,11 @@
                                       :edge-type :have-to
                                       :vertex-class 'campus)))
 
+
 (defun get-edge-system2campus (graph system campus)
   (when-let ((r (get-r-system2campus graph system campus)))
     (getf r :edge)))
+
 
 (defgeneric tx-make-edge-system2campus (graph system campus)
   (:method (graph (system system) (campus campus))

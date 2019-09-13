@@ -27,7 +27,8 @@
            #:find-entities-ports
            #:save-port-ter-location
            #:save-ter-camera-look-at
-           #:save-ter-camera-magnification)
+           #:save-ter-camera-magnification
+           #:ter-environment-at-modeler-system-campus)
   (:export #:create-system)
   (:export #:find-graph)
   (:export #:pages-basic))

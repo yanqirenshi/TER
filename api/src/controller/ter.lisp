@@ -24,6 +24,19 @@
   (or (ter::get-campus-graph campus)
       (error "????????")))
 
+
+;;;
+;;; environment
+;;;
+(defun ter-environment-at-modeler-system-campus (graph modeler system campus)
+  (when (ter::get-edge-system2campus graph system campus)
+    (list :|system|   system
+          :|campus|   (campus2campus campus :graph graph :modeler modeler)
+          :|campuses| (mapcar #'(lambda (campus)
+                                  (campus2campus campus :graph graph :modeler modeler))
+                              (ter::find-campus graph :system system)))))
+
+
 ;;;
 ;;; entity
 ;;;

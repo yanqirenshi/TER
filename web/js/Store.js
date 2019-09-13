@@ -46,13 +46,16 @@ class Store extends Vanilla_Redux_Store {
     }
     initTer () {
         return {
-            camera:               null,
-            cameras:              { ht: {}, list: [] },
+            camera:               null, // TODO: これは不要な気がするな。
+            cameras:              { ht: {}, list: [] }, // TODO: これは不要な気がするな。
             entities:             { ht: {}, list: [] },
             identifier_instances: { ht: {}, list: [] },
             attribute_instances:  { ht: {}, list: [] },
             relationships:        { ht: {}, list: [], indexes: { from: {}, to: {} } },
             ports:                { ht: {}, list: [] },
+            system:               null,
+            campus:               null, // TODO: これは不要な気がするな。
+            campuses:             { ht: {}, list: [] },
         };
     }
     initHomeGraph () {

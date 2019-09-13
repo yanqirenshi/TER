@@ -8,9 +8,11 @@
                                       :edge-type :have-to
                                       :vertex-class 'schema)))
 
+
 (defun get-edge-system2schema (graph system schema)
   (when-let ((r (get-r-system2schema graph system schema)))
     (getf r :edge)))
+
 
 (defgeneric tx-make-edge-system2schema (graph system schema)
   (:method (graph (system system) (schema schema))

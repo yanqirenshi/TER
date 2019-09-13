@@ -2,8 +2,12 @@
 
 (defvar *campus-directory-root* nil)
 
-(defun find-campus (graph)
-  (shinra:find-vertex graph 'campus))
+(defun find-campus (graph &key system)
+  (if system
+      (shinra:find-r-vertex graph 'edge :from system
+                                        :edge-type :have-to
+                                        :vertex-class 'campus)
+      (shinra:find-vertex graph 'campus)))
 
 (defun get-campus (graph &key code)
   (car (shinra:find-vertex graph 'campus

@@ -278,7 +278,21 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedTerEnvironment (schema, mode, response) {
         let new_state = STORE.get('ter');
 
-        new_state.cameras = new TerDataManeger().mergeStateData(response.cameras, new_state.cameras);
+        let ht = {};
+        for (let campus of response.campuses) {
+            for (let data of campus.cameras) {
+                let camera = data.camera;
+                ht[camera._id] = camera;
+            }
+        }
+        let list = [];
+        for (let key in ht)
+            list.push(ht[key]);
+
+        new_state.system   = response.system;
+        new_state.campus   = response.campus;
+        new_state.campuses = new TerDataManeger().mergeStateData(response.campuses, new_state.campuses);
+        new_state.cameras  = new TerDataManeger().mergeStateData(list, new_state.cameras);
 
         let cameras = new_state.cameras.list;
         new_state.camera = cameras.length==0 ? null : cameras[0];

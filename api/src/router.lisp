@@ -177,8 +177,11 @@
 
 (defroute "/ter/:campus-code/environment" (&key campus-code)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code)))
-      (render-json (list :|cameras| (ter:find-ter-cameras graph :campus campus :modeler modeler))))))
+    (let ((system (ter::get-system graph :code (str2keyword campus-code)))
+          (campus (get-campus graph campus-code)))
+      (unless system (throw-code 404))
+      (unless campus (throw-code 404))
+      (render-json (ter-environment-at-modeler-system-campus graph modeler system campus)))))
 
 (defroute ("/ter/:campus-code/cameras/:camera-code/look-at" :method :post)
     (&key campus-code camera-code |x| |y|)
@@ -201,7 +204,13 @@
 (defroute "/ter/:campus-code/entities" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
+      (unless campus (throw-code 404))
       (render-json (find-entities campus)))))
+
+(defroute ("/systems/:sytem-id/campuses/:campus-id/entities" :method :post)
+    (&key sytem-id campus-id |type| |code| |name| |description|)
+  (with-graph-modeler (graph modeler)
+    (render-json (list sytem-id campus-id |type| |code| |name| |description|))))
 
 (defroute ("/ter/:campus-code/entities/:entity-code/location" :method :post)
     (&key campus-code entity-code |x| |y| |z|)

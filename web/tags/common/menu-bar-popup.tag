@@ -6,11 +6,12 @@
         </div>
 
         <div style="flex-grow:1;">
-            <button each={opts.source}
+            <button each={obj in opts.source}
                     class="button system-item"
-                    code={code}
+                    id={obj._id}
+                    code={obj.code}
                     onclick={clickMovePanelItem}>
-                {label}
+                {obj.label}
             </button>
         </div>
 
@@ -28,7 +29,13 @@
          ACTIONS.closeGlobalMenuSystemPanel();
      };
      this.clickMovePanelItem = (e) => {
-         this.opts.callback('click-move-panel-item', e);
+         let id = e.target.getAttribute('id');
+
+         let system = opts.source.find((d) => {
+             return d._id == id;
+         });
+
+         this.opts.callback('change-system', system);
 
          ACTIONS.closeGlobalMenuSystemPanel();
      };

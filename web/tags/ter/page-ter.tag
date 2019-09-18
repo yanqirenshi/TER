@@ -2,6 +2,8 @@
 
     <div style="margin-left:55px; padding-top: 22px;">
         <page-tabs-with-selecter core={page_tabs}
+                                 source={campuses()}
+                                 active={activeCampus()}
                                  callback={clickTab}></page-tabs-with-selecter>
     </div>
 
@@ -11,6 +13,17 @@
         <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers>
         <page-ter_tab-attributes  class="hide"></page-ter_tab-attributes>
     </div>
+
+    <script>
+     this.campuses = () => {
+         let system = STORE.get('active.system');
+
+         return system ? system.campuses : [];
+     }
+     this.activeCampus = () => {
+         return STORE.get('active.ter.campus');
+     }
+    </script>
 
     <script>
      STORE.subscribe(this, (action) => {
@@ -61,10 +74,12 @@
      });
 
      this.startLoadData = () => {
-         let schema = STORE.get('schemas.active')
+         let active_campus = STORE.get('active.ter.campus');
 
-         if (schema)
-             ACTIONS.fetchTerEnvironment(schema, 'FIRST');
+         if (!active_campus)
+             return;
+
+         ACTIONS.fetchTerEnvironment(active_campus.code, 'FIRST');
      };
      this.on('mount', () => {
          this.startLoadData();

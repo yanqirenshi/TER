@@ -236,9 +236,13 @@
      });
 
      this.on('mount', () => {
-         ACTIONS.fetchErEnvironment(STORE.get('schemas.active'), 'FIRST');
+         let active_schema = STORE.get('active.er.schema');
+
+         if (!active_schema)
+             return;
+
+         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
      });
     </script>
-
 
 </page-er_tab-graph>

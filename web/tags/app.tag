@@ -3,7 +3,7 @@
 
     <menu-bar brand={brand()}
               site={site()}
-              moves={moves()}
+              systems={systems()}
               data={menuBarData()}
               callback={callback}></menu-bar>
 
@@ -22,15 +22,8 @@
     </style>
 
     <script>
-     this.getActiveSchema = () => {
-         let state = STORE.state().get('schemas');
-         let code = state.active;
-
-         return state.list.find((d) => { return d.code == code; });
-     };
-
      this.brand = () => {
-         let brand = this.getActiveSchema();
+         let brand = STORE.get('active.system');
 
          return { label: (brand ? brand.code : 'TER')};
      };
@@ -39,25 +32,30 @@
          if (type=='click-brand')
              return ACTIONS.toggleMovePagePanel();
 
-         if (type=='click-move-panel-item')
-             return this.clickSchema(e);
+         if (type=='change-system')
+             return this.changeSystem(e);
      };
 
-     this.clickSchema = (e) => {
-         let schema_code = e.target.getAttribute('CODE');
-
-         STORE.dispatch(ACTIONS.changeSchema(schema_code));
+     this.changeSystem = (system) => {
+         dump('-');
+         dump(system);
+         dump('-');
+         ACTIONS.changeSystem(system);
 
          this.tags['menu-bar'].update();
-
-         ACTIONS.fetchErNodes(this.getActiveSchema());
      };
 
-     this.moves = () => {
-         let schemas = STORE.state().get('schemas').list;
+     this.systems = () => {
+         let systems = STORE.get('systems.list');
 
-         return schemas.map((d) => {
-             return { code: d.code, href: '', label: d.code }
+         return systems.map((d) => {
+             return {
+                 _id: d._id,
+                 code: d.code,
+                 href: '',
+                 label: d.code,
+                 description: d.description
+             }
          });
      };
 

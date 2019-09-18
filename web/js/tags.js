@@ -11,16 +11,9 @@ riot.tag2('app-page-area', '', '', '', function(opts) {
      });
 });
 
-riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#5BBBE7" color="#ffffff"></github-link> <menu-bar brand="{brand()}" site="{site()}" moves="{moves()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
-     this.getActiveSchema = () => {
-         let state = STORE.state().get('schemas');
-         let code = state.active;
-
-         return state.list.find((d) => { return d.code == code; });
-     };
-
+riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#5BBBE7" color="#ffffff"></github-link> <menu-bar brand="{brand()}" site="{site()}" systems="{systems()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
-         let brand = this.getActiveSchema();
+         let brand = STORE.get('active.system');
 
          return { label: (brand ? brand.code : 'TER')};
      };
@@ -29,25 +22,30 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
          if (type=='click-brand')
              return ACTIONS.toggleMovePagePanel();
 
-         if (type=='click-move-panel-item')
-             return this.clickSchema(e);
+         if (type=='change-system')
+             return this.changeSystem(e);
      };
 
-     this.clickSchema = (e) => {
-         let schema_code = e.target.getAttribute('CODE');
-
-         STORE.dispatch(ACTIONS.changeSchema(schema_code));
+     this.changeSystem = (system) => {
+         dump('-');
+         dump(system);
+         dump('-');
+         ACTIONS.changeSystem(system);
 
          this.tags['menu-bar'].update();
-
-         ACTIONS.fetchErNodes(this.getActiveSchema());
      };
 
-     this.moves = () => {
-         let schemas = STORE.state().get('schemas').list;
+     this.systems = () => {
+         let systems = STORE.get('systems.list');
 
-         return schemas.map((d) => {
-             return { code: d.code, href: '', label: d.code }
+         return systems.map((d) => {
+             return {
+                 _id: d._id,
+                 code: d.code,
+                 href: '',
+                 label: d.code,
+                 description: d.description
+             }
          });
      };
 
@@ -182,20 +180,26 @@ riot.tag2('github-link', '<a id="fork" target="_blank" title="Fork Nobit@ on git
                        "141.8 Z"];
 });
 
-riot.tag2('menu-bar-popup', '<div class="flex-root"> <div> <h1 class="title is-4">System</h1> </div> <div style="flex-grow:1;"> <button each="{opts.source}" class="button system-item" code="{code}" onclick="{clickMovePanelItem}"> {label} </button> </div> <div> <button class="button is-danger" style="width:100%;" onclick="{clickCreateSystem}">Create System</button> </div> </div>', 'menu-bar-popup .flex-root { display: flex; flex-direction: column; height:100%; padding: 22px 22px 11px 22px; } menu-bar-popup .flex-root .system-item { margin-top: 11px; width: 100%; }', '', function(opts) {
+riot.tag2('menu-bar-popup', '<div class="flex-root"> <div> <h1 class="title is-4">System</h1> </div> <div style="flex-grow:1;"> <button each="{obj in opts.source}" class="button system-item" id="{obj._id}" code="{obj.code}" onclick="{clickMovePanelItem}"> {obj.label} </button> </div> <div> <button class="button is-danger" style="width:100%;" onclick="{clickCreateSystem}">Create System</button> </div> </div>', 'menu-bar-popup .flex-root { display: flex; flex-direction: column; height:100%; padding: 22px 22px 11px 22px; } menu-bar-popup .flex-root .system-item { margin-top: 11px; width: 100%; }', '', function(opts) {
      this.clickCreateSystem = () => {
          ACTIONS.openModalCreateSystem();
 
          ACTIONS.closeGlobalMenuSystemPanel();
      };
      this.clickMovePanelItem = (e) => {
-         this.opts.callback('click-move-panel-item', e);
+         let id = e.target.getAttribute('id');
+
+         let system = opts.source.find((d) => {
+             return d._id == id;
+         });
+
+         this.opts.callback('change-system', system);
 
          ACTIONS.closeGlobalMenuSystemPanel();
      };
 });
 
-riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <menu-bar-popup source="{opts.moves}" callback="{childrenCallback()}"></menu-bar-popup> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 45px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 45px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
+riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <menu-bar-popup source="{opts.systems}" callback="{childrenCallback()}"></menu-bar-popup> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 45px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 45px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
          let classes = brand.getAttribute('class').trim().split(' ');
@@ -233,7 +237,13 @@ riot.tag2('operators', '<div> <a each="{opts.data}" class="button {color}" code=
      };
 });
 
-riot.tag2('page-tabs-with-selecter', '<div class="tabs is-boxed"> <ul> <li style="margin-right:11px;"> <div class="select"> <select> <option>Select dropdown</option> <option>With options</option> <option>With options</option> <option>With options</option> </select> </div> </li> <li each="{opts.core.tabs}" class="{opts.core.active_tab==code ? \'is-active\' : \'\'}"> <a code="{code}" onclick="{clickTab}">{label}</a> </li> </ul> </div>', 'page-tabs-with-selecter li:first-child { margin-left: 11px; } page-tabs-with-selecter .select select { border: none; }', '', function(opts) {
+riot.tag2('page-tabs-with-selecter', '<div class="tabs is-boxed"> <ul> <li style="margin-right:11px;"> <div class="select"> <select> <option each="{obj in opts.source}" selected="{isSelect(obj)}"> {obj.code + ⁗: ⁗ + obj.name} </option> </select> </div> </li> <li each="{opts.core.tabs}" class="{opts.core.active_tab==code ? \'is-active\' : \'\'}"> <a code="{code}" onclick="{clickTab}">{label}</a> </li> </ul> </div>', 'page-tabs-with-selecter li:first-child { margin-left: 11px; } page-tabs-with-selecter .select select { border: none; }', '', function(opts) {
+     this.isSelect = (obj) => {
+         let active = opts.active;
+
+         return obj._id==active._id;
+     };
+
      this.clickTab = (e) => {
          let code = e.target.getAttribute('code');
          this.opts.callback(e, 'CLICK-TAB', { code: code });
@@ -779,7 +789,16 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
      };
 });
 
-riot.tag2('page-er', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-er_tab-graph class="hide"></page-er_tab-graph> <page-er_tab-tables class="hide"></page-er_tab-tables> <page-er_tab-columns class="hide"></page-er_tab-columns> </div>', 'page-er page-tabs-with-selecter { display: flex; flex-direction: column; } page-er page-tabs-with-selecter li:first-child { margin-left: 88px; } page-er { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-er .tabs { flex-grow: 1; }', '', function(opts) {
+riot.tag2('page-er', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{schemas()}" active="{activeSchema()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-er_tab-graph class="hide"></page-er_tab-graph> <page-er_tab-tables class="hide"></page-er_tab-tables> <page-er_tab-columns class="hide"></page-er_tab-columns> </div>', 'page-er page-tabs-with-selecter { display: flex; flex-direction: column; } page-er page-tabs-with-selecter li:first-child { margin-left: 88px; } page-er { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-er .tabs { flex-grow: 1; }', '', function(opts) {
+     this.schemas = () => {
+         let system = STORE.get('active.system');
+
+         return system ? system.schemas : [];
+     }
+     this.activeSchema = () => {
+         return STORE.get('active.er.schema');
+     }
+
      this.page_tabs = new PageTabs([
          { code: 'graph',   label: 'Graph',   tag: 'page-er_tab-graph' },
          { code: 'tables',  label: 'Tables',  tag: 'page-er_tab-tables' },
@@ -1023,7 +1042,12 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
      });
 
      this.on('mount', () => {
-         ACTIONS.fetchErEnvironment(STORE.get('schemas.active'), 'FIRST');
+         let active_schema = STORE.get('active.er.schema');
+
+         if (!active_schema)
+             return;
+
+         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
      });
 });
 
@@ -1171,7 +1195,16 @@ riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEn
      };
 });
 
-riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div>', 'page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; } page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; }', '', function(opts) {
+riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{campuses()}" active="{activeCampus()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div>', 'page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; } page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; }', '', function(opts) {
+     this.campuses = () => {
+         let system = STORE.get('active.system');
+
+         return system ? system.campuses : [];
+     }
+     this.activeCampus = () => {
+         return STORE.get('active.ter.campus');
+     }
+
      STORE.subscribe(this, (action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {
              let state = STORE.get('ter');
@@ -1220,10 +1253,12 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
      });
 
      this.startLoadData = () => {
-         let schema = STORE.get('schemas.active')
+         let active_campus = STORE.get('active.ter.campus');
 
-         if (schema)
-             ACTIONS.fetchTerEnvironment(schema, 'FIRST');
+         if (!active_campus)
+             return;
+
+         ACTIONS.fetchTerEnvironment(active_campus.code, 'FIRST');
      };
      this.on('mount', () => {
          this.startLoadData();

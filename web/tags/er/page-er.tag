@@ -2,6 +2,8 @@
 
     <div style="margin-left:55px; padding-top: 22px;">
         <page-tabs-with-selecter core={page_tabs}
+                                 source={schemas()}
+                                 active={activeSchema()}
                                  callback={clickTab}></page-tabs-with-selecter>
     </div>
 
@@ -10,6 +12,17 @@
         <page-er_tab-tables  class="hide"></page-er_tab-tables>
         <page-er_tab-columns class="hide"></page-er_tab-columns>
     </div>
+
+    <script>
+     this.schemas = () => {
+         let system = STORE.get('active.system');
+
+         return system ? system.schemas : [];
+     }
+     this.activeSchema = () => {
+         return STORE.get('active.er.schema');
+     }
+    </script>
 
     <script>
      this.page_tabs = new PageTabs([

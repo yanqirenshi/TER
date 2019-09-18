@@ -13,6 +13,7 @@
                  (:module "controller"
                   :components ((:file "package")
                                (:file "modeler")
+                               (:file "system")
                                (:file "campus")
                                (:file "schema")
                                (:file "environment")

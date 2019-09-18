@@ -98,7 +98,12 @@ class Store extends Vanilla_Redux_Store {
             modals: {
                 'create-system': null,
                 'create-entity': null,
-            }
+            },
+            active: {
+                system: null,
+                ter: { campus: null },
+                er:  { schema: null },
+            },
         };
 
         for (var i in data.site.pages) {

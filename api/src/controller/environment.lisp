@@ -2,7 +2,10 @@
 
 (defun environments ()
   (let ((graph ter.db:*graph*))
-    (list :|systems| (ter::find-systems graph)
+    (list :|systems| (mapcar #'(lambda (d)
+                                 (system2system graph d))
+                             (ter::find-systems graph))
+          ;; TODO: 以下廃棄予定
           :schemas   (ter::find-schema  graph)
           :er `(:schema (:active ,(ter::config :er :schema :active))))))
 

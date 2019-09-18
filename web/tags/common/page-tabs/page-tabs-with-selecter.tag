@@ -5,10 +5,10 @@
             <li style="margin-right:11px;">
                 <div class="select">
                     <select>
-                        <option>Select dropdown</option>
-                        <option>With options</option>
-                        <option>With options</option>
-                        <option>With options</option>
+                        <option each={obj in opts.source}
+                                selected={isSelect(obj)}>
+                            {obj.code + ": " + obj.name}
+                        </option>
                     </select>
                 </div>
             </li>
@@ -21,6 +21,21 @@
         </ul>
     </div>
 
+    <script>
+     this.isSelect = (obj) => {
+         let active = opts.active;
+
+         return obj._id==active._id;
+     };
+    </script>
+
+    <script>
+     this.clickTab = (e) => {
+         let code = e.target.getAttribute('code');
+         this.opts.callback(e, 'CLICK-TAB', { code: code });
+     };
+    </script>
+
     <style>
      page-tabs-with-selecter li:first-child {
          margin-left: 11px;
@@ -29,11 +44,4 @@
          border: none;
      }
     </style>
-
-    <script>
-     this.clickTab = (e) => {
-         let code = e.target.getAttribute('code');
-         this.opts.callback(e, 'CLICK-TAB', { code: code });
-     };
-    </script>
 </page-tabs-with-selecter>

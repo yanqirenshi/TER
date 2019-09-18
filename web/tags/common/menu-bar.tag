@@ -1,10 +1,12 @@
 <menu-bar>
+
     <aside class="menu">
         <p ref="brand"
            class="menu-label"
            onclick={clickBrand}>
             {opts.brand.label}
         </p>
+
         <ul class="menu-list">
             <li each={opts.site.pages}>
                 <a class="{opts.site.active_page==code ? 'is-active' : ''}"
@@ -16,7 +18,7 @@
     </aside>
 
     <div class="move-page-menu {movePanelHide()}" ref="move-panel">
-        <menu-bar-popup source={opts.moves}
+        <menu-bar-popup source={opts.systems}
                         callback={childrenCallback()}></menu-bar-popup>
     </div>
 

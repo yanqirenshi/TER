@@ -49,6 +49,19 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedEnvironment (mode, response) {
+        let state = STORE.get('active');
+
+        if (response.systems.length!=0) {
+            let active_system = response.systems[0];
+            state.system = active_system;
+
+            if (active_system.campuses.length!=0)
+                state.ter.campus = active_system.campuses[0];
+
+            if (active_system.schemas.length!=0);
+                state.er.schema = active_system.schemas[0];
+        }
+
         return {
             type: 'FETCHED-ENVIRONMENT',
             mode: mode,
@@ -58,7 +71,8 @@ class Actions extends Vanilla_Redux_Actions {
                     active: response.ER.SCHEMA.ACTIVE,
                     list: response.SCHEMAS
                 },
-                camera: response.CAMERA
+                camera: response.CAMERA,
+                active: state,
             }
         };
     }
@@ -293,17 +307,16 @@ class Actions extends Vanilla_Redux_Actions {
         };
         API.post(path, data, ()=>{});
     }
-    changeSchema (schema_code) {
-        let schemas = STORE.state().get('schemas');
+    changeSystem (system) {
 
-        schemas.active = schema_code;
+        let state = STORE.get('active');
 
-        return {
-            type: 'CHANGE-SCHEMA',
-            data: {
-                schemas: schemas
-            }
-        };
+        state.system = system;
+
+        STORE.dispatch({
+            type: 'CHANGE-SYSTEM',
+            data: { active: state },
+        });
     }
     /* **************************************************************** *
      *  Fetch TER

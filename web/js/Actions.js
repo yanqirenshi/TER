@@ -572,13 +572,35 @@ class Actions extends Vanilla_Redux_Actions {
      * **************************************************************** */
     toggleMovePagePanel () {
         let state = STORE.state().get('global');
+
         state.menu.move_panel.open = !state.menu.move_panel.open;
-        return {
+
+        STORE.dispatch({
             type: 'TOGGLE-MOVE-PAGE-PANEL',
             data: {
                 global: state
             }
-        };
+        });
+    }
+    openGlobalMenuSystemPanel () {
+        let state = STORE.state().get('global');
+
+        state.menu.move_panel.open = true;
+
+        STORE.dispatch({
+            type: 'OPEN-GLOBAL-MENU-SYSTEM-PANEL',
+            data: { global: state },
+        });
+    }
+    closeGlobalMenuSystemPanel () {
+        let state = STORE.state().get('global');
+
+        state.menu.move_panel.open = false;
+
+        STORE.dispatch({
+            type: 'CLOSE-GLOBAL-MENU-SYSTEM-PANEL',
+            data: { global: state },
+        });
     }
     /* **************************************************************** *
      *  Snapshot

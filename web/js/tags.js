@@ -27,7 +27,7 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
 
      this.callback = (type, e) => {
          if (type=='click-brand')
-             return STORE.dispatch(ACTIONS.toggleMovePagePanel());
+             return ACTIONS.toggleMovePagePanel();
 
          if (type=='click-move-panel-item')
              return this.clickSchema(e);
@@ -79,7 +79,10 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              this.tags['menu-bar'].update();
 
-         if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
+         if (action.type=='CLOSE-ALL-SUB-PANELS' ||
+             action.type=='TOGGLE-MOVE-PAGE-PANEL' ||
+             action.type=='OPEN-GLOBAL-MENU-SYSTEM-PANEL' ||
+             action.type=='CLOSE-GLOBAL-MENU-SYSTEM-PANEL')
              this.tags['menu-bar'].update();
      })
 
@@ -182,9 +185,13 @@ riot.tag2('github-link', '<a id="fork" target="_blank" title="Fork Nobit@ on git
 riot.tag2('menu-bar-popup', '<div class="flex-root"> <div> <h1 class="title is-4">System</h1> </div> <div style="flex-grow:1;"> <button each="{opts.source}" class="button system-item" code="{code}" onclick="{clickMovePanelItem}"> {label} </button> </div> <div> <button class="button is-danger" style="width:100%;" onclick="{clickCreateSystem}">Create System</button> </div> </div>', 'menu-bar-popup .flex-root { display: flex; flex-direction: column; height:100%; padding: 22px 22px 11px 22px; } menu-bar-popup .flex-root .system-item { margin-top: 11px; width: 100%; }', '', function(opts) {
      this.clickCreateSystem = () => {
          ACTIONS.openModalCreateSystem();
+
+         ACTIONS.closeGlobalMenuSystemPanel();
      };
      this.clickMovePanelItem = (e) => {
          this.opts.callback('click-move-panel-item', e);
+
+         ACTIONS.closeGlobalMenuSystemPanel();
      };
 });
 
@@ -212,6 +219,8 @@ riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" on
      };
      this.clickMovePanelItem = (e) => {
          this.opts.callback('click-move-panel-item', e);
+
+         ACTIONS.closeGlobalMenuSystemPanel();
      };
      this.childrenCallback = () => {
          return this.opts.callback;

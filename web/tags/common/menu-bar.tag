@@ -20,6 +20,38 @@
                         callback={childrenCallback()}></menu-bar-popup>
     </div>
 
+    <script>
+     this.brandStatus = (status) => {
+         let brand = this.refs['brand'];
+         let classes = brand.getAttribute('class').trim().split(' ');
+
+         if (status=='open') {
+             if (classes.find((d)=>{ return d!='open'; }))
+                 classes.push('open')
+         } else {
+             if (classes.find((d)=>{ return d=='open'; }))
+                 classes = classes.filter((d)=>{ return d!='open'; });
+         }
+         brand.setAttribute('class', classes.join(' '));
+     }
+
+     this.movePanelHide = () => {
+         return this.opts.data.move_panel.open ? '' : 'hide'
+     };
+
+     this.clickBrand = (e) => {
+         this.opts.callback('click-brand', e);
+     };
+     this.clickMovePanelItem = (e) => {
+         this.opts.callback('click-move-panel-item', e);
+
+         ACTIONS.closeGlobalMenuSystemPanel();
+     };
+     this.childrenCallback = () => {
+         return this.opts.callback;
+     };
+    </script>
+
     <style>
      menu-bar .move-page-menu {
          z-index: 666665;
@@ -85,33 +117,4 @@
      }
     </style>
 
-    <script>
-     this.brandStatus = (status) => {
-         let brand = this.refs['brand'];
-         let classes = brand.getAttribute('class').trim().split(' ');
-
-         if (status=='open') {
-             if (classes.find((d)=>{ return d!='open'; }))
-                 classes.push('open')
-         } else {
-             if (classes.find((d)=>{ return d=='open'; }))
-                 classes = classes.filter((d)=>{ return d!='open'; });
-         }
-         brand.setAttribute('class', classes.join(' '));
-     }
-
-     this.movePanelHide = () => {
-         return this.opts.data.move_panel.open ? '' : 'hide'
-     };
-
-     this.clickBrand = (e) => {
-         this.opts.callback('click-brand', e);
-     };
-     this.clickMovePanelItem = (e) => {
-         this.opts.callback('click-move-panel-item', e);
-     };
-     this.childrenCallback = () => {
-         return this.opts.callback;
-     };
-    </script>
 </menu-bar>

@@ -24,9 +24,13 @@
     <script>
      this.clickCreateSystem = () => {
          ACTIONS.openModalCreateSystem();
+
+         ACTIONS.closeGlobalMenuSystemPanel();
      };
      this.clickMovePanelItem = (e) => {
          this.opts.callback('click-move-panel-item', e);
+
+         ACTIONS.closeGlobalMenuSystemPanel();
      };
     </script>
 

@@ -37,7 +37,7 @@
 
      this.callback = (type, e) => {
          if (type=='click-brand')
-             return STORE.dispatch(ACTIONS.toggleMovePagePanel());
+             return ACTIONS.toggleMovePagePanel();
 
          if (type=='click-move-panel-item')
              return this.clickSchema(e);
@@ -89,7 +89,10 @@
          if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
              this.tags['menu-bar'].update();
 
-         if (action.type=='CLOSE-ALL-SUB-PANELS' || action.type=='TOGGLE-MOVE-PAGE-PANEL' )
+         if (action.type=='CLOSE-ALL-SUB-PANELS' ||
+             action.type=='TOGGLE-MOVE-PAGE-PANEL' ||
+             action.type=='OPEN-GLOBAL-MENU-SYSTEM-PANEL' ||
+             action.type=='CLOSE-GLOBAL-MENU-SYSTEM-PANEL')
              this.tags['menu-bar'].update();
      })
 

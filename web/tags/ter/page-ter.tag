@@ -1,9 +1,8 @@
 <page-ter>
 
-    <page-ter-controller></page-ter-controller>
-
     <div style="margin-left:55px; padding-top: 22px;">
-        <page-tabs core={page_tabs} callback={clickTab}></page-tabs>
+        <page-tabs-with-selecter core={page_tabs}
+                                 callback={clickTab}></page-tabs-with-selecter>
     </div>
 
     <div class="tabs">
@@ -92,12 +91,12 @@
     </script>
 
     <style>
-     page-ter page-tabs {
+     page-ter page-tabs-with-selecter {
          display: flex;
          flex-direction: column;
      }
 
-     page-ter page-tabs li:first-child {
+     page-ter page-tabs-with-selecter li:first-child {
          margin-left: 88px;
      }
      page-ter {

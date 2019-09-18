@@ -224,6 +224,13 @@ riot.tag2('operators', '<div> <a each="{opts.data}" class="button {color}" code=
      };
 });
 
+riot.tag2('page-tabs-with-selecter', '<div class="tabs is-boxed"> <ul> <li style="margin-right:11px;"> <div class="select"> <select> <option>Select dropdown</option> <option>With options</option> <option>With options</option> <option>With options</option> </select> </div> </li> <li each="{opts.core.tabs}" class="{opts.core.active_tab==code ? \'is-active\' : \'\'}"> <a code="{code}" onclick="{clickTab}">{label}</a> </li> </ul> </div>', 'page-tabs-with-selecter li:first-child { margin-left: 11px; } page-tabs-with-selecter .select select { border: none; }', '', function(opts) {
+     this.clickTab = (e) => {
+         let code = e.target.getAttribute('code');
+         this.opts.callback(e, 'CLICK-TAB', { code: code });
+     };
+});
+
 riot.tag2('page-tabs', '<div class="tabs is-boxed"> <ul> <li each="{opts.core.tabs}" class="{opts.core.active_tab==code ? \'is-active\' : \'\'}"> <a code="{code}" onclick="{clickTab}">{label}</a> </li> </ul> </div>', 'page-tabs li:first-child { margin-left: 11px; }', '', function(opts) {
      this.clickTab = (e) => {
          let code = e.target.getAttribute('code');
@@ -763,7 +770,28 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
      };
 });
 
-riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
+riot.tag2('page-er', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-er_tab-graph class="hide"></page-er_tab-graph> <page-er_tab-tables class="hide"></page-er_tab-tables> <page-er_tab-columns class="hide"></page-er_tab-columns> </div>', 'page-er page-tabs-with-selecter { display: flex; flex-direction: column; } page-er page-tabs-with-selecter li:first-child { margin-left: 88px; } page-er { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-er .tabs { flex-grow: 1; }', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         { code: 'graph',   label: 'Graph',   tag: 'page-er_tab-graph' },
+         { code: 'tables',  label: 'Tables',  tag: 'page-er_tab-tables' },
+         { code: 'columns', label: 'Columns', tag: 'page-er_tab-columns' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+});
+
+riot.tag2('page-er_tab-columns', '', '', '', function(opts) {
+});
+
+riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
      this.sketcher = null;
      this.painter = new Er({
          callbacks: {
@@ -895,11 +923,10 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
      };
 
      this.makeSketcher = () => {
-         dump(this.state());
          let camera = this.state().cameras.list[0];
 
          return new Sketcher({
-             selector: 'page-er > svg',
+             selector: 'page-er_tab-graph > svg',
              x: camera.look_at.X,
              y: camera.look_at.Y,
              w: window.innerWidth,
@@ -987,10 +1014,11 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
      });
 
      this.on('mount', () => {
-         dump(STORE.get('schemas.active'));
-
          ACTIONS.fetchErEnvironment(STORE.get('schemas.active'), 'FIRST');
      });
+});
+
+riot.tag2('page-er_tab-tables', '', '', '', function(opts) {
 });
 
 riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create Entity</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div class="select"> <select ref="entity_type" onchange="{keyUp}"> <option value="">Entity の種類を選択してください。</option> <option value="rs">Resource</option> <option value="ev">Event</option> </select> </div> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-entity .modal-card-foot { display: flex; justify-content: space-between; } modal-create-entity .modal-card-body .input, modal-create-entity .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
@@ -1134,7 +1162,7 @@ riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEn
      };
 });
 
-riot.tag2('page-ter', '<page-ter-controller></page-ter-controller> <div style="margin-left:55px; padding-top: 22px;"> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div>', 'page-ter page-tabs { display: flex; flex-direction: column; } page-ter page-tabs li:first-child { margin-left: 88px; } page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; }', '', function(opts) {
+riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div>', 'page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; } page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; }', '', function(opts) {
      STORE.subscribe(this, (action) => {
          if(action.type=='SAVED-TER-PORT-POSITION') {
              let state = STORE.get('ter');
@@ -1236,7 +1264,7 @@ riot.tag2('page-ter_tab-entities', '<section class="section"> <div class="contai
      };
 });
 
-riot.tag2('page-ter_tab-graph', '<svg id="ter-sec_root-svg" ref="svg"></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
+riot.tag2('page-ter_tab-graph', '<page-ter-controller></page-ter-controller> <svg id="ter-sec_root-svg" ref="svg"></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
      this.inspectorCallback = (type, data) => {
      };
 

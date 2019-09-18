@@ -1,5 +1,7 @@
 <page-ter_tab-graph>
 
+    <page-ter-controller></page-ter-controller>
+
     <svg id="ter-sec_root-svg" ref="svg"></svg>
 
     <operators data={operators()}

@@ -9,12 +9,14 @@
                                         :vertex-class 'campus)
       (shinra:find-vertex graph 'campus)))
 
-(defun get-campus (graph &key code)
-  (car (shinra:find-vertex graph 'campus
-                           :slot 'code
-                           :value (if (stringp code)
-                                      (str2keyword code)
-                                      code))))
+(defun get-campus (graph &key code %id)
+  (if %id
+      (shinra:get-vertex-at graph 'campus :%id %id)
+      (car (shinra:find-vertex graph 'campus
+                               :slot 'code
+                               :value (if (stringp code)
+                                          (str2keyword code)
+                                          code)))))
 
 (defun campus-store-directory-pathname (code)
   (let ((root *campus-directory-root*))
@@ -27,12 +29,13 @@
 
 (defgeneric tx-make-campus (graph code &key name description)
   (:method (graph code &key name description)
-    (assert (not (get-campus graph)))
-    (shinra:tx-make-vertex graph 'campus
-                           `((code ,code)
-                             (name ,name )
-                             (description ,description)
-                             (store-directory ,(campus-store-directory-pathname code))))))
+    (or (progn (warn "CAMPUS: CDOE=~a は既に存在していたので作成しませんでした。" code)
+               (get-campus graph :code code))
+        (shinra:tx-make-vertex graph 'campus
+                               `((code ,code)
+                                 (name ,name )
+                                 (description ,description)
+                                 (store-directory ,(campus-store-directory-pathname code)))))))
 
 
 ;;;;;

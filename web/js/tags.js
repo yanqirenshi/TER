@@ -91,7 +91,10 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
          location.hash='#base'
 });
 
-riot.tag2('page-base', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td>{obj._id}</td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 55px; }', '', function(opts) {
+riot.tag2('page-base', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj._id)}"> {obj._id} </a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 55px; }', '', function(opts) {
+     this.idLink = (v) => {
+         return location.hash + '/systems/' + v;
+     };
      this.list = () => {
          return this.source.systems || [];
      };
@@ -228,35 +231,71 @@ riot.tag2('page-tabs', '<div class="tabs is-boxed"> <ul> <li each="{opts.core.ta
      };
 });
 
-riot.tag2('section-breadcrumb', '<section-container data="{path()}"> <nav class="breadcrumb" aria-label="breadcrumbs"> <ul> <li each="{opts.data}"> <a class="{active ? \'is-active\' : \'\'}" href="{href}" aria-current="page">{label}</a> </li> </ul> </nav> </section-container>', 'section-breadcrumb section-container > .section,[data-is="section-breadcrumb"] section-container > .section{ padding-top: 3px; }', '', function(opts) {
+riot.tag2('section-breadcrumb', '<nav class="breadcrumb" aria-label="breadcrumbs"> <ul> <li each="{path()}" class="{active ? \'is-active\' : \'\'}"> <a href="{href}" aria-current="page">{label}</a> </li> </ul> </nav>', '', '', function(opts) {
+     this.label = (node, is_last, node_name) => {
+         if (node.menu_label)
+             return node.menu_label;
+
+         if (node.regex)
+             return node_name;
+
+         return is_last ? node_name : node.code;
+     };
+     this.active = (node, is_last) => {
+         if (is_last)
+             return true;
+
+         if (!node.tag)
+             return true;
+
+         return false;
+     };
+     this.makeData = (routes, href, path) => {
+         if (!path || path.length==0)
+             return null;
+
+         let node_name = path[0];
+         let node = routes.find((d) => {
+             if (d.regex) {
+                 return d.regex.exec(node_name);
+             } else {
+                 return d.code == node_name;
+             }
+         });
+
+         if (!node) {
+             console.warn(routes);
+             console.warn(path);
+             throw new Error ('なんじゃこりゃぁ!!')
+         }
+
+         let sep = href=='#' ? '' : '/';
+         let node_label = node.regex ? node_name : node.code;
+         let new_href = href + sep + node_label;
+
+         let is_last = path.length == 1;
+
+         let crumb = [{
+             label: this.label(node, is_last, node_name),
+             href: new_href,
+             active: this.active(node, is_last),
+         }]
+
+         if (is_last==1)
+             return crumb;
+
+         return crumb.concat(this.makeData(node.children, new_href, path.slice(1)))
+     };
      this.path = () => {
          let hash = location.hash;
          let path = hash.split('/');
 
+         let routes = STORE.get('site.pages');
+
          if (path[0] && path[0].substr(0,1)=='#')
              path[0] = path[0].substr(1);
 
-         let out = [];
-         let len = path.length;
-         let href = null;
-         for (var i in path) {
-             href = href ? href + '/' + path[i] : '#' + path[i];
-
-             if (i==len-1)
-                 out.push({
-                     label: path[i],
-                     href: hash,
-                     active: true
-                 });
-
-             else
-                 out.push({
-                     label: path[i],
-                     href: href,
-                     active: false
-                 });
-         }
-         return out;
+         return this.makeData(routes, '#', path);
      }
 });
 
@@ -769,7 +808,7 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
      };
 
      this.state = () => {
-         return STORE.state().get('er');
+         return STORE.get('er');
      };
 
      this.operators = () => {
@@ -856,7 +895,8 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
      };
 
      this.makeSketcher = () => {
-         let camera = this.state().cameras[0];
+         dump(this.state());
+         let camera = this.state().cameras.list[0];
 
          return new Sketcher({
              selector: 'page-er > svg',
@@ -872,7 +912,7 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
                      },
                      move: {
                          end: (position) => {
-                             let camera = this.state().cameras[0];
+                             let camera = this.state().cameras.list[0];
                              let state = STORE.get('schemas');
                              let schema = state.list.find((d) => {
                                  return d.code==state.active;
@@ -882,7 +922,7 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
                          },
                      },
                      zoom: (scale) => {
-                         let camera = this.state().cameras[0];
+                         let camera = this.state().cameras.list[0];
                          let state = STORE.get('schemas');
                          let schema = state.list.find((d) => {
                              return d.code==state.active;
@@ -904,7 +944,7 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
 
      STORE.subscribe(this, (action) => {
          if (action.mode=='FIRST') {
-             if (action.type=='FETCHED-GRAPH')
+             if (action.type=='FETCHED-ER-ENVIRONMENT')
                  ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
 
              if (action.type=='FETCHED-ER-NODES')
@@ -947,7 +987,9 @@ riot.tag2('page-er', '<svg></svg> <operators data="{operators()}" callbak="{clic
      });
 
      this.on('mount', () => {
-         ACTIONS.fetchGraph('FIRST');
+         dump(STORE.get('schemas.active'));
+
+         ACTIONS.fetchErEnvironment(STORE.get('schemas.active'), 'FIRST');
      });
 });
 
@@ -1040,6 +1082,43 @@ riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="m
 });
 
 riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity>', '', '', function(opts) {
+});
+
+riot.tag2('page-base-camera-list', '<section class="section"> <div class="container"> <h1 class="title is-4">Camera</h1> <h2 class="subtitle"></h2> <div if="{opts.source.length==0}"> <p>Camera は持っていません。</p> </div> <div if="{opts.source.length!=0}"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3" colspan="2">Owner</th> <th colspan="8">Camera</th> </tr> <tr> <th rowspan="2">id</th> <th rowspan="2">code</th> <th rowspan="2">name</th> <th colspan="3">Look at</th> <th rowspan="2">magification</th> <th rowspan="2">description</th> </tr> <tr> <th>x</th> <th>y</th> <th>z</th> </tr> </thead> <tbody> <tr each="{obj in opts.source}"> <td>{obj.owner._id}</td> <td>{obj.owner.name}</td> <td>{obj.camera._id}</td> <td>{obj.camera.code}</td> <td>{obj.camera.name}</td> <td>{obj.camera.look_at.x}</td> <td>{obj.camera.look_at.y}</td> <td>{obj.camera.look_at.z}</td> <td>{obj.camera.magnification}</td> <td>{obj.camera.description}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-base-campuses', '<section class="section"> <div class="container"> <h1 class="title">Campuses</h1> <h2 class="subtitle"></h2> <div each="{obj in opts.source}"> <div class="contetns" style="margin-left:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <tbody> <tr> <th>ID</th> <td>{obj._id}</td> </tr> <tr> <th>Code</th> <td>{obj.code}</td> </tr> <tr> <th>Name</th> <td>{obj.name}</td> </tr> <tr> <th>Description</th> <td>{obj.description}</td> </tr> </tbody> </table> </div> <page-base-camera-list source="{obj.cameras}"></page-base-camera-list> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-base-schemas', '<section class="section"> <div class="container"> <h1 class="title">Schemas</h1> <h2 class="subtitle"></h2> <div each="{obj in opts.source}"> <div class="contetns" style="margin-left:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <tbody> <tr> <th>ID</th> <td>{obj._id}</td> </tr> <tr> <th>Code</th> <td>{obj.code}</td> </tr> <tr> <th>Name</th> <td>{obj.name}</td> </tr> <tr> <th>Description</th> <td>{obj.description}</td> </tr> </tbody> </table> </div> <page-base-camera-list source="{obj.cameras}"></page-base-camera-list> </div> </div> </section>', '', '', function(opts) {
+});
+
+riot.tag2('page-system', '<div class="page-root"> <div style="padding: 22px 33px;"> <section-breadcrumb></section-breadcrumb> </div> <section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contetns" style="margin-left:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <tbody> <tr> <th>ID</th> <td>{systemVal(\'id\')}</td> </tr> <tr> <th>Code</th> <td>{systemVal(\'code\')}</td> </tr> <tr> <th>Name</th> <td>{systemVal(\'name\')}</td> </tr> <tr> <th>Description</th> <td>{systemVal(\'description\')</td> </tr>                         </tbody>                     </table>                 </div>             </div>         </section>         <page-base-campuses source={this.source.campuses}></page-base-campuses>         <page-base-schemas source={this.source.schemas}></page-base-schemas>     </div>}', '', '', function(opts) {
+     this.systemVal = (key) => {
+         if (!this.source.system)
+             return '';
+
+         return this.source.system[key];
+     }
+
+     this.on('mount', () => {
+         let id = location.hash.split('/').reverse()[0] * 1;
+
+         ACTIONS.fetchPagesSystem(id);
+     });
+     this.source = {
+         system: null,
+         campuses: [],
+         schemas: [],
+     }
+     STORE.subscribe((action) => {
+         if (action.type=='FETCHED-PAGES-SYSTEM') {
+             this.source = action.response;
+             this.update();
+
+             return;
+         }
+     });
 });
 
 riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEntity}">Create Entity</button> <button class="button">Create Relationship</button> <button class="button">Save Graph</button> <button class="button" onclick="{clickDownload}">Download</button>', 'page-ter-controller { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; } page-ter-controller > * { margin-top: 22px; }', '', function(opts) {

@@ -17,13 +17,14 @@
            #:find-table
            #:find-column
            #:find-column-instance
-           #:find-er-all-edges)
+           #:find-er-all-edges
+           #:find-er-cameras)
   ;; ter
   (:export #:get-campus
-           #:find-ter-cameras
-           #:get-ter-camera
            #:tx-update-camera-look-at
            #:tx-update-camera-magnification
+           #:find-schema
+           #:find-campus
            #:find-resource
            #:find-event
            #:find-correspondence

@@ -16,5 +16,5 @@
 
 (defgeneric tx-make-edge-system2campus (graph system campus)
   (:method (graph (system system) (campus campus))
-    (assert (null (get-edge-system2campus graph system campus)))
-    (shinra:tx-make-edge graph 'edge system campus :have-to)))
+    (or (get-edge-system2campus graph system campus)
+        (shinra:tx-make-edge graph 'edge system campus :have-to))))

@@ -57,7 +57,7 @@
      };
 
      this.state = () => {
-         return STORE.state().get('er');
+         return STORE.get('er');
      };
 
      this.operators = () => {
@@ -144,7 +144,8 @@
      };
 
      this.makeSketcher = () => {
-         let camera = this.state().cameras[0];
+         dump(this.state());
+         let camera = this.state().cameras.list[0];
 
          return new Sketcher({
              selector: 'page-er > svg',
@@ -160,7 +161,7 @@
                      },
                      move: {
                          end: (position) => {
-                             let camera = this.state().cameras[0];
+                             let camera = this.state().cameras.list[0];
                              let state = STORE.get('schemas');
                              let schema = state.list.find((d) => {
                                  return d.code==state.active;
@@ -170,7 +171,7 @@
                          },
                      },
                      zoom: (scale) => {
-                         let camera = this.state().cameras[0];
+                         let camera = this.state().cameras.list[0];
                          let state = STORE.get('schemas');
                          let schema = state.list.find((d) => {
                              return d.code==state.active;
@@ -192,7 +193,7 @@
 
      STORE.subscribe(this, (action) => {
          if (action.mode=='FIRST') {
-             if (action.type=='FETCHED-GRAPH')
+             if (action.type=='FETCHED-ER-ENVIRONMENT')
                  ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
 
              if (action.type=='FETCHED-ER-NODES')
@@ -235,7 +236,9 @@
      });
 
      this.on('mount', () => {
-         ACTIONS.fetchGraph('FIRST');
+         dump(STORE.get('schemas.active'));
+         // ACTIONS.fetchGraph('FIRST');
+         ACTIONS.fetchErEnvironment(STORE.get('schemas.active'), 'FIRST');
      });
     </script>
 </page-er>

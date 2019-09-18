@@ -104,19 +104,18 @@
       (render-json (save-er-size schema code |w| |h|)))))
 
 
-(defroute "/er/:schema_code" (&key schema_code)
+(defroute "/er/:schema_code/environments" (&key schema_code)
   (with-graph-modeler (graph modeler)
-    (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
+    (let* ((system (ter::get-system graph :code (str2keyword schema_code)))
+           (schema_code (alexandria:make-keyword (string-upcase schema_code)))
            (schema (ter:get-schema graph :code schema_code)))
-      (render-json (nconc (find-er schema)
-                          (list :cameras (ter::find-schema-camera graph schema)))))))
+      (render-json (er-environment-at-modeler-system-schema graph modeler system schema)))))
 
 (defroute "/er/:schema_code/nodes" (&key schema_code)
   (with-graph-modeler (graph modeler)
     (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
            (schema (ter:get-schema graph :code schema_code)))
-      (render-json (nconc (find-er-vertexes schema)
-                          (list :cameras (ter::find-schema-camera graph schema)))))))
+      (render-json (find-er-vertexes schema)))))
 
 (defroute "/er/:schema_code/edges" (&key schema_code)
   (with-graph-modeler (graph modeler)
@@ -175,7 +174,7 @@
       (throw-code 404)))
 
 
-(defroute "/ter/:campus-code/environment" (&key campus-code)
+(defroute "/ter/:campus-code/environments" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((system (ter::get-system graph :code (str2keyword campus-code)))
           (campus (get-campus graph campus-code)))
@@ -183,12 +182,14 @@
       (unless campus (throw-code 404))
       (render-json (ter-environment-at-modeler-system-campus graph modeler system campus)))))
 
+
 (defroute ("/ter/:campus-code/cameras/:camera-code/look-at" :method :post)
     (&key campus-code camera-code |x| |y|)
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code))
           (camera-code (str2keyword camera-code)))
       (render-json (save-ter-camera-look-at campus modeler camera-code |x| |y|)))))
+
 
 (defroute ("/ter/:campus-code/cameras/:camera-code/magnification" :method :post)
     (&key campus-code camera-code |magnification|)
@@ -263,7 +264,7 @@
 ;;;
 ;;; system
 ;;;
-(defroute ("/system" :method :post) (&key |code| |name| |description|)
+(defroute ("/systems" :method :post) (&key |code| |name| |description|)
   (with-graph-modeler (graph modeler)
     (let ((code (alexandria:make-keyword (string-upcase |code|)))
           (name |name|)
@@ -308,6 +309,12 @@
 (defroute "/pages/basic" ()
   (with-graph-modeler (graph modeler)
     (render-json (pages-basic graph modeler))))
+
+(defroute "/pages/systems/:id" (&key id)
+  (with-graph-modeler (graph modeler)
+    (let ((system (ter::get-system graph :%id (parse-integer id))))
+      (unless system (throw-code 404))
+      (render-json (pages-system graph system modeler)))))
 
 
 ;;;;;

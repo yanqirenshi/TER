@@ -10,15 +10,17 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
-                 (:module "controller" :components ((:file "package")
-                                                    (:file "modeler")
-                                                    (:file "campus")
-                                                    (:file "environment")
-                                                    (:file "er")
-                                                    (:file "ter")
-                                                    (:file "graph")
-                                                    (:file "common")
-                                                    (:file "session")))
+                 (:module "controller"
+                  :components ((:file "package")
+                               (:file "modeler")
+                               (:file "campus")
+                               (:file "schema")
+                               (:file "environment")
+                               (:file "er")
+                               (:file "ter")
+                               (:file "graph")
+                               (:file "common")
+                               (:file "session")))
                  (:file "render")
                  (:file "router"))))
   :description ""

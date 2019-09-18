@@ -16,5 +16,5 @@
 
 (defgeneric tx-make-edge-system2schema (graph system schema)
   (:method (graph (system system) (schema schema))
-    (assert (null (get-edge-system2schema graph system schema)))
-    (shinra:tx-make-edge graph 'edge system schema :have-to)))
+    (or (get-edge-system2schema graph system schema)
+        (shinra:tx-make-edge graph 'edge system schema :have-to))))

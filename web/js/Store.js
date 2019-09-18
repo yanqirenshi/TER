@@ -7,6 +7,18 @@ class Store extends Vanilla_Redux_Store {
             menu_label: '基',
             code: "base",
             tag: 'page-base',
+            children: [
+                {
+                    code: "systems",
+                    children: [
+                        {
+                            code: "base",
+                            tag: 'page-system',
+                            regex: new RegExp('^\\d+$'),
+                        }
+                    ],
+                }
+            ],
         };
     }
     siteTER () {
@@ -41,7 +53,10 @@ class Store extends Vanilla_Redux_Store {
             column_instances: {ht: {}, list: []},
             ports:            {ht: {}, list: []},
             relashonships:    {ht: {}, list: []},
-            cameras: []
+            cameras:          { ht: {}, list: [] }, // TODO: これは不要な気がするな。
+            system:           null,
+            schema:           null, // TODO: これは不要な気がするな。
+            schemas:          { ht: {}, list: [] },
         };
     }
     initTer () {

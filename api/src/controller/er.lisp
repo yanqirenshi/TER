@@ -1,5 +1,21 @@
 (in-package :ter.api.controller)
 
+
+;;;
+;;; environments
+;;;
+(defun er-environment-at-modeler-system-schema (graph modeler system schema)
+  (when (ter::get-edge-system2schema graph system schema)
+    (list :|system|  system
+          :|schema|  (schema2schema schema :graph graph :modeler modeler)
+          :|schemas| (mapcar #'(lambda (schema)
+                                 (schema2schema schema :graph graph :modeler modeler))
+                             (ter::find-schema graph :system system)))))
+
+
+;;;
+;;; others
+;;;
 (defun save-er-camera-look-at (graph camera look-at)
   (up:execute-transaction
    (up:tx-change-object-slots graph 'camera (up:%id camera)

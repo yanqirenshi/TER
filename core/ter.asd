@@ -64,6 +64,7 @@ This file is a part of ter project.
                                               (:file "system")
                                               (:file "system_schema")
                                               (:file "system_campus")
+                                              (:file "relationship2camera")
                                               (:file "base")))
                  ;; er
                  (:module "er" :components ((:file "column")
@@ -74,7 +75,6 @@ This file is a part of ter project.
                                             (:file "er")))
                  ;; ter
                  (:module "ter" :components ((:file "predicates")
-                                             (:file "camera")
                                              (:file "identifier")
                                              (:file "identifier-instance")
                                              (:file "attribute")

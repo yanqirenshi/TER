@@ -104,7 +104,7 @@ class ErDataManeger {
     /////
     ///// response
     /////
-    responseNode2Data (response) {
+    responseNode2Data (response, state) {
         let relashonships    = this.makeGraphDataR(response.RELASHONSHIPS);
         let tables           = this.makeGraphData(response.TABLES);
         let column_instances = this.makeGraphData(response.COLUMN_INSTANCES);
@@ -114,14 +114,13 @@ class ErDataManeger {
         this.injectTable2ColumnInstances(tables, column_instances, relashonships);
         this.injectColumnInstances2Ports (column_instances, ports, relashonships);
 
-        return {
-            tables:           this.makeGraphData(response.TABLES),
-            columns:          this.makeGraphData(response.COLUMNS),
-            column_instances: column_instances,
-            ports:            ports,
-            relashonships:    relashonships,
-            cameras:          response.CAMERAS
-        };
+        state.tables =           this.makeGraphData(response.TABLES);
+        state.columns =          this.makeGraphData(response.COLUMNS);
+        state.column_instances = column_instances;
+        state.ports =            ports;
+        state.relashonships =    relashonships;
+
+        return state;
     }
     responseEdge2Data (relashonships, ports) {
         return this.makeGraphData(this.makeEdges(relashonships, ports));

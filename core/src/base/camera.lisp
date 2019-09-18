@@ -11,9 +11,9 @@
 (defgeneric tx-make-camera (graph code &key name description magnification look-at)
   (:method (graph code &key name description
                     (magnification 1)
-                    (look-at '(:x 0 :y 0 :z 0)) )
-    (assert (not (get-camera graph)))
-    (or (get-camera graph :code code)
+                    (look-at '(:x 0 :y 0 :z 0)))
+    (or (progn (warn "CAMERA: CDOE=~a は既に存在していたので作成しませんでした。" code)
+               (get-camera graph :code code))
         (shinra:tx-make-vertex graph 'camera
                                `((code ,code)
                                  (name ,name )

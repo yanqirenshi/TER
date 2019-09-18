@@ -87,6 +87,45 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Fetch ER
      * **************************************************************** */
+    fetchErEnvironment (schema, mode) {
+        let graph = schema;
+        let path = '/er/%s/environments'.format(graph);
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedErEnvironment(schema, mode, response));
+        }.bind(this));
+    }
+    fetchedErEnvironment (schema, mode, response) {
+        let new_state = STORE.get('er');
+
+        let ht = {};
+        for (let schema of response.schemas) {
+            for (let data of schema.cameras) {
+                let camera = data.camera;
+                ht[camera._id] = camera;
+            }
+        }
+        let list = [];
+        for (let key in ht)
+            list.push(ht[key]);
+
+        new_state.system  = response.system;
+        new_state.schema  = response.schema;
+        new_state.schemas = new TerDataManeger().mergeStateData(response.schemas, new_state.schemas);
+        new_state.cameras = new TerDataManeger().mergeStateData(list, new_state.cameras);
+
+        let cameras = new_state.cameras.list;
+        new_state.camera = cameras.length==0 ? null : cameras[0];
+
+        return {
+            type: 'FETCHED-ER-ENVIRONMENT',
+            data: {
+                er:  new_state,
+            },
+            schema: schema,
+            mode: mode,
+        };
+    }
     fetchErNodes (schema, mode) {
         let scheme_code = schema.code.toLowerCase();
 
@@ -95,11 +134,13 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErNodes (mode, response) {
+        let new_state = STORE.get('er');
+
         return {
             type: 'FETCHED-ER-NODES',
             mode: mode,
             data: {
-                er: new ErDataManeger().responseNode2Data(response),
+                er: new ErDataManeger().responseNode2Data(response, new_state),
             }
         };
     }
@@ -111,7 +152,7 @@ class Actions extends Vanilla_Redux_Actions {
         }.bind(this));
     }
     fetchedErEdges (mode, response) {
-        let new_state        = STORE.state().get('er');
+        let new_state = STORE.get('er');
 
         // TODO: response つこてないんじゃけど。
         new_state.edges = new ErDataManeger().responseEdge2Data(
@@ -269,7 +310,7 @@ class Actions extends Vanilla_Redux_Actions {
      * **************************************************************** */
     fetchTerEnvironment (schema, mode) {
         let graph = schema;
-        let path = '/ter/%s/environment'.format(graph);
+        let path = '/ter/%s/environments'.format(graph);
 
         API.get(path, function (response) {
             STORE.dispatch(this.fetchedTerEnvironment(schema, mode, response));
@@ -620,7 +661,7 @@ class Actions extends Vanilla_Redux_Actions {
      *  System
      * **************************************************************** */
     createSystem (data) {
-        let path = '/system';
+        let path = '/systems';
         let post_data = data;
 
         API.post(path, post_data, function (response) {
@@ -634,7 +675,7 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     createTerEntity (data) {
-        let path = '/system/:code/campus/:code/entities';
+        let path = '/systems/:code/campus/:code/entities';
         let post_data = data;
 
         API.post(path, post_data, function (response) {
@@ -663,4 +704,18 @@ class Actions extends Vanilla_Redux_Actions {
             response: response,
         };
     }
+    fetchPagesSystem (id) {
+        let path = '/pages/systems/' + id;
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedPagesSystem(response));
+        }.bind(this));
+    }
+    fetchedPagesSystem (response) {
+        return {
+            type: 'FETCHED-PAGES-SYSTEM',
+            response: response,
+        };
+    }
+
 }

@@ -18,7 +18,11 @@
 
                     <tbody>
                         <tr each={obj in list()}>
-                            <td>{obj._id}</td>
+                            <td>
+                                <a href={idLink(obj._id)}>
+                                    {obj._id}
+                                </a>
+                            </td>
                             <td>{obj.code}</td>
                             <td>{obj.name}</td>
                             <td>{obj.description}</td>
@@ -30,6 +34,9 @@
     </section>
 
     <script>
+     this.idLink = (v) => {
+         return location.hash + '/systems/' + v;
+     };
      this.list = () => {
          return this.source.systems || [];
      };

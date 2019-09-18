@@ -16,7 +16,8 @@
            #:save-column-instance-logical-name
            #:save-column-instance-description
            #:save-er-camera-look-at
-           #:save-er-camera-magnification)
+           #:save-er-camera-magnification
+           #:er-environment-at-modeler-system-schema)
   (:export #:find-ter ;; TODO: こらはもういらんやろ。
            #:find-entities
            #:get-entity
@@ -31,5 +32,6 @@
            #:ter-environment-at-modeler-system-campus)
   (:export #:create-system)
   (:export #:find-graph)
-  (:export #:pages-basic))
+  (:export #:pages-basic
+           #:pages-system))
 (in-package :ter.api.controller)

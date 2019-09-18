@@ -2,8 +2,13 @@
 
 (defvar *schema-directory-root* nil)
 
-(defun find-schema (graph)
-  (shinra:find-vertex graph 'schema))
+(defun find-schema (graph &key system)
+  (let ((class-symbol 'schema))
+    (if system
+        (shinra:find-r-vertex graph 'edge :from system
+                                          :edge-type :have-to
+                                          :vertex-class class-symbol)
+        (shinra:find-vertex graph class-symbol))))
 
 (defun get-schema (graph &key code)
   (car (shinra:find-vertex graph 'schema
@@ -20,12 +25,13 @@
 
 (defgeneric tx-make-schema (graph code &key name description)
   (:method (graph code &key name description)
-    (assert (not (get-schema graph)))
-    (shinra:tx-make-vertex graph 'schema
-                           `((code ,code)
-                             (name ,name )
-                             (description ,description)
-                             (store-directory ,(schem-store-directory-pathname code))))))
+    (or (progn (warn "SCHEMA: CDOE=~a は既に存在していたので作成しませんでした。" code)
+               (get-schema graph :code code))
+        (shinra:tx-make-vertex graph 'schema
+                               `((code ,code)
+                                 (name ,name )
+                                 (description ,description)
+                                 (store-directory ,(schem-store-directory-pathname code)))))))
 
 
 ;;;;;

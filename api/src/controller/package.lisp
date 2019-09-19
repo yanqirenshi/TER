@@ -3,6 +3,7 @@
   (:use #:cl)
   (:import-from :alexandria
                 #:when-let)
+  (:export #:set-active-system)
   (:export #:finder-er-tables
            #:finder-er-columns
            #:finder-er-column-instances

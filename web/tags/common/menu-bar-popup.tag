@@ -35,7 +35,7 @@
              return d._id == id;
          });
 
-         this.opts.callback('change-system', system);
+         this.opts.callback('change-system', system._core);
 
          ACTIONS.closeGlobalMenuSystemPanel();
      };

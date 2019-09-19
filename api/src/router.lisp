@@ -274,6 +274,12 @@
                                   :name name
                                   :description description)))))
 
+(defroute ("/systems/:id/active" :method :post) (&key id)
+  (with-graph-modeler (graph modeler)
+    (let* ((id (parse-integer id))
+           (system (ter::get-system graph :%id id)))
+      (unless system (throw-code 404))
+      (render-json (ter.api.controller:set-active-system system)))))
 
 ;;;
 ;;; edges

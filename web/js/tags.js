@@ -27,9 +27,6 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
      };
 
      this.changeSystem = (system) => {
-         dump('-');
-         dump(system);
-         dump('-');
          ACTIONS.changeSystem(system);
 
          this.tags['menu-bar'].update();
@@ -44,7 +41,8 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
                  code: d.code,
                  href: '',
                  label: d.code,
-                 description: d.description
+                 description: d.description,
+                 _core: d,
              }
          });
      };
@@ -58,6 +56,7 @@ riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#
      this.site = () => {
          return STORE.state().get('site');
      };
+
      this.menuBarData = () => {
          return STORE.state().get('global').menu;
      };
@@ -193,7 +192,7 @@ riot.tag2('menu-bar-popup', '<div class="flex-root"> <div> <h1 class="title is-4
              return d._id == id;
          });
 
-         this.opts.callback('change-system', system);
+         this.opts.callback('change-system', system._core);
 
          ACTIONS.closeGlobalMenuSystemPanel();
      };
@@ -790,6 +789,36 @@ riot.tag2('er-modal-logical-name', '<div class="modal {isActive()}"> <div class=
 });
 
 riot.tag2('page-er', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{schemas()}" active="{activeSchema()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-er_tab-graph class="hide"></page-er_tab-graph> <page-er_tab-tables class="hide"></page-er_tab-tables> <page-er_tab-columns class="hide"></page-er_tab-columns> </div>', 'page-er page-tabs-with-selecter { display: flex; flex-direction: column; } page-er page-tabs-with-selecter li:first-child { margin-left: 88px; } page-er { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-er .tabs { flex-grow: 1; }', '', function(opts) {
+     this.startFirstLoad = () => {
+         let active_schema = this.activeSchema();
+
+         if (!active_schema)
+             return;
+
+         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
+     };
+     this.on('mount', () => {
+         this.startFirstLoad();
+     });
+     STORE.subscribe((action) => {
+         if (action.mode=='FIRST') {
+             if (action.type=='FETCHED-ER-ENVIRONMENT')
+                 ACTIONS.fetchErNodes(this.activeSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-NODES')
+                 ACTIONS.fetchErEdges(this.activeSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-EDGES') {
+                 this.update();
+             }
+         }
+
+         if (action.type=='CHANGE-SYSTEM') {
+             this.startFirstLoad();
+             return;
+         }
+     });
+
      this.schemas = () => {
          let system = STORE.get('active.system');
 
@@ -990,40 +1019,20 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
          });
      };
 
-     this.getActiveSchema = () => {
-         let state = STORE.state().get('schemas');
-         let code = state.active;
+     this.on('update', () => {
+         if (!this.sketcher) {
+             this.sketcher = this.makeSketcher();
+             this.sketcher.makeCampus();
+         } else {
+             this.painter.clear(this.sketcher._d3svg);
+         }
 
-         return state.list.find((d) => { return d.code == code; });
-     };
+         let d3svg = this.sketcher._d3svg;
+
+         this.painter.drawTables(d3svg, STORE.state().get('er'));
+     });
 
      STORE.subscribe(this, (action) => {
-         if (action.mode=='FIRST') {
-             if (action.type=='FETCHED-ER-ENVIRONMENT')
-                 ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
-
-             if (action.type=='FETCHED-ER-NODES')
-                 ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
-
-             if (action.type=='FETCHED-ER-EDGES') {
-                 if (!this.sketcher) {
-                     this.sketcher = this.makeSketcher();
-                     this.sketcher.makeCampus();
-                 } else {
-                     this.painter.clear(this.sketcher._d3svg);
-                 }
-
-                 let d3svg = this.sketcher._d3svg;
-
-                 this.painter.drawTables(d3svg, STORE.state().get('er'));
-             }
-         }
-
-         if (action.type=='CHANGE-SCHEMA') {
-             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
-             return;
-         }
-
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
              this.update();
              this.painter.reDrawTable (action.redraw);
@@ -1039,15 +1048,6 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
              this.update();
          }
 
-     });
-
-     this.on('mount', () => {
-         let active_schema = STORE.get('active.er.schema');
-
-         if (!active_schema)
-             return;
-
-         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
      });
 });
 
@@ -1222,7 +1222,7 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
          }
 
          if (action.type=='FETCHED-ENVIRONMENT') {
-             this.startLoadData();
+             this.startFirstLoadData();
              return;
          }
 
@@ -1250,10 +1250,15 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
                  this.update();
              }
          }
+
+         if (action.type=='CHANGE-SYSTEM') {
+             this.startFirstLoadData();
+             return;
+         }
      });
 
-     this.startLoadData = () => {
-         let active_campus = STORE.get('active.ter.campus');
+     this.startFirstLoadData = () => {
+         let active_campus = this.activeCampus();
 
          if (!active_campus)
              return;
@@ -1261,7 +1266,7 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
          ACTIONS.fetchTerEnvironment(active_campus.code, 'FIRST');
      };
      this.on('mount', () => {
-         this.startLoadData();
+         this.startFirstLoadData();
      });
 
      this.page_tabs = new PageTabs([

@@ -184,40 +184,20 @@
          });
      };
 
-     this.getActiveSchema = () => {
-         let state = STORE.state().get('schemas');
-         let code = state.active;
+     this.on('update', () => {
+         if (!this.sketcher) {
+             this.sketcher = this.makeSketcher();
+             this.sketcher.makeCampus();
+         } else {
+             this.painter.clear(this.sketcher._d3svg);
+         }
 
-         return state.list.find((d) => { return d.code == code; });
-     };
+         let d3svg = this.sketcher._d3svg;
+
+         this.painter.drawTables(d3svg, STORE.state().get('er'));
+     });
 
      STORE.subscribe(this, (action) => {
-         if (action.mode=='FIRST') {
-             if (action.type=='FETCHED-ER-ENVIRONMENT')
-                 ACTIONS.fetchErNodes(this.getActiveSchema(), action.mode);
-
-             if (action.type=='FETCHED-ER-NODES')
-                 ACTIONS.fetchErEdges(this.getActiveSchema(), action.mode);
-
-             if (action.type=='FETCHED-ER-EDGES') {
-                 if (!this.sketcher) {
-                     this.sketcher = this.makeSketcher();
-                     this.sketcher.makeCampus();
-                 } else {
-                     this.painter.clear(this.sketcher._d3svg);
-                 }
-
-                 let d3svg = this.sketcher._d3svg;
-
-                 this.painter.drawTables(d3svg, STORE.state().get('er'));
-             }
-         }
-
-         if (action.type=='CHANGE-SCHEMA') {
-             ACTIONS.saveConfigAtDefaultSchema(action.data.schemas.active);
-             return;
-         }
-
          if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
              this.update();
              this.painter.reDrawTable (action.redraw);
@@ -233,15 +213,6 @@
              this.update();
          }
 
-     });
-
-     this.on('mount', () => {
-         let active_schema = STORE.get('active.er.schema');
-
-         if (!active_schema)
-             return;
-
-         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
      });
     </script>
 

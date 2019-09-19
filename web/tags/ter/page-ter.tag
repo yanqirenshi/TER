@@ -43,7 +43,7 @@
          }
 
          if (action.type=='FETCHED-ENVIRONMENT') {
-             this.startLoadData();
+             this.startFirstLoadData();
              return;
          }
 
@@ -71,10 +71,15 @@
                  this.update();
              }
          }
+
+         if (action.type=='CHANGE-SYSTEM') {
+             this.startFirstLoadData();
+             return;
+         }
      });
 
-     this.startLoadData = () => {
-         let active_campus = STORE.get('active.ter.campus');
+     this.startFirstLoadData = () => {
+         let active_campus = this.activeCampus();
 
          if (!active_campus)
              return;
@@ -82,7 +87,7 @@
          ACTIONS.fetchTerEnvironment(active_campus.code, 'FIRST');
      };
      this.on('mount', () => {
-         this.startLoadData();
+         this.startFirstLoadData();
      });
     </script>
 

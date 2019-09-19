@@ -25,21 +25,6 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Save Config
      * **************************************************************** */
-    saveConfigAtDefaultSchema (schema_code) {
-        let data = {
-            schema_code: schema_code
-        };
-
-        API.post('/environment/er/schema/active', data, (response) => {
-            STORE.dispatch(this.savedConfigAtDefaultSchema(response));
-        });
-    }
-    savedConfigAtDefaultSchema (response) {
-        return {
-            type: 'SAVED-CONFIG-AT-DEFAULT-SCHEMA',
-            data: {}
-        };
-    }
     /* **************************************************************** *
      *  Fetch Environment
      * **************************************************************** */
@@ -58,7 +43,7 @@ class Actions extends Vanilla_Redux_Actions {
             if (active_system.campuses.length!=0)
                 state.ter.campus = active_system.campuses[0];
 
-            if (active_system.schemas.length!=0);
+            if (active_system.schemas.length!=0)
                 state.er.schema = active_system.schemas[0];
         }
 
@@ -313,10 +298,30 @@ class Actions extends Vanilla_Redux_Actions {
 
         state.system = system;
 
+        if (system.campuses.length!=0)
+            state.ter.campus = system.campuses[0];
+
+        if (system.schemas.length!=0)
+            state.er.schema = system.schemas[0];
+
+        this.saveConfigAtDefaultSystem(system);
+
         STORE.dispatch({
             type: 'CHANGE-SYSTEM',
             data: { active: state },
         });
+    }
+    saveConfigAtDefaultSystem (system) {
+        let path = '/systems/%d/active'.format(system._id);
+
+        API.post(path, null, (response) => {
+            STORE.dispatch(this.savedConfigAtDefaultSystem(response));
+        });
+    }
+    savedConfigAtDefaultSystem (response) {
+        return {
+            type: 'SAVED-CONFIG-AT-DEFAULT-SYSTEM',
+        };
     }
     /* **************************************************************** *
      *  Fetch TER

@@ -5,13 +5,18 @@
     (list :|systems| (mapcar #'(lambda (d)
                                  (system2system graph d))
                              (ter::find-systems graph))
-          ;; TODO: 以下廃棄予定
-          :schemas   (ter::find-schema  graph)
-          :er `(:schema (:active ,(ter::config :er :schema :active))))))
+          :|active| (list :|system| (ter::config :active :system)
+                          :|ter|    (list :|campus| :null)
+                          :|er|     (list :|schema| :null)))))
 
 (defun set-active-schema (schema)
   (setf (ter::config :er :schema :active) (ter::code schema))
   (environments))
+
+(defun set-active-system (system)
+  (setf (ter::config :active :system) (up:%id system))
+  (environments))
+
 
 (defun save-ter-camera-look-at (campus modeler code x y &key (graph ter.db:*graph*))
   (let ((camera (ter::get-to-cameras graph campus :modeler modeler :code code)))

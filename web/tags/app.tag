@@ -37,9 +37,6 @@
      };
 
      this.changeSystem = (system) => {
-         dump('-');
-         dump(system);
-         dump('-');
          ACTIONS.changeSystem(system);
 
          this.tags['menu-bar'].update();
@@ -54,7 +51,8 @@
                  code: d.code,
                  href: '',
                  label: d.code,
-                 description: d.description
+                 description: d.description,
+                 _core: d,
              }
          });
      };
@@ -68,6 +66,7 @@
      this.site = () => {
          return STORE.state().get('site');
      };
+
      this.menuBarData = () => {
          return STORE.state().get('global').menu;
      };

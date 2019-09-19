@@ -11,7 +11,9 @@
   (:export #:*graph-stor-dir*
            #:*campus-directory-root*
            #:*schema-directory-root*)
-  (:export #:tx-create-system)
+  (:export #:tx-create-system
+           #:get-system
+           #:find-systems)
   ;; er
   (:export #:get-schema
            #:find-table

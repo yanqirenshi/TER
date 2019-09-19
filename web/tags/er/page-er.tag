@@ -14,6 +14,38 @@
     </div>
 
     <script>
+     this.startFirstLoad = () => {
+         let active_schema = this.activeSchema();
+
+         if (!active_schema)
+             return;
+
+         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
+     };
+     this.on('mount', () => {
+         this.startFirstLoad();
+     });
+     STORE.subscribe((action) => {
+         if (action.mode=='FIRST') {
+             if (action.type=='FETCHED-ER-ENVIRONMENT')
+                 ACTIONS.fetchErNodes(this.activeSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-NODES')
+                 ACTIONS.fetchErEdges(this.activeSchema(), action.mode);
+
+             if (action.type=='FETCHED-ER-EDGES') {
+                 this.update();
+             }
+         }
+
+         if (action.type=='CHANGE-SYSTEM') {
+             this.startFirstLoad();
+             return;
+         }
+     });
+    </script>
+
+    <script>
      this.schemas = () => {
          let system = STORE.get('active.system');
 

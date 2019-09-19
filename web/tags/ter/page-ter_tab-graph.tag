@@ -35,8 +35,25 @@
 
      this.painter = new Ter();
 
+     this.getCamera = () => {
+         let active_campus = STORE.get('active.ter.campus');
+         let campuses = STORE.get('ter.campuses');
+
+         let campus = campuses.ht[active_campus._id];
+
+         let camera = campus.cameras[0];
+         if (!camera)
+             return null;
+
+         return campus.cameras[0].camera;
+     };
      this.makeSketcher = () => {
-         let camera = STORE.get('ter.camera');
+         let camera = this.getCamera();
+
+         if (!camera) {
+             console.warn('Camera is Empty.');
+             return;
+         }
 
          return new Sketcher({
              selector: 'page-ter_tab-graph svg',

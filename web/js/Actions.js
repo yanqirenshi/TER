@@ -36,15 +36,49 @@ class Actions extends Vanilla_Redux_Actions {
     fetchedEnvironment (mode, response) {
         let state = STORE.get('active');
 
+        let getActiveSystem = () => {
+            let active_system = null;
+
+            let id = response.active.system;
+
+            if (id)
+                active_system = response.systems.find((d) => {
+                    return d._id == id;
+                });
+
+            if (active_system)
+                return active_system;
+
+            if (response.systems.length==0)
+                return null;
+
+            return response.systems[0];
+        };
+
+        let getActiveElement = (list, id) => {
+            if (list.length==0)
+                return null;
+
+            let active_element;
+
+            if (id)
+                active_element = list.find((d) => {
+                    return d._id == id;
+                });
+
+            if (active_element)
+                return active_element;
+
+            return list[0];
+        };
+
         if (response.systems.length!=0) {
-            let active_system = response.systems[0];
+            let active_system = getActiveSystem();
+
             state.system = active_system;
 
-            if (active_system.campuses.length!=0)
-                state.ter.campus = active_system.campuses[0];
-
-            if (active_system.schemas.length!=0)
-                state.er.schema = active_system.schemas[0];
+            state.ter.campus = getActiveElement(active_system.campuses, response.active.ter.campus);
+            state.er.schema = getActiveElement(active_system.schemas,  response.active.er.schema);
         }
 
         return {
@@ -52,10 +86,8 @@ class Actions extends Vanilla_Redux_Actions {
             mode: mode,
             data: {
                 systems: this.list2Pool(response.systems),
-                schemas: {
-                    active: response.ER.SCHEMA.ACTIVE,
-                    list: response.SCHEMAS
-                },
+                campuses: this.list2Pool(response.campuses),
+                schemas: this.list2Pool(response.schemas),
                 camera: response.CAMERA,
                 active: state,
             }

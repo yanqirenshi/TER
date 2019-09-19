@@ -979,8 +979,20 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
          }
      };
 
+     this.getCamera = () => {
+         let active_schema = STORE.get('active.er.schema');
+         let schemas = STORE.get('er.schemas');
+
+         let schema = schemas.ht[active_schema._id];
+
+         let camera = schema.cameras[0];
+         if (!camera)
+             return null;
+
+         return schema.cameras[0].camera;
+     };
      this.makeSketcher = () => {
-         let camera = this.state().cameras.list[0];
+         let camera = this.getCamera();
 
          return new Sketcher({
              selector: 'page-er_tab-graph > svg',
@@ -1335,8 +1347,25 @@ riot.tag2('page-ter_tab-graph', '<page-ter-controller></page-ter-controller> <sv
 
      this.painter = new Ter();
 
+     this.getCamera = () => {
+         let active_campus = STORE.get('active.ter.campus');
+         let campuses = STORE.get('ter.campuses');
+
+         let campus = campuses.ht[active_campus._id];
+
+         let camera = campus.cameras[0];
+         if (!camera)
+             return null;
+
+         return campus.cameras[0].camera;
+     };
      this.makeSketcher = () => {
-         let camera = STORE.get('ter.camera');
+         let camera = this.getCamera();
+
+         if (!camera) {
+             console.warn('Camera is Empty.');
+             return;
+         }
 
          return new Sketcher({
              selector: 'page-ter_tab-graph svg',

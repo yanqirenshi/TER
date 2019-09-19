@@ -82,10 +82,15 @@ class Store extends Vanilla_Redux_Store {
     }
     init () {
         let data = {
-            schemas:   { active: null, list: [] },
             site:      this.site(),
+            //
+            systems:   { ht: {}, list: [] },
+            campuses:  { ht: {}, list: [] },
+            schemas:   { ht: {}, list: [] },
+            //
             er:        this.initEr(),
             ter:       this.initTer(),
+            //
             graph:     this.initHomeGraph(),
             inspector: { display: false, data: null },
             global: {

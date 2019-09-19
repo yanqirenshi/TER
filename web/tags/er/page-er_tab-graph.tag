@@ -144,8 +144,20 @@
          }
      };
 
+     this.getCamera = () => {
+         let active_schema = STORE.get('active.er.schema');
+         let schemas = STORE.get('er.schemas');
+
+         let schema = schemas.ht[active_schema._id];
+
+         let camera = schema.cameras[0];
+         if (!camera)
+             return null;
+
+         return schema.cameras[0].camera;
+     };
      this.makeSketcher = () => {
-         let camera = this.state().cameras.list[0];
+         let camera = this.getCamera();
 
          return new Sketcher({
              selector: 'page-er_tab-graph > svg',

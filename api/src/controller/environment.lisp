@@ -1,10 +1,19 @@
 (in-package :ter.api.controller)
 
 (defun environments ()
-  (let ((graph ter.db:*graph*))
+  (let* ((graph ter.db:*graph*)
+         (systems (ter::find-systems graph)))
     (list :|systems| (mapcar #'(lambda (d)
                                  (system2system graph d))
-                             (ter::find-systems graph))
+                             systems)
+          :|campuses| (reduce #'(lambda (a system)
+                                  (nconc a
+                                         (ter:find-campus graph :system system)))
+                              systems :initial-value nil)
+          :|schemas| (reduce #'(lambda (a system)
+                                  (nconc a
+                                         (ter:find-schema graph :system system)))
+                              systems :initial-value nil)
           :|active| (list :|system| (ter::config :active :system)
                           :|ter|    (list :|campus| :null)
                           :|er|     (list :|schema| :null)))))

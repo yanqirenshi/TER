@@ -1,20 +1,51 @@
 <page-er_tab-graph>
 
-    <svg></svg>
+    <div>
+        <svg></svg>
+    </div>
 
+    <!-- TODO: 以下廃棄予定 -->
     <operators data={operators()}
                callbak={clickOperator}></operators>
 
     <inspector callback={inspectorCallback}></inspector>
 
-    <!-- <er-modal-logical-name data={modalData()}
-         callback={modalCallback}></er-modal-logical-name>
+    <script>
+     this.on('update', () => {
+         if (!this.sketcher) {
+             this.sketcher = this.makeSketcher();
+             this.sketcher.makeCampus();
+         } else {
+             this.painter.clear(this.sketcher._d3svg);
+         }
 
-         <er-modal-description data={modal_target_table}
-         callback={modalCallback}></er-modal-description> -->
+         let d3svg = this.sketcher._d3svg;
+
+         this.painter.drawTables(d3svg, STORE.state().get('er'));
+     });
+
+     STORE.subscribe(this, (action) => {
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
+             this.update();
+             this.painter.reDrawTable (action.redraw);
+         }
+
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+     });
+    </script>
 
     <script>
      this.sketcher = null;
+
      this.painter = new Er({
          callbacks: {
              table: {
@@ -47,7 +78,93 @@
              }
          }
      });
+     this.getSize = () => {
+         return {
+             w: this.root.clientWidth,
+             h: this.root.clientHeight,
+         }
+     };
+     this.getCamera = () => {
+         let active_schema = STORE.get('active.er.schema');
+         let schemas = STORE.get('er.schemas');
 
+         let schema = schemas.ht[active_schema._id];
+
+         let camera = schema.cameras[0];
+         if (!camera)
+             return null;
+
+         return schema.cameras[0].camera;
+     };
+     this.makeSketcher = () => {
+         let camera = this.getCamera();
+
+         if (!camera) {
+             console.warn('Camera is Empty.');
+             return;
+         }
+
+         let size = this.getSize();
+
+         return new Sketcher({
+             selector: 'page-er_tab-graph svg',
+             x: camera.look_at.x,
+             y: camera.look_at.y,
+             w: size.w,
+             h: size.h,
+             scale: camera.magnification,
+             callbacks: {
+                 svg: {
+                     click: () => {
+                         STORE.dispatch(ACTIONS.closeAllSubPanels());
+                     },
+                     move: {
+                         end: (position) => {
+                             let camera = this.state().cameras.list[0];
+                             let state = STORE.get('schemas');
+                             let schema = state.list.find((d) => {
+                                 return d.code==state.active;
+                             });
+
+                             ACTIONS.saveErCameraLookAt(schema, camera, point);
+                         },
+                     },
+                     zoom: (scale) => {
+                         let camera = this.state().cameras.list[0];
+                         let state = STORE.get('schemas');
+                         let schema = state.list.find((d) => {
+                             return d.code==state.active;
+                         });
+
+                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
+                     }
+                 }
+             }
+         });
+     };
+    </script>
+
+    <style>
+     page-er_tab-graph {
+         display: block;
+         width: 100%;
+         height: 100%;
+
+         position: relative;
+     }
+     page-er_tab-graph > div {
+         display: flex;
+         flex-direction: column;
+
+         width:100%;
+         height:100%;
+     }
+    </style>
+
+    <script>
+     ///
+     /// TODO: 以下廃棄予定
+     ///
      this.modal_target_table = null;
 
      this.modalData = () => {
@@ -56,11 +173,9 @@
                      .modal
                      .logical_name;
      };
-
      this.state = () => {
          return STORE.get('er');
      };
-
      this.operators = () => {
          let state = STORE.state().get('site').pages.find((d) => { return d.code=='er'; });
          return state.operators;
@@ -105,127 +220,6 @@
              return;
          }
      };
-     this.modalCallback = (type, data) => {
-         if (type=='click-close-button') {
-             STORE.dispatch(ACTIONS.setDataToModalLogicalName('er', null));
-             this.tags['er-modal-logical-name'].update();
-             return;
-         }
-         if (type=='click-save-button') {
-             data.schema_code = STORE.state().get('schemas').active;
-             return ACTIONS.saveColumnInstanceLogicalName(data, 'er');
-         }
-
-         if (type=='close-modal-description') {
-             this.modal_target_table = null;
-
-             this.update();
-             return;
-         }
-
-         if (type=='save-column-instance-description') {
-             let schema_code = STORE.state().get('schemas').active;
-
-             ACTIONS.saveColumnInstanceDescription(schema_code,
-                                                   data.column_instance,
-                                                   data.value,
-                                                   'er');
-             return;
-         }
-
-         if (type=='save-table-description') {
-             let schema_code = STORE.state().get('schemas').active;
-
-             ACTIONS.saveTableDescription(schema_code,
-                                          data.table,
-                                          data.value,
-                                          'er');
-             return;
-         }
-     };
-
-     this.getCamera = () => {
-         let active_schema = STORE.get('active.er.schema');
-         let schemas = STORE.get('er.schemas');
-
-         let schema = schemas.ht[active_schema._id];
-
-         let camera = schema.cameras[0];
-         if (!camera)
-             return null;
-
-         return schema.cameras[0].camera;
-     };
-     this.makeSketcher = () => {
-         let camera = this.getCamera();
-
-         return new Sketcher({
-             selector: 'page-er_tab-graph > svg',
-             x: camera.look_at.X,
-             y: camera.look_at.Y,
-             w: window.innerWidth,
-             h: window.innerHeight,
-             scale: camera.magnification,
-             callbacks: {
-                 svg: {
-                     click: () => {
-                         STORE.dispatch(ACTIONS.closeAllSubPanels());
-                     },
-                     move: {
-                         end: (position) => {
-                             let camera = this.state().cameras.list[0];
-                             let state = STORE.get('schemas');
-                             let schema = state.list.find((d) => {
-                                 return d.code==state.active;
-                             });
-
-                             ACTIONS.saveErCameraLookAt(schema, camera, point);
-                         },
-                     },
-                     zoom: (scale) => {
-                         let camera = this.state().cameras.list[0];
-                         let state = STORE.get('schemas');
-                         let schema = state.list.find((d) => {
-                             return d.code==state.active;
-                         });
-
-                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
-                     }
-                 }
-             }
-         });
-     };
-
-     this.on('update', () => {
-         if (!this.sketcher) {
-             this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
-         } else {
-             this.painter.clear(this.sketcher._d3svg);
-         }
-
-         let d3svg = this.sketcher._d3svg;
-
-         this.painter.drawTables(d3svg, STORE.state().get('er'));
-     });
-
-     STORE.subscribe(this, (action) => {
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
-             this.update();
-             this.painter.reDrawTable (action.redraw);
-         }
-
-         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-
-         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-
-     });
     </script>
 
 </page-er_tab-graph>

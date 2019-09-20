@@ -12,10 +12,11 @@
                 ((:file "package")
                  (:module "controller"
                   :components ((:file "package")
-                               (:file "modeler")
-                               (:file "system")
-                               (:file "campus")
-                               (:file "schema")
+                               (:module "controller"
+                                :components ((:file "modeler")
+                                             (:file "system")
+                                             (:file "campus")
+                                             (:file "schema")))
                                (:file "environment")
                                (:file "er")
                                (:file "ter")

@@ -11,9 +11,14 @@
     (jojo:write-key-value "description" (or (slot-value obj 'description) ""))
     (jojo:write-key-value "_class"      "TABLE")
     ;; point
+    (jojo:write-key-value "position" (list :|x| (slot-value obj 'x)
+                                           :|y| (slot-value obj 'y)
+                                           :|z| (slot-value obj 'z)))
     (jojo:write-key-value "x" (slot-value obj 'x))
     (jojo:write-key-value "y" (slot-value obj 'y))
     (jojo:write-key-value "z" (slot-value obj 'z))
     ;; rect
+    (jojo:write-key-value "size" (list :|w| (slot-value obj 'w)
+                                       :|h| (slot-value obj 'h)))
     (jojo:write-key-value "w" (slot-value obj 'w))
     (jojo:write-key-value "h" (slot-value obj 'h))))

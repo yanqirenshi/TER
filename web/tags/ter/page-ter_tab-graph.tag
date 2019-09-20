@@ -1,33 +1,35 @@
 <page-ter_tab-graph>
 
-    <page-ter-controller></page-ter-controller>
+    <div>
+        <svg></svg>
+    </div>
 
-    <svg id="ter-sec_root-svg" ref="svg"></svg>
+    <page-ter-controller parent_size={getSize()}></page-ter-controller>
 
+    <page-ter-inspectors if={false} parent_size={getSize()}></page-ter-inspectors>
+
+    <!-- TODO: 以下廃棄予定 -->
     <operators data={operators()}
                callbak={clickOperator}></operators>
 
-    <inspector callback={inspectorCallback}></inspector>
-
     <script>
-     this.inspectorCallback = (type, data) => {
+     this.getSize = () => {
+         return {
+             w: this.root.clientWidth,
+             h: this.root.clientHeight,
+         }
      };
     </script>
 
     <script>
-     this.operators = () => {
-         let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
-         return state.operators;
-     };
-
-     this.clickOperator = (code, e) => {
-         if (code=='download') {
-             let erapp = new ErApp();
-             let file_name = STORE.get('schemas.active') + '.ter';
-
-             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+     this.on('update', ()=>{
+         if (!this.sketcher) {
+             this.sketcher = this.makeSketcher();
+             this.sketcher.makeCampus();
          }
-     };
+
+         this.draw();
+     });
     </script>
 
     <script>
@@ -55,12 +57,14 @@
              return;
          }
 
+         let size = this.getSize();
+
          return new Sketcher({
              selector: 'page-ter_tab-graph svg',
-             x: camera.look_at.X,
-             y: camera.look_at.Y,
-             w: window.innerWidth,
-             h: window.innerHeight,
+             x: camera.look_at.x,
+             y: camera.look_at.y,
+             w: size.w,
+             h: size.h,
              scale: camera.magnification,
              callbacks: {
                  svg: {
@@ -71,8 +75,7 @@
                          end: (position) => {
                              let state = STORE.get('schemas');
                              let schema = state.list.find((d) => { return d.code==state.active; });
-                             let camera = STORE.get('ter.camera');
-
+                             // let camera = STORE.get('ter.camera');
                              ACTIONS.saveTerCameraLookAt(schema, camera, position);
                          },
                      },
@@ -108,13 +111,42 @@
                            }}
                    });
      };
-     this.on('update', ()=>{
-         if (!this.sketcher) {
-             this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
-         }
-
-         this.draw();
-     });
     </script>
+
+    <style>
+     page-ter_tab-graph {
+         display: block;
+         width: 100%;
+         height: 100%;
+
+         position: relative;
+     }
+     page-ter_tab-graph > div {
+         display: flex;
+         flex-direction: column;
+
+         width:100%;
+         height:100%;
+     }
+    </style>
+
+    <script>
+     ///
+     /// TODO: 以下廃棄予定
+     ///
+     this.operators = () => {
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
+         return state.operators;
+     };
+
+     this.clickOperator = (code, e) => {
+         if (code=='download') {
+             let erapp = new ErApp();
+             let file_name = STORE.get('schemas.active') + '.ter';
+
+             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+         }
+     };
+    </script>
+
 </page-ter_tab-graph>

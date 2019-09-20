@@ -111,14 +111,6 @@
     </script>
 
     <style>
-     page-ter page-tabs-with-selecter {
-         display: flex;
-         flex-direction: column;
-     }
-
-     page-ter page-tabs-with-selecter li:first-child {
-         margin-left: 88px;
-     }
      page-ter {
          display: flex;
          flex-direction: column;
@@ -127,6 +119,13 @@
      }
      page-ter .tabs {
          flex-grow: 1;
+     }
+     page-ter page-tabs-with-selecter {
+         display: flex;
+         flex-direction: column;
+     }
+     page-ter page-tabs-with-selecter li:first-child {
+         margin-left: 88px;
      }
     </style>
 

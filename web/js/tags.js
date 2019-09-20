@@ -845,11 +845,53 @@ riot.tag2('page-er', '<div style="margin-left:55px; padding-top: 22px;"> <page-t
      };
 });
 
-riot.tag2('page-er_tab-columns', '', '', '', function(opts) {
+riot.tag2('page-er_tab-columns', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th colspan="2">Table</th> <th colspan="6">Identifier</th> </tr> <tr> <th>Code</th> <th>Name</th> <th>ID</th> <th>Code</th> <th>Physical Name</th> <th>Logical Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{obj._table.code}</td> <td nowrap>{obj._table.name}</td> <td nowrap>{obj._id}</td> <td nowrap>{obj.code}</td> <td nowrap>{obj.physical_name}</td> <td nowrap>{obj.logical_name}</td> <td nowrap>{obj.data_type}</td> <td nowrap>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-er_tab-columns { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-er_tab-columns .table .num{ text-align: right; }', '', function(opts) {
+     this.num = (v) => {
+         if (!v)
+             return '';
+         return v.toFixed(2);
+     }
+     this.list = () => {
+         let list = STORE.get('er.column_instances.list');
+
+         return list || [];
+     };
 });
 
-riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
+riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', 'page-er_tab-graph { display: block; width: 100%; height: 100%; position: relative; } page-er_tab-graph > div { display: flex; flex-direction: column; width:100%; height:100%; }', '', function(opts) {
+     this.on('update', () => {
+         if (!this.sketcher) {
+             this.sketcher = this.makeSketcher();
+             this.sketcher.makeCampus();
+         } else {
+             this.painter.clear(this.sketcher._d3svg);
+         }
+
+         let d3svg = this.sketcher._d3svg;
+
+         this.painter.drawTables(d3svg, STORE.state().get('er'));
+     });
+
+     STORE.subscribe(this, (action) => {
+         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
+             this.update();
+             this.painter.reDrawTable (action.redraw);
+         }
+
+         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
+             this.modal_target_table = null;
+             this.update();
+         }
+
+     });
+
      this.sketcher = null;
+
      this.painter = new Er({
          callbacks: {
              table: {
@@ -882,6 +924,70 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
              }
          }
      });
+     this.getSize = () => {
+         return {
+             w: this.root.clientWidth,
+             h: this.root.clientHeight,
+         }
+     };
+     this.getCamera = () => {
+         let active_schema = STORE.get('active.er.schema');
+         let schemas = STORE.get('er.schemas');
+
+         let schema = schemas.ht[active_schema._id];
+
+         let camera = schema.cameras[0];
+         if (!camera)
+             return null;
+
+         return schema.cameras[0].camera;
+     };
+     this.makeSketcher = () => {
+         let camera = this.getCamera();
+
+         if (!camera) {
+             console.warn('Camera is Empty.');
+             return;
+         }
+
+         let size = this.getSize();
+
+         return new Sketcher({
+             selector: 'page-er_tab-graph svg',
+             x: camera.look_at.x,
+             y: camera.look_at.y,
+             w: size.w,
+             h: size.h,
+             scale: camera.magnification,
+             callbacks: {
+                 svg: {
+                     click: () => {
+                         STORE.dispatch(ACTIONS.closeAllSubPanels());
+                     },
+                     move: {
+                         end: (position) => {
+                             let camera = this.state().cameras.list[0];
+                             let state = STORE.get('schemas');
+                             let schema = state.list.find((d) => {
+                                 return d.code==state.active;
+                             });
+
+                             ACTIONS.saveErCameraLookAt(schema, camera, point);
+                         },
+                     },
+                     zoom: (scale) => {
+                         let camera = this.state().cameras.list[0];
+                         let state = STORE.get('schemas');
+                         let schema = state.list.find((d) => {
+                             return d.code==state.active;
+                         });
+
+                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
+                     }
+                 }
+             }
+         });
+     };
 
      this.modal_target_table = null;
 
@@ -891,11 +997,9 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
                      .modal
                      .logical_name;
      };
-
      this.state = () => {
          return STORE.get('er');
      };
-
      this.operators = () => {
          let state = STORE.state().get('site').pages.find((d) => { return d.code=='er'; });
          return state.operators;
@@ -940,130 +1044,20 @@ riot.tag2('page-er_tab-graph', '<svg></svg> <operators data="{operators()}" call
              return;
          }
      };
-     this.modalCallback = (type, data) => {
-         if (type=='click-close-button') {
-             STORE.dispatch(ACTIONS.setDataToModalLogicalName('er', null));
-             this.tags['er-modal-logical-name'].update();
-             return;
-         }
-         if (type=='click-save-button') {
-             data.schema_code = STORE.state().get('schemas').active;
-             return ACTIONS.saveColumnInstanceLogicalName(data, 'er');
-         }
-
-         if (type=='close-modal-description') {
-             this.modal_target_table = null;
-
-             this.update();
-             return;
-         }
-
-         if (type=='save-column-instance-description') {
-             let schema_code = STORE.state().get('schemas').active;
-
-             ACTIONS.saveColumnInstanceDescription(schema_code,
-                                                   data.column_instance,
-                                                   data.value,
-                                                   'er');
-             return;
-         }
-
-         if (type=='save-table-description') {
-             let schema_code = STORE.state().get('schemas').active;
-
-             ACTIONS.saveTableDescription(schema_code,
-                                          data.table,
-                                          data.value,
-                                          'er');
-             return;
-         }
-     };
-
-     this.getCamera = () => {
-         let active_schema = STORE.get('active.er.schema');
-         let schemas = STORE.get('er.schemas');
-
-         let schema = schemas.ht[active_schema._id];
-
-         let camera = schema.cameras[0];
-         if (!camera)
-             return null;
-
-         return schema.cameras[0].camera;
-     };
-     this.makeSketcher = () => {
-         let camera = this.getCamera();
-
-         return new Sketcher({
-             selector: 'page-er_tab-graph > svg',
-             x: camera.look_at.X,
-             y: camera.look_at.Y,
-             w: window.innerWidth,
-             h: window.innerHeight,
-             scale: camera.magnification,
-             callbacks: {
-                 svg: {
-                     click: () => {
-                         STORE.dispatch(ACTIONS.closeAllSubPanels());
-                     },
-                     move: {
-                         end: (position) => {
-                             let camera = this.state().cameras.list[0];
-                             let state = STORE.get('schemas');
-                             let schema = state.list.find((d) => {
-                                 return d.code==state.active;
-                             });
-
-                             ACTIONS.saveErCameraLookAt(schema, camera, point);
-                         },
-                     },
-                     zoom: (scale) => {
-                         let camera = this.state().cameras.list[0];
-                         let state = STORE.get('schemas');
-                         let schema = state.list.find((d) => {
-                             return d.code==state.active;
-                         });
-
-                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
-                     }
-                 }
-             }
-         });
-     };
-
-     this.on('update', () => {
-         if (!this.sketcher) {
-             this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
-         } else {
-             this.painter.clear(this.sketcher._d3svg);
-         }
-
-         let d3svg = this.sketcher._d3svg;
-
-         this.painter.drawTables(d3svg, STORE.state().get('er'));
-     });
-
-     STORE.subscribe(this, (action) => {
-         if (action.type=='SAVED-COLUMN-INSTANCE-LOGICAL-NAME' && action.from=='er') {
-             this.update();
-             this.painter.reDrawTable (action.redraw);
-         }
-
-         if (action.type=='SAVED-TABLE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-
-         if (action.type=='SAVED-COLUMN-INSTANCE-DESCRIPTION' && action.from=='er') {
-             this.modal_target_table = null;
-             this.update();
-         }
-
-     });
 });
 
-riot.tag2('page-er_tab-tables', '', '', '', function(opts) {
+riot.tag2('page-er_tab-tables', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th rowspan="2">ID</th> <th rowspan="2">Class</th> <th rowspan="2">Code</th> <th rowspan="2">Name</th> <th colspan="2">Position</th> <th colspan="2">Size</th> <th rowspan="2">description</th> </tr> <tr> <th>x</th> <th>y</th> <th>w</th> <th>h</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{obj._id}</td> <td nowrap>{obj._class}</td> <td nowrap>{obj.code}</td> <td>{obj.name}</td> <td class="num" nowrap></td> <td class="num" nowrap></td> <td class="num" nowrap></td> <td class="num" nowrap></td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-er_tab-tables { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-er_tab-tables .table .num{ text-align: right; }', '', function(opts) {
+     this.num = (v) => {
+         if (!v && !(v===0))
+             return '';
+
+         return v.toFixed(2);
+     }
+     this.list = () => {
+         let list = STORE.get('er.tables.list');
+
+         return list || [];
+     };
 });
 
 riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create Entity</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div class="select"> <select ref="entity_type" onchange="{keyUp}"> <option value="">Entity の種類を選択してください。</option> <option value="rs">Resource</option> <option value="ev">Event</option> </select> </div> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-entity .modal-card-foot { display: flex; justify-content: space-between; } modal-create-entity .modal-card-body .input, modal-create-entity .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
@@ -1207,7 +1201,10 @@ riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEn
      };
 });
 
-riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{campuses()}" active="{activeCampus()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div>', 'page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; } page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; }', '', function(opts) {
+riot.tag2('page-ter-inspectors', '<div> XXX </div>', 'page-ter-inspectors { position: absolute; height:100%; max-width: 50%; right:0px; top:0px; } page-ter-inspectors > div{ height:100%; background: #fff; border-left: solid 1px #aaa; border-top: solid 1px #aaa; border-bottom: solid 1px #aaa; }', '', function(opts) {
+});
+
+riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{campuses()}" active="{activeCampus()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div>', 'page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; } page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; }', '', function(opts) {
      this.campuses = () => {
          let system = STORE.get('active.system');
 
@@ -1325,23 +1322,22 @@ riot.tag2('page-ter_tab-entities', '<section class="section"> <div class="contai
      };
 });
 
-riot.tag2('page-ter_tab-graph', '<page-ter-controller></page-ter-controller> <svg id="ter-sec_root-svg" ref="svg"></svg> <operators data="{operators()}" callbak="{clickOperator}"></operators> <inspector callback="{inspectorCallback}"></inspector>', '', '', function(opts) {
-     this.inspectorCallback = (type, data) => {
-     };
-
-     this.operators = () => {
-         let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
-         return state.operators;
-     };
-
-     this.clickOperator = (code, e) => {
-         if (code=='download') {
-             let erapp = new ErApp();
-             let file_name = STORE.get('schemas.active') + '.ter';
-
-             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+riot.tag2('page-ter_tab-graph', '<div> <svg></svg> </div> <page-ter-controller parent_size="{getSize()}"></page-ter-controller> <page-ter-inspectors if="{false}" parent_size="{getSize()}"></page-ter-inspectors> <operators data="{operators()}" callbak="{clickOperator}"></operators>', 'page-ter_tab-graph { display: block; width: 100%; height: 100%; position: relative; } page-ter_tab-graph > div { display: flex; flex-direction: column; width:100%; height:100%; }', '', function(opts) {
+     this.getSize = () => {
+         return {
+             w: this.root.clientWidth,
+             h: this.root.clientHeight,
          }
      };
+
+     this.on('update', ()=>{
+         if (!this.sketcher) {
+             this.sketcher = this.makeSketcher();
+             this.sketcher.makeCampus();
+         }
+
+         this.draw();
+     });
 
      this.sketcher = null;
 
@@ -1367,12 +1363,14 @@ riot.tag2('page-ter_tab-graph', '<page-ter-controller></page-ter-controller> <sv
              return;
          }
 
+         let size = this.getSize();
+
          return new Sketcher({
              selector: 'page-ter_tab-graph svg',
-             x: camera.look_at.X,
-             y: camera.look_at.Y,
-             w: window.innerWidth,
-             h: window.innerHeight,
+             x: camera.look_at.x,
+             y: camera.look_at.y,
+             w: size.w,
+             h: size.h,
              scale: camera.magnification,
              callbacks: {
                  svg: {
@@ -1383,7 +1381,6 @@ riot.tag2('page-ter_tab-graph', '<page-ter-controller></page-ter-controller> <sv
                          end: (position) => {
                              let state = STORE.get('schemas');
                              let schema = state.list.find((d) => { return d.code==state.active; });
-                             let camera = STORE.get('ter.camera');
 
                              ACTIONS.saveTerCameraLookAt(schema, camera, position);
                          },
@@ -1420,14 +1417,20 @@ riot.tag2('page-ter_tab-graph', '<page-ter-controller></page-ter-controller> <sv
                            }}
                    });
      };
-     this.on('update', ()=>{
-         if (!this.sketcher) {
-             this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
-         }
 
-         this.draw();
-     });
+     this.operators = () => {
+         let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
+         return state.operators;
+     };
+
+     this.clickOperator = (code, e) => {
+         if (code=='download') {
+             let erapp = new ErApp();
+             let file_name = STORE.get('schemas.active') + '.ter';
+
+             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+         }
+     };
 });
 
 riot.tag2('page-ter_tab-identifiers', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th colspan="2">Entity</th> <th colspan="5">Identifier</th> </tr> <tr> <th>Code</th> <th>Name</th> <th>ID</th> <th>Code</th> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{obj._entity._core.code}</td> <td nowrap>{obj._entity._core.name}</td> <td nowrap>{obj._id}</td> <td nowrap>{obj.code}</td> <td nowrap>{obj.name}</td> <td nowrap>{obj.data_type}</td> <td nowrap>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-ter_tab-identifiers { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-ter_tab-identifiers .table .num{ text-align: right; }', '', function(opts) {

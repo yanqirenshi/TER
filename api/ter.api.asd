@@ -12,7 +12,7 @@
                 ((:file "package")
                  (:module "controller"
                   :components ((:file "package")
-                               (:module "controller"
+                               (:module "classes"
                                 :components ((:file "modeler")
                                              (:file "system")
                                              (:file "campus")

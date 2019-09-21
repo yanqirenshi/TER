@@ -6,5 +6,12 @@ const _CONFIG = {
         path: {
             prefix: '/path/api/v1'
         }
-    }
+    },
+    auth: {
+        sign: {
+                in: {
+                    url: '/path/sign/in'
+                },
+        },
+    },
 };

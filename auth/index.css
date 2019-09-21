@@ -1,0 +1,22 @@
+.form-container {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+
+    justify-content: center;
+}
+
+.form-root {
+    width: 333px;
+    height: auto;
+    margin: 222px auto 0px auto;
+    padding: 22px;
+    border: 1px solid #eee;
+}
+
+.forgot-password {
+    font-size: 12px;
+    text-align: right;
+    margin-top: 6px;
+    color: #eeeeee;
+}

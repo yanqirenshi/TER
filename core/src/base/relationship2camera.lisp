@@ -75,6 +75,6 @@
                                      :vertex-class 'camera
                                      :edge-type :have-to))))
 
-(defun get-to-cameras (graph &key campus modeler code)
+(defun get-to-camera (graph &key obj modeler code)
   (find-if #'(lambda (camera) (eq code (code camera)))
-           (find-to-cameras graph campus :modeler modeler)))
+           (find-to-cameras graph obj :modeler modeler)))

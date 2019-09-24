@@ -22,8 +22,8 @@
                     </thead>
                     <tbody>
                         <tr each={obj in list()}>
-                            <td nowrap>{obj._entity._core.code}</td>
-                            <td nowrap>{obj._entity._core.name}</td>
+                            <td nowrap>{entityValue(obj, 'code')}</td>
+                            <td nowrap>{entityValue(obj, 'name')}</td>
                             <td nowrap>{obj._id}</td>
                             <td nowrap>{obj.code}</td>
                             <td nowrap>{obj.name}</td>
@@ -37,6 +37,12 @@
     </section>
 
     <script>
+     this.entityValue = (obj, key) => {
+         if (!obj._entity || !obj._entity._core)
+             return '';
+
+         return obj._entity._core[key];
+     };
      this.num = (v) => {
          if (!v)
              return '';

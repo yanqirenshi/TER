@@ -28,12 +28,21 @@
 
 
 (defun save-ter-camera-look-at (campus modeler code x y &key (graph ter.db:*graph*))
-  (let ((camera (ter::get-to-cameras graph campus :modeler modeler :code code)))
+  (let ((camera (ter:get-to-camera graph
+                                   :obj campus
+                                   :modeler modeler
+                                   :code code)))
+    (unless camera (caveman2:throw-code 404))
     (ter:tx-update-camera-look-at graph camera :x x :y y)))
+
 
 (defun save-ter-camera-magnification
     (campus modeler code magnification &key (graph ter.db:*graph*))
-  (let ((camera (ter::get-to-cameras  graph campus :modeler modeler :code code)))
+  (let ((camera (ter:get-to-camera graph
+                                   :obj campus
+                                   :modeler modeler
+                                   :code code)))
+    (unless camera (caveman2:throw-code 404))
     (ter:tx-update-camera-magnification graph camera magnification)))
 
 ;;;;;

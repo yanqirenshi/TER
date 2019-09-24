@@ -14,7 +14,7 @@
      this.on('update', () => {
          if (!this.sketcher) {
              this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
+             // this.sketcher.makeCampus();
          } else {
              this.painter.clear(this.sketcher._d3svg);
          }
@@ -41,43 +41,57 @@
          }
 
      });
+     this.callbacks = {
+         table: {
+             move: {
+                 end: (d) => {
+                     ACTIONS.savePosition(this.getActiveSchema(), d);
+                 }
+             },
+             resize: (table) => {
+                 ACTIONS.saveTableSize(this.getActiveSchema(), table);
+             },
+             header: {
+                 click: (d) => {
+                     STORE.dispatch(ACTIONS.setDataToInspector(d));
+                 }
+             },
+             columns: {
+                 click: (d) => {
+                     STORE.dispatch(ACTIONS.setDataToInspector(d));
+                 }
+             },
+         },
+         svg: {
+             click: () => {
+                 STORE.dispatch(ACTIONS.closeAllSubPanels());
+             },
+             move: {
+                 end: (position) => {
+                     let camera = this.state().cameras.list[0];
+                     let schema = this.getActiveSchema();
+                     ACTIONS.saveErCameraLookAt(schema, camera, position);
+                 },
+             },
+             zoom: (scale) => {
+                 let camera = this.state().cameras.list[0];
+                 let schema = this.getActiveSchema();
+                 ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
+             }
+         },
+     };
     </script>
 
     <script>
      this.sketcher = null;
+     this.painter = new Er({ callbacks: this.callbacks });
 
-     this.painter = new Er({
-         callbacks: {
-             table: {
-                 move: {
-                     end: (d) => {
-                         let state = STORE.state().get('schemas');
-                         let code = state.active;
-                         let schema = state.list.find((d) => { return d.code == code; });
+     this.getActiveSchema = () => {
+         let active_schema = STORE.get('active.er.schema');
+         let schemas = STORE.get('er.schemas');
 
-                         ACTIONS.savePosition(schema, d);
-                     }
-                 },
-                 resize: (table) => {
-                     let state = STORE.state().get('schemas');
-                     let code = state.active;
-                     let schema = state.list.find((d) => { return d.code == code; });
-
-                     ACTIONS.saveTableSize(schema, table);
-                 },
-                 header: {
-                     click: (d) => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(d));
-                     }
-                 },
-                 columns: {
-                     click: (d) => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(d));
-                     }
-                 },
-             }
-         }
-     });
+         return schemas.ht[active_schema._id];
+     } ;
      this.getSize = () => {
          return {
              w: this.root.clientWidth,
@@ -85,10 +99,7 @@
          }
      };
      this.getCamera = () => {
-         let active_schema = STORE.get('active.er.schema');
-         let schemas = STORE.get('er.schemas');
-
-         let schema = schemas.ht[active_schema._id];
+         let schema = this.getActiveSchema();
 
          let camera = schema.cameras[0];
          if (!camera)
@@ -96,51 +107,29 @@
 
          return schema.cameras[0].camera;
      };
-     this.makeSketcher = () => {
+     this.makeOption = () => {
          let camera = this.getCamera();
+         let size   = this.getSize();
 
          if (!camera) {
              console.warn('Camera is Empty.');
              return;
          }
 
-         let size = this.getSize();
-
-         return new Sketcher({
-             selector: 'page-er_tab-graph svg',
-             x: camera.look_at.x,
-             y: camera.look_at.y,
+         return {
+             element: {
+                 selector: 'page-er_tab-graph svg',
+             },
              w: size.w,
              h: size.h,
+             x: camera.look_at.x,
+             y: camera.look_at.y,
              scale: camera.magnification,
-             callbacks: {
-                 svg: {
-                     click: () => {
-                         STORE.dispatch(ACTIONS.closeAllSubPanels());
-                     },
-                     move: {
-                         end: (position) => {
-                             let camera = this.state().cameras.list[0];
-                             let state = STORE.get('schemas');
-                             let schema = state.list.find((d) => {
-                                 return d.code==state.active;
-                             });
-
-                             ACTIONS.saveErCameraLookAt(schema, camera, point);
-                         },
-                     },
-                     zoom: (scale) => {
-                         let camera = this.state().cameras.list[0];
-                         let state = STORE.get('schemas');
-                         let schema = state.list.find((d) => {
-                             return d.code==state.active;
-                         });
-
-                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
-                     }
-                 }
-             }
-         });
+             callbacks: this.callbacks.svg,
+         };
+     }
+     this.makeSketcher = () => {
+         return new DefaultSketcher(this.makeOption());
      };
     </script>
 

@@ -25,23 +25,46 @@
      this.on('update', ()=>{
          if (!this.sketcher) {
              this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
+             // TODO: Clear していた？
+             // this.sketcher.makeCampus();
          }
 
          this.draw();
      });
+     this.callbacks = {
+         entity: {
+             click: (d) => {
+                 STORE.dispatch(ACTIONS.setDataToInspector(d));
+                 d3.event.stopPropagation();
+             },
+         },
+         svg: {
+             click: () => {
+                 STORE.dispatch(ACTIONS.setDataToInspector(null));
+             },
+             move: {
+                 end: (position) => {
+                     ACTIONS.saveTerCameraLookAt(this.getActiveCampus(), this.getCamera(), position);
+                 },
+             },
+             zoom: (scale) => {
+                 ACTIONS.saveTerCameraLookMagnification(this.getActiveCampus(), this.getCamera(), scale);
+             }
+         },
+     };
     </script>
 
     <script>
      this.sketcher = null;
-
      this.painter = new Ter();
-
-     this.getCamera = () => {
+     this.getActiveCampus = () => {
          let active_campus = STORE.get('active.ter.campus');
          let campuses = STORE.get('ter.campuses');
 
-         let campus = campuses.ht[active_campus._id];
+         return campuses.ht[active_campus._id];
+     };
+     this.getCamera = () => {
+         let campus = this.getActiveCampus();
 
          let camera = campus.cameras[0];
          if (!camera)
@@ -49,68 +72,42 @@
 
          return campus.cameras[0].camera;
      };
-     this.makeSketcher = () => {
+     this.makeOption = () => {
          let camera = this.getCamera();
+         let size   = this.getSize();
 
          if (!camera) {
              console.warn('Camera is Empty.');
              return;
          }
 
-         let size = this.getSize();
-
-         return new Sketcher({
-             selector: 'page-ter_tab-graph svg',
-             x: camera.look_at.x,
-             y: camera.look_at.y,
+         return {
+             element: {
+                 selector: 'page-ter_tab-graph svg',
+             },
              w: size.w,
              h: size.h,
+             x: camera.look_at.x,
+             y: camera.look_at.y,
              scale: camera.magnification,
-             callbacks: {
-                 svg: {
-                     click: () => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(null));
-                     },
-                     move: {
-                         end: (position) => {
-                             let state = STORE.get('schemas');
-                             let schema = state.list.find((d) => { return d.code==state.active; });
-                             // let camera = STORE.get('ter.camera');
-                             ACTIONS.saveTerCameraLookAt(schema, camera, position);
-                         },
-                     },
-                     zoom: (scale) => {
-                         let state = STORE.get('schemas');
-                         let schema = state.list.find((d) => { return d.code==state.active; });
-                         let camera = STORE.get('ter.camera');
-
-                         ACTIONS.saveTerCameraLookMagnification(schema, camera, scale);
-                     }
-                 }
-             }
-         });
+             callbacks: this.callbacks.svg,
+         };
+     }
+     this.makeSketcher = () => {
+         return new DefaultSketcher(this.makeOption());
      };
      this.draw = () => {
-         let svg = this.sketcher.svg();
-
-         let forground  = svg.selectAll('g.base.forground');
-         let background = svg.selectAll('g.base.background');
-         let state      = STORE.get('ter');
+         let forground  = this.sketcher.getBase('forground');
+         let background = this.sketcher.getBase('background');
 
          this.painter
-             .data(state)
+             .data(STORE.get('ter'))
              .sizing()
              .positioning()
-             .draw(forground,
-                   background,
-                   {
-                       entity: {
-                           click: (d) => {
-                               STORE.dispatch(ACTIONS.setDataToInspector(d));
-                               d3.event.stopPropagation();
-                           }}
-                   });
-     };
+             .draw(forground, background, {
+                 entity: this.callbacks.entity
+             });
+     }
     </script>
 
     <style>

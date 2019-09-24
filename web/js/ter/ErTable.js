@@ -18,6 +18,7 @@ class ErTable {
 
         let keys = keys_str.split('.');
         let callbacks = this._callbacks;
+
         for (let key of keys) {
             let val = callbacks[key];
             if (typeof val == "function")
@@ -31,7 +32,6 @@ class ErTable {
         let argsArray = args_arr.slice(2);
 
         let callback = this.getCallbak(keys_str);
-
         if (!callback)
             return;
 

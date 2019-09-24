@@ -862,7 +862,7 @@ riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{opera
      this.on('update', () => {
          if (!this.sketcher) {
              this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
+
          } else {
              this.painter.clear(this.sketcher._d3svg);
          }
@@ -889,41 +889,55 @@ riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{opera
          }
 
      });
+     this.callbacks = {
+         table: {
+             move: {
+                 end: (d) => {
+                     ACTIONS.savePosition(this.getActiveSchema(), d);
+                 }
+             },
+             resize: (table) => {
+                 ACTIONS.saveTableSize(this.getActiveSchema(), table);
+             },
+             header: {
+                 click: (d) => {
+                     STORE.dispatch(ACTIONS.setDataToInspector(d));
+                 }
+             },
+             columns: {
+                 click: (d) => {
+                     STORE.dispatch(ACTIONS.setDataToInspector(d));
+                 }
+             },
+         },
+         svg: {
+             click: () => {
+                 STORE.dispatch(ACTIONS.closeAllSubPanels());
+             },
+             move: {
+                 end: (position) => {
+                     let camera = this.state().cameras.list[0];
+                     let schema = this.getActiveSchema();
+                     ACTIONS.saveErCameraLookAt(schema, camera, position);
+                 },
+             },
+             zoom: (scale) => {
+                 let camera = this.state().cameras.list[0];
+                 let schema = this.getActiveSchema();
+                 ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
+             }
+         },
+     };
 
      this.sketcher = null;
+     this.painter = new Er({ callbacks: this.callbacks });
 
-     this.painter = new Er({
-         callbacks: {
-             table: {
-                 move: {
-                     end: (d) => {
-                         let state = STORE.state().get('schemas');
-                         let code = state.active;
-                         let schema = state.list.find((d) => { return d.code == code; });
+     this.getActiveSchema = () => {
+         let active_schema = STORE.get('active.er.schema');
+         let schemas = STORE.get('er.schemas');
 
-                         ACTIONS.savePosition(schema, d);
-                     }
-                 },
-                 resize: (table) => {
-                     let state = STORE.state().get('schemas');
-                     let code = state.active;
-                     let schema = state.list.find((d) => { return d.code == code; });
-
-                     ACTIONS.saveTableSize(schema, table);
-                 },
-                 header: {
-                     click: (d) => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(d));
-                     }
-                 },
-                 columns: {
-                     click: (d) => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(d));
-                     }
-                 },
-             }
-         }
-     });
+         return schemas.ht[active_schema._id];
+     } ;
      this.getSize = () => {
          return {
              w: this.root.clientWidth,
@@ -931,10 +945,7 @@ riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{opera
          }
      };
      this.getCamera = () => {
-         let active_schema = STORE.get('active.er.schema');
-         let schemas = STORE.get('er.schemas');
-
-         let schema = schemas.ht[active_schema._id];
+         let schema = this.getActiveSchema();
 
          let camera = schema.cameras[0];
          if (!camera)
@@ -942,51 +953,29 @@ riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{opera
 
          return schema.cameras[0].camera;
      };
-     this.makeSketcher = () => {
+     this.makeOption = () => {
          let camera = this.getCamera();
+         let size   = this.getSize();
 
          if (!camera) {
              console.warn('Camera is Empty.');
              return;
          }
 
-         let size = this.getSize();
-
-         return new Sketcher({
-             selector: 'page-er_tab-graph svg',
-             x: camera.look_at.x,
-             y: camera.look_at.y,
+         return {
+             element: {
+                 selector: 'page-er_tab-graph svg',
+             },
              w: size.w,
              h: size.h,
+             x: camera.look_at.x,
+             y: camera.look_at.y,
              scale: camera.magnification,
-             callbacks: {
-                 svg: {
-                     click: () => {
-                         STORE.dispatch(ACTIONS.closeAllSubPanels());
-                     },
-                     move: {
-                         end: (position) => {
-                             let camera = this.state().cameras.list[0];
-                             let state = STORE.get('schemas');
-                             let schema = state.list.find((d) => {
-                                 return d.code==state.active;
-                             });
-
-                             ACTIONS.saveErCameraLookAt(schema, camera, point);
-                         },
-                     },
-                     zoom: (scale) => {
-                         let camera = this.state().cameras.list[0];
-                         let state = STORE.get('schemas');
-                         let schema = state.list.find((d) => {
-                             return d.code==state.active;
-                         });
-
-                         ACTIONS.saveErCameraLookMagnification(schema, camera, scale);
-                     }
-                 }
-             }
-         });
+             callbacks: this.callbacks.svg,
+         };
+     }
+     this.makeSketcher = () => {
+         return new DefaultSketcher(this.makeOption());
      };
 
      this.modal_target_table = null;
@@ -1296,7 +1285,13 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
      };
 });
 
-riot.tag2('page-ter_tab-attributes', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th colspan="2">Entity</th> <th colspan="5">Identifier</th> </tr> <tr> <th>Code</th> <th>Name</th> <th>ID</th> <th>Code</th> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{obj._entity._core.code}</td> <td nowrap>{obj._entity._core.name}</td> <td nowrap>{obj._id}</td> <td nowrap>{obj.code}</td> <td nowrap>{obj.name}</td> <td nowrap>{obj.data_type}</td> <td nowrap>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-ter_tab-attributes { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-ter_tab-attributes .table .num{ text-align: right; }', '', function(opts) {
+riot.tag2('page-ter_tab-attributes', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th colspan="2">Entity</th> <th colspan="5">Identifier</th> </tr> <tr> <th>Code</th> <th>Name</th> <th>ID</th> <th>Code</th> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{entityValue(obj, \'code\')}</td> <td nowrap>{entityValue(obj, \'name\')}</td> <td nowrap>{obj._id}</td> <td nowrap>{obj.code}</td> <td nowrap>{obj.name}</td> <td nowrap>{obj.data_type}</td> <td nowrap>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-ter_tab-attributes { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-ter_tab-attributes .table .num{ text-align: right; }', '', function(opts) {
+     this.entityValue = (obj, key) => {
+         if (!obj._entity || !obj._entity._core)
+             return '';
+
+         return obj._entity._core[key];
+     };
      this.num = (v) => {
          if (!v)
              return '';
@@ -1333,21 +1328,43 @@ riot.tag2('page-ter_tab-graph', '<div> <svg></svg> </div> <page-ter-controller p
      this.on('update', ()=>{
          if (!this.sketcher) {
              this.sketcher = this.makeSketcher();
-             this.sketcher.makeCampus();
+
          }
 
          this.draw();
      });
+     this.callbacks = {
+         entity: {
+             click: (d) => {
+                 STORE.dispatch(ACTIONS.setDataToInspector(d));
+                 d3.event.stopPropagation();
+             },
+         },
+         svg: {
+             click: () => {
+                 STORE.dispatch(ACTIONS.setDataToInspector(null));
+             },
+             move: {
+                 end: (position) => {
+                     ACTIONS.saveTerCameraLookAt(this.getActiveCampus(), this.getCamera(), position);
+                 },
+             },
+             zoom: (scale) => {
+                 ACTIONS.saveTerCameraLookMagnification(this.getActiveCampus(), this.getCamera(), scale);
+             }
+         },
+     };
 
      this.sketcher = null;
-
      this.painter = new Ter();
-
-     this.getCamera = () => {
+     this.getActiveCampus = () => {
          let active_campus = STORE.get('active.ter.campus');
          let campuses = STORE.get('ter.campuses');
 
-         let campus = campuses.ht[active_campus._id];
+         return campuses.ht[active_campus._id];
+     };
+     this.getCamera = () => {
+         let campus = this.getActiveCampus();
 
          let camera = campus.cameras[0];
          if (!camera)
@@ -1355,68 +1372,42 @@ riot.tag2('page-ter_tab-graph', '<div> <svg></svg> </div> <page-ter-controller p
 
          return campus.cameras[0].camera;
      };
-     this.makeSketcher = () => {
+     this.makeOption = () => {
          let camera = this.getCamera();
+         let size   = this.getSize();
 
          if (!camera) {
              console.warn('Camera is Empty.');
              return;
          }
 
-         let size = this.getSize();
-
-         return new Sketcher({
-             selector: 'page-ter_tab-graph svg',
-             x: camera.look_at.x,
-             y: camera.look_at.y,
+         return {
+             element: {
+                 selector: 'page-ter_tab-graph svg',
+             },
              w: size.w,
              h: size.h,
+             x: camera.look_at.x,
+             y: camera.look_at.y,
              scale: camera.magnification,
-             callbacks: {
-                 svg: {
-                     click: () => {
-                         STORE.dispatch(ACTIONS.setDataToInspector(null));
-                     },
-                     move: {
-                         end: (position) => {
-                             let state = STORE.get('schemas');
-                             let schema = state.list.find((d) => { return d.code==state.active; });
-
-                             ACTIONS.saveTerCameraLookAt(schema, camera, position);
-                         },
-                     },
-                     zoom: (scale) => {
-                         let state = STORE.get('schemas');
-                         let schema = state.list.find((d) => { return d.code==state.active; });
-                         let camera = STORE.get('ter.camera');
-
-                         ACTIONS.saveTerCameraLookMagnification(schema, camera, scale);
-                     }
-                 }
-             }
-         });
+             callbacks: this.callbacks.svg,
+         };
+     }
+     this.makeSketcher = () => {
+         return new DefaultSketcher(this.makeOption());
      };
      this.draw = () => {
-         let svg = this.sketcher.svg();
-
-         let forground  = svg.selectAll('g.base.forground');
-         let background = svg.selectAll('g.base.background');
-         let state      = STORE.get('ter');
+         let forground  = this.sketcher.getBase('forground');
+         let background = this.sketcher.getBase('background');
 
          this.painter
-             .data(state)
+             .data(STORE.get('ter'))
              .sizing()
              .positioning()
-             .draw(forground,
-                   background,
-                   {
-                       entity: {
-                           click: (d) => {
-                               STORE.dispatch(ACTIONS.setDataToInspector(d));
-                               d3.event.stopPropagation();
-                           }}
-                   });
-     };
+             .draw(forground, background, {
+                 entity: this.callbacks.entity
+             });
+     }
 
      this.operators = () => {
          let state = STORE.state().get('site').pages.find((d) => { return d.code=='ter'; });
@@ -1433,7 +1424,13 @@ riot.tag2('page-ter_tab-graph', '<div> <svg></svg> </div> <page-ter-controller p
      };
 });
 
-riot.tag2('page-ter_tab-identifiers', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th colspan="2">Entity</th> <th colspan="5">Identifier</th> </tr> <tr> <th>Code</th> <th>Name</th> <th>ID</th> <th>Code</th> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{obj._entity._core.code}</td> <td nowrap>{obj._entity._core.name}</td> <td nowrap>{obj._id}</td> <td nowrap>{obj.code}</td> <td nowrap>{obj.name}</td> <td nowrap>{obj.data_type}</td> <td nowrap>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-ter_tab-identifiers { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-ter_tab-identifiers .table .num{ text-align: right; }', '', function(opts) {
+riot.tag2('page-ter_tab-identifiers', '<section class="section"> <div class="container"> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th colspan="2">Entity</th> <th colspan="5">Identifier</th> </tr> <tr> <th>Code</th> <th>Name</th> <th>ID</th> <th>Code</th> <th>Name</th> <th>Type</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td nowrap>{entityValue(obj, \'code\')}</td> <td nowrap>{entityValue(obj, \'name\')}</td> <td nowrap>{obj._id}</td> <td nowrap>{obj.code}</td> <td nowrap>{obj.name}</td> <td nowrap>{obj.data_type}</td> <td nowrap>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-ter_tab-identifiers { display: block; width: 100%; height: 100%; margin-left: 55px; overflow: auto; } page-ter_tab-identifiers .table .num{ text-align: right; }', '', function(opts) {
+     this.entityValue = (obj, key) => {
+         if (!obj._entity || !obj._entity._core)
+             return '';
+
+         return obj._entity._core[key];
+     };
      this.num = (v) => {
          if (!v)
              return '';

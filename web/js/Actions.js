@@ -299,7 +299,6 @@ class Actions extends Vanilla_Redux_Actions {
     saveTableSize (schema, table) {
         let scheme_code = schema.code.toLowerCase();
         let table_code = table.code.toLowerCase();
-
         let path = '/er/' + scheme_code + '/tables/' + table_code + '/size';
 
         let data = { w: table.w, h: 0 };

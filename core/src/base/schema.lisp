@@ -17,11 +17,16 @@
                                       (str2keyword code)
                                       code))))
 
+
 (defun schem-store-directory-pathname (code)
-  (assert *campus-directory-root*)
   (assert code)
   (assert (keywordp code))
-  (merge-pathnames *schema-directory-root* (string-downcase (symbol-name code))))
+  (let ((root *schema-directory-root*))
+    (assert root)
+    (concatenate 'string
+                 (princ-to-string (merge-pathnames root (string-downcase (symbol-name code))))
+                 "/")))
+
 
 (defgeneric tx-make-schema (graph code &key name description)
   (:method (graph code &key name description)

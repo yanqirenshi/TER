@@ -70,13 +70,13 @@
 
 (defroute ("/er/schemas/:schema-code/camera/:camera-code/look-at" :method :POST)
     (&key schema-code camera-code |x| |y| |z|)
+  (declare (ignore |z|))
   (with-graph-modeler (graph modeler)
-    (let* ((look-at (list :x |x| :y |y| :z |z|))
+    (let* ((x |x|)
+           (y |y|)
            (schema (get-schema graph schema-code))
-           (camera (ter::get-camera graph :code (str2keyword camera-code))))
-      (declare (ignore schema))
-      (unless camera (throw-code 404))
-      (render-json (save-er-camera-look-at graph camera look-at)))))
+           (camera-code (str2keyword camera-code)))
+      (render-json (save-er-camera-look-at schema modeler camera-code x y)))))
 
 
 (defroute ("/er/schemas/:schema-code/camera/:camera-code/magnification" :method :POST)
@@ -84,10 +84,8 @@
   (with-graph-modeler (graph modeler)
     (let* ((val |magnification|)
            (schema (get-schema graph schema-code))
-           (camera (ter::get-camera graph :code (str2keyword camera-code))))
-      (declare (ignore schema))
-      (unless camera (throw-code 404))
-      (render-json (save-er-camera-magnification graph camera val)))))
+           (camera-code (str2keyword camera-code)))
+      (render-json (save-er-camera-magnification schema modeler camera-code val)))))
 
 
 (defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code |x| |y| |z|)

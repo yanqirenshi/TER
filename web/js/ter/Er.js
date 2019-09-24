@@ -137,7 +137,7 @@ class Er extends ErDataManeger {
         super();
 
         this._table = null;
-        this._callbacks = this.initCallbacks(options.callbacks);
+        this._callbacks = this.initCallbacks(options);
     }
     initCallbacks (options) {
         let default_callbacks = {

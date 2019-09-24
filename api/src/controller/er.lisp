@@ -22,11 +22,23 @@
                               `((ter::look-at ,look-at))))
   camera)
 
-(defun save-er-camera-magnification (graph camera magnification)
-  (up:execute-transaction
-   (up:tx-change-object-slots graph 'camera (up:%id camera)
-                              `((ter::magnification ,magnification))))
-  camera)
+(defun save-er-camera-look-at (schema modeler code x y &key (graph ter.db:*graph*))
+  (let ((camera (ter:get-to-camera graph
+                                   :obj schema
+                                   :modeler modeler
+                                   :code code)))
+    (unless camera (caveman2:throw-code 404))
+    (ter:tx-update-camera-look-at graph camera :x x :y y)))
+
+
+(defun save-er-camera-magnification
+    (schema modeler code magnification &key (graph ter.db:*graph*))
+  (let ((camera (ter:get-to-camera graph
+                                   :obj schema
+                                   :modeler modeler
+                                   :code code)))
+    (unless camera (caveman2:throw-code 404))
+    (ter:tx-update-camera-magnification graph camera magnification)))
 
 (defun throw-404 ()
   (caveman2:throw-code 404))

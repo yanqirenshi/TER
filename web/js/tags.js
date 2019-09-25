@@ -11,7 +11,7 @@ riot.tag2('app-page-area', '', '', '', function(opts) {
      });
 });
 
-riot.tag2('app', '<github-link href="https://github.com/yanqirenshi/TER" fill="#5BBBE7" color="#ffffff"></github-link> <menu-bar brand="{brand()}" site="{site()}" systems="{systems()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <menu-bar brand="{brand()}" site="{site()}" systems="{systems()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = STORE.get('active.system');
 

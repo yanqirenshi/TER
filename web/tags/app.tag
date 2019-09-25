@@ -1,5 +1,7 @@
 <app>
-    <github-link href="https://github.com/yanqirenshi/TER" fill="#5BBBE7" color="#ffffff"></github-link>
+    <github-link fill="#1D0C37" color="#CF2317"
+                 href="https://github.com/yanqirenshi/TER"></github-link>
+
 
     <menu-bar brand={brand()}
               site={site()}

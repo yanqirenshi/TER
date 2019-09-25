@@ -11,10 +11,11 @@
 
     <script>
      this.clickDownload = () => {
-         let erapp = new ErApp();
+         let ter = new Ter();
          let file_name = STORE.get('schemas.active') + '.ter';
 
-         erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+         ter.downloadJson(file_name,
+                          ter.stateTER2Json(STORE.state().get('ter')));
      }
     </script>
 

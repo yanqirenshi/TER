@@ -1001,10 +1001,11 @@ riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{opera
              ACTIONS.snapshotAll();
 
          if (code=='download') {
-             let erapp = new ErApp();
+             let er = new Er();
              let file_name = STORE.get('schemas.active') + '.er';
+             let state = STORE.state().get('er');
 
-             erapp.downloadJson(file_name, erapp.stateER2Json(STORE.state().get('er')));
+             er.downloadJson(file_name, er.stateER2Json(state));
          }
      };
      this.inspectorCallback = (type, data) => {
@@ -1179,10 +1180,11 @@ riot.tag2('page-system', '<div class="page-root"> <div style="padding: 22px 33px
 
 riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEntity}">Create Entity</button> <button class="button">Create Relationship</button> <button class="button">Save Graph</button> <button class="button" onclick="{clickDownload}">Download</button>', 'page-ter-controller { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; } page-ter-controller > * { margin-top: 22px; }', '', function(opts) {
      this.clickDownload = () => {
-         let erapp = new ErApp();
+         let ter = new Ter();
          let file_name = STORE.get('schemas.active') + '.ter';
 
-         erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+         ter.downloadJson(file_name,
+                          ter.stateTER2Json(STORE.state().get('ter')));
      }
 
      this.clickCreateEntity = () => {
@@ -1416,10 +1418,11 @@ riot.tag2('page-ter_tab-graph', '<div> <svg></svg> </div> <page-ter-controller p
 
      this.clickOperator = (code, e) => {
          if (code=='download') {
-             let erapp = new ErApp();
+             let ter = new Ter();
              let file_name = STORE.get('schemas.active') + '.ter';
 
-             erapp.downloadJson(file_name, erapp.stateTER2Json(STORE.state().get('ter')));
+             ter.downloadJson(file_name,
+                              ter.stateTER2Json(STORE.state().get('ter')));
          }
      };
 });

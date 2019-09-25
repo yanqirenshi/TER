@@ -177,10 +177,11 @@
              ACTIONS.snapshotAll();
 
          if (code=='download') {
-             let erapp = new ErApp();
+             let er = new Er();
              let file_name = STORE.get('schemas.active') + '.er';
+             let state = STORE.state().get('er');
 
-             erapp.downloadJson(file_name, erapp.stateER2Json(STORE.state().get('er')));
+             er.downloadJson(file_name, er.stateER2Json(state));
          }
      };
      this.inspectorCallback = (type, data) => {

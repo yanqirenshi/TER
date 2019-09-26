@@ -1,8 +1,7 @@
 (in-package :ter.api.controller)
 
 (defun environments (graph modeler)
-  (let* ((graph ter.db:*graph*)
-         (systems (ter::find-systems graph)))
+  (let* ((systems (ter::find-systems graph)))
     (list :|systems| (mapcar #'(lambda (d)
                                  (system2system graph d))
                              systems)
@@ -43,7 +42,8 @@
 ;;;;;
 (defun pages-basic (graph modeler)
   (declare (ignore modeler))
-  (list :|systems|  (ter::find-systems graph)
+  (list :|modelers| (ter::find-modeler graph)
+        :|systems|  (ter::find-systems graph)
         :|schemas|  (ter::find-schema  graph)
         :|campuses| (ter::find-campus  graph)))
 

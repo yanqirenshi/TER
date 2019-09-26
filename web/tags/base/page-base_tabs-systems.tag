@@ -41,14 +41,14 @@
          return this.source.systems || [];
      };
      this.on('mount', () => {
-         ACTIONS.fetchPagesBasic();
+         ACTIONS.fetchPagesManagements();
      });
     </script>
 
     <script>
      this.source = {};
      STORE.subscribe((action)=>{
-         if (action.type=='FETCHED-PAGES-BASIC') {
+         if (action.type=='FETCHED-PAGES-MANAGEMENTS') {
              this.source = action.response;
              this.update();
              return;

@@ -119,12 +119,12 @@ riot.tag2('page-base_tabs-systems', '<section class="section"> <div class="conta
          return this.source.systems || [];
      };
      this.on('mount', () => {
-         ACTIONS.fetchPagesBasic();
+         ACTIONS.fetchPagesManagements();
      });
 
      this.source = {};
      STORE.subscribe((action)=>{
-         if (action.type=='FETCHED-PAGES-BASIC') {
+         if (action.type=='FETCHED-PAGES-MANAGEMENTS') {
              this.source = action.response;
              this.update();
              return;

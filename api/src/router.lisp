@@ -310,7 +310,7 @@
 ;;;
 ;;; pages
 ;;;
-(defroute "/pages/basic" ()
+(defroute "/pages/managements" ()
   (with-graph-modeler (graph modeler)
     (render-json (pages-basic graph modeler))))
 

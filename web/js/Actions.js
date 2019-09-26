@@ -760,16 +760,16 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Page
      * **************************************************************** */
-    fetchPagesBasic () {
-        let path = '/pages/basic';
+    fetchPagesManagements () {
+        let path = '/pages/managements';
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedPagesBasic(response));
+            STORE.dispatch(this.fetchedPagesManagements(response));
         }.bind(this));
     }
-    fetchedPagesBasic (response) {
+    fetchedPagesManagements (response) {
         return {
-            type: 'FETCHED-PAGES-BASIC',
+            type: 'FETCHED-PAGES-MANAGEMENTS',
             response: response,
         };
     }

@@ -112,6 +112,7 @@ class Store extends Vanilla_Redux_Store {
                 ter: { campus: null },
                 er:  { schema: null },
             },
+            modeler: null,
             //
             er:        this.initEr(),
             ter:       this.initTer(),

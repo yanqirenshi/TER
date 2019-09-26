@@ -85,6 +85,7 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'FETCHED-ENVIRONMENTS',
             mode: mode,
             data: {
+                modeler: response.modeler,
                 systems: this.list2Pool(response.systems),
                 active: state,
             }

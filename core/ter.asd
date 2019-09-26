@@ -50,11 +50,6 @@ This file is a part of ter project.
                                (:file "modeler")))
                  (:file "config")
                  (:file "point")
-                 (:module "modeler"
-                  :components ((:file "ghost-shadow")
-                               (:file "ghost-shadow-to-modeler")
-                               (:file "modeler")))
-                 (:file "modeler_system")
                  ;; base
                  (:module "base" :components ((:file "schema")
                                               (:file "drawing")
@@ -62,8 +57,13 @@ This file is a part of ter project.
                                               (:file "campus")
                                               (:file "common")
                                               (:file "system")
-                                              (:file "system_schema")
-                                              (:file "system_campus")
+                                              (:file "ghost-shadow")
+                                              (:file "modeler")
+                                              (:file "ghost-shadow_modeler")
+                                              (:file "modeler2system_grant")
+                                              (:file "modeler2system_select")
+                                              (:file "system2schema")
+                                              (:file "system2campus")
                                               (:file "relationship2camera")
                                               (:file "base")))
                  ;; er

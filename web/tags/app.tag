@@ -100,6 +100,6 @@
      });
 
      if (location.hash=='')
-         location.hash='#base'
+         location.hash='#' + STORE.get('site.home_page');
     </script>
 </app>

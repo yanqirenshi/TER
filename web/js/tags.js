@@ -88,10 +88,30 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
      });
 
      if (location.hash=='')
-         location.hash='#base'
+         location.hash='#' + STORE.get('site.home_page');
 });
 
-riot.tag2('page-base', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj._id)}"> {obj._id} </a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 55px; }', '', function(opts) {
+riot.tag2('page-base', '<div style="padding-top: 22px;"> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> </div> <div class="tabs"> <page-base_tabs-systems class="hide"></page-base_tabs-systems> <page-base_tabs-modelers class="hide"></page-base_tabs-modelers> </div>', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 111px; } page-base page-tabs li:first-child { margin-left: 88px; }', '', function(opts) {
+     this.page_tabs = new PageTabs([
+         { code: 'systems',  label: 'Systems',  tag: 'page-base_tabs-systems' },
+         { code: 'modelers', label: 'Modelers', tag: 'page-base_tabs-modelers' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+});
+
+riot.tag2('page-base_tabs-modelers', '<section class="section"> <div class="container"> <h1 class="title">Modelers</h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', 'page-base_tabs-modelers { display: block; width: 100%; }', '', function(opts) {
+});
+
+riot.tag2('page-base_tabs-systems', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj._id)}"> {obj._id} </a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-base_tabs-systems { display: block; width: 100%; }', '', function(opts) {
      this.idLink = (v) => {
          return location.hash + '/systems/' + v;
      };
@@ -198,7 +218,7 @@ riot.tag2('menu-bar-popup', '<div class="flex-root"> <div> <h1 class="title is-4
      };
 });
 
-riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <menu-bar-popup source="{opts.systems}" callback="{childrenCallback()}"></menu-bar-popup> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 55px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 55px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(44, 169, 225, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 33px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: rgba(44, 169, 225, 0.8); width: 45px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 45px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #ffffff; color: #333333; }', '', function(opts) {
+riot.tag2('menu-bar', '<aside class="menu"> <p ref="brand" class="menu-label" onclick="{clickBrand}"> {opts.brand.label} </p> <ul class="menu-list"> <li each="{opts.site.pages}"> <a class="{opts.site.active_page==code ? \'is-active\' : \'\'}" href="{\'#\' + code}"> {menu_label} </a> </li> </ul> </aside> <div class="move-page-menu {movePanelHide()}" ref="move-panel"> <menu-bar-popup source="{opts.systems}" callback="{childrenCallback()}"></menu-bar-popup> </div>', 'menu-bar .move-page-menu { z-index: 666665; background: rgba(255,255,255,1); position: fixed; left: 111px; top: 0px; min-width: 111px; height: 100vh; box-shadow: 2px 0px 8px 0px #e0e0e0; } menu-bar .move-page-menu.hide { display: none; } menu-bar .move-page-menu > p { margin-bottom: 11px; } menu-bar > .menu { z-index: 666666; height: 100vh; width: 111px; padding: 11px 0px 11px 11px; position: fixed; left: 0px; top: 0px; background: rgba(29, 12, 55, 0.8); } menu-bar .menu-label, menu-bar .menu-list a { padding: 0; width: 88px; height: 33px; text-align: center; margin-top: 8px; border-radius: 3px; background: none; color: #ffffff; font-size: 12px; font-weight: bold; padding-top: 7px; } menu-bar .menu-label,[data-is="menu-bar"] .menu-label{ background: rgba(255,255,255,1); color: #CF2317; } menu-bar .menu-label.open,[data-is="menu-bar"] .menu-label.open{ background: rgba(255,255,255,1); color: #CF2317; width: 45px; border-radius: 3px 0px 0px 3px; text-shadow: 0px 0px 1px #eee; padding-right: 11px; } menu-bar .menu-list a.is-active { width: 100px; padding-right: 11px; border-radius: 3px 0px 0px 3px; background: #CF2317; color: #fff; }', '', function(opts) {
      this.brandStatus = (status) => {
          let brand = this.refs['brand'];
          let classes = brand.getAttribute('class').trim().split(' ');
@@ -1139,6 +1159,9 @@ riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="m
 });
 
 riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity>', '', '', function(opts) {
+});
+
+riot.tag2('page-modelers', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', 'page-modelers { display: block; width: 100vw; }', '', function(opts) {
 });
 
 riot.tag2('page-base-camera-list', '<section class="section"> <div class="container"> <h1 class="title is-4">Camera</h1> <h2 class="subtitle"></h2> <div if="{opts.source.length==0}"> <p>Camera は持っていません。</p> </div> <div if="{opts.source.length!=0}"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3" colspan="2">Owner</th> <th colspan="8">Camera</th> </tr> <tr> <th rowspan="2">id</th> <th rowspan="2">code</th> <th rowspan="2">name</th> <th colspan="3">Look at</th> <th rowspan="2">magification</th> <th rowspan="2">description</th> </tr> <tr> <th>x</th> <th>y</th> <th>z</th> </tr> </thead> <tbody> <tr each="{obj in opts.source}"> <td>{obj.owner._id}</td> <td>{obj.owner.name}</td> <td>{obj.camera._id}</td> <td>{obj.camera.code}</td> <td>{obj.camera.name}</td> <td>{obj.camera.look_at.x}</td> <td>{obj.camera.look_at.y}</td> <td>{obj.camera.look_at.z}</td> <td>{obj.camera.magnification}</td> <td>{obj.camera.description}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {

@@ -59,7 +59,7 @@
          z-index: 666665;
          background: rgba(255,255,255,1);
          position: fixed;
-         left: 55px;
+         left: 111px;
          top: 0px;
          min-width: 111px;
          height: 100vh;
@@ -74,17 +74,17 @@
      menu-bar > .menu {
          z-index: 666666;
          height: 100vh;
-         width: 55px;
+         width: 111px;
          padding: 11px 0px 11px 11px;
          position: fixed;
          left: 0px;
          top: 0px;
-         background: rgba(44, 169, 225, 0.8);
+         background: rgba(29, 12, 55, 0.8);
      }
 
      menu-bar .menu-label, menu-bar .menu-list a {
          padding: 0;
-         width: 33px;
+         width: 88px;
          height: 33px;
          text-align: center;
          margin-top: 8px;
@@ -100,22 +100,22 @@
      }
      .menu-label {
          background: rgba(255,255,255,1);
-         color: rgba(44, 169, 225, 0.8);
+         color: #CF2317;
      }
      .menu-label.open {
          background: rgba(255,255,255,1);
-         color: rgba(44, 169, 225, 0.8);
+         color: #CF2317;
          width: 45px;
          border-radius: 3px 0px 0px 3px;
          text-shadow: 0px 0px 1px #eee;
          padding-right: 11px;
      }
      menu-bar .menu-list a.is-active {
-         width: 45px;
+         width: 100px;
          padding-right: 11px;
          border-radius: 3px 0px 0px 3px;
-         background: #ffffff;
-         color: #333333;
+         background: #CF2317;
+         color: #fff;
      }
     </style>
 

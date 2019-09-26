@@ -4,9 +4,28 @@ class Store extends Vanilla_Redux_Store {
     }
     siteBase () {
         return {
-            menu_label: '基',
-            code: "base",
+            menu_label: '管理',
+            code: "managements",
             tag: 'page-base',
+            children: [
+                {
+                    code: "systems",
+                    children: [
+                        {
+                            code: "base",
+                            tag: 'page-system',
+                            regex: new RegExp('^\\d+$'),
+                        }
+                    ],
+                }
+            ],
+        };
+    }
+    siteModelers () {
+        return {
+            menu_label: '造形師',
+            code: "modelers",
+            tag: 'page-modelers',
             children: [
                 {
                     code: "systems",
@@ -23,26 +42,27 @@ class Store extends Vanilla_Redux_Store {
     }
     siteTER () {
         return {
-            menu_label: 'TER',
+            menu_label: 'T字形ER図',
             code: "ter",
             tag: 'page-ter',
         };
     }
     siteER () {
         return {
-            menu_label: 'ER',
+            menu_label: 'ER図',
             code: "er",
             tag: 'page-er',
         };
     }
     site () {
         return {
-            active_page: 'base',
-            home_page: 'base',
+            active_page: 'ter',
+            home_page: 'ter',
             pages: [
-                this.siteBase(),
                 this.siteTER(),
                 this.siteER(),
+                this.siteModelers(),
+                this.siteBase(),
             ]
         };
     }

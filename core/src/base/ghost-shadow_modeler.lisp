@@ -16,10 +16,12 @@
                         :vertex-class 'ghost-shadow
                         :edge-type :have-to))))
 
+
 (defun get-edge-ghost-shadow2modeler (graph ghost-shadow modeler)
   (let ((edge (find-edge-ghost-shadow2modeler graph :ghost-shadow ghost-shadow :modeler modeler)))
     (when edge
       (getf (car edge) :edge))))
+
 
 (defun tx-make-edge-ghost-shadow2modeler (graph ghost-shadow modeler)
   (when (get-edge-ghost-shadow2modeler graph ghost-shadow modeler)

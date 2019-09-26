@@ -1,18 +1,22 @@
 (in-package :ter.api.controller)
 
+(defun environments-systems (graph modeler)
+  (mapcar #'(lambda (d)
+              (system2system graph d))
+          (ter::find-systems graph :modeler modeler)))
+
 (defun environments (graph modeler)
-  (let* ((systems (ter::find-systems graph)))
-    (list :|systems| (mapcar #'(lambda (d)
-                                 (system2system graph d))
-                             systems)
-          :|modeler| (modeler2modeler modeler)
-          :|active| (list :|system| (ter::config :active :system)
-                          :|ter|    (list :|campus| :null)
-                          :|er|     (list :|schema| :null)))))
+  (list :|systems| (environments-systems graph modeler)
+        :|modeler| (modeler2modeler modeler)
+        :|active| (list :|system| (ter::config :active :system)
+                        :|ter|    (list :|campus| :null)
+                        :|er|     (list :|schema| :null))))
+
 
 (defun set-active-schema (schema)
   (setf (ter::config :er :schema :active) (ter::code schema))
   (environments))
+
 
 (defun set-active-system (system)
   (setf (ter::config :active :system) (up:%id system))

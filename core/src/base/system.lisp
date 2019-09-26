@@ -1,7 +1,9 @@
 (in-package :ter)
 
-(defun find-systems (graph)
-  (shinra:find-vertex graph 'system))
+(defun find-systems (graph &key modeler)
+  (if modeler
+      (mapcar #'(lambda (r) (getf r :vertex)) (ter::find-r-modeler2system-grant graph modeler))
+      (shinra:find-vertex graph 'system)))
 
 (defun get-system (graph &key code %id)
   (let ((class-symbol 'system))

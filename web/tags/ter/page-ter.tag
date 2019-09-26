@@ -42,7 +42,7 @@
              this.painter.movePort(edge._from._entity, action.target);
          }
 
-         if (action.type=='FETCHED-ENVIRONMENT') {
+         if (action.type=='FETCHED-ENVIRONMENTS') {
              this.startFirstLoadData();
              return;
          }

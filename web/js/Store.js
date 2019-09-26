@@ -73,24 +73,26 @@ class Store extends Vanilla_Redux_Store {
             column_instances: {ht: {}, list: []},
             ports:            {ht: {}, list: []},
             relashonships:    {ht: {}, list: []},
-            cameras:          { ht: {}, list: [] }, // TODO: これは不要な気がするな。
             system:           null,
-            schema:           null, // TODO: これは不要な気がするな。
             schemas:          { ht: {}, list: [] },
+            //
+            schema:           null, // TODO: これは不要な気がするな。
+            cameras:          { ht: {}, list: [] }, // TODO: これは不要な気がするな。
         };
     }
     initTer () {
         return {
-            camera:               null, // TODO: これは不要な気がするな。
-            cameras:              { ht: {}, list: [] }, // TODO: これは不要な気がするな。
             entities:             { ht: {}, list: [] },
             identifier_instances: { ht: {}, list: [] },
             attribute_instances:  { ht: {}, list: [] },
             relationships:        { ht: {}, list: [], indexes: { from: {}, to: {} } },
             ports:                { ht: {}, list: [] },
             system:               null,
-            campus:               null, // TODO: これは不要な気がするな。
             campuses:             { ht: {}, list: [] },
+            //
+            camera:               null, // TODO: これは不要な気がするな。
+            cameras:              { ht: {}, list: [] }, // TODO: これは不要な気がするな。
+            campus:               null, // TODO: これは不要な気がするな。
         };
     }
     initHomeGraph () {
@@ -103,10 +105,13 @@ class Store extends Vanilla_Redux_Store {
     init () {
         let data = {
             site:      this.site(),
-            //
+            // environments
             systems:   { ht: {}, list: [] },
-            campuses:  { ht: {}, list: [] },
-            schemas:   { ht: {}, list: [] },
+            active: {
+                system: null,
+                ter: { campus: null },
+                er:  { schema: null },
+            },
             //
             er:        this.initEr(),
             ter:       this.initTer(),
@@ -123,11 +128,6 @@ class Store extends Vanilla_Redux_Store {
             modals: {
                 'create-system': null,
                 'create-entity': null,
-            },
-            active: {
-                system: null,
-                ter: { campus: null },
-                er:  { schema: null },
             },
         };
 

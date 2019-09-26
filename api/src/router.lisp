@@ -37,12 +37,12 @@
 ;;;
 ;;; Environment
 ;;;
-(defroute "/environment" ()
+(defroute "/environments" ()
   (with-graph-modeler (graph modeler)
     (render-json (ter.api.controller::environments))))
 
 
-(defroute ("/environment/er/schema/active" :method :POST) (&key |schema_code|)
+(defroute ("/environments/er/schema/active" :method :POST) (&key |schema_code|)
   (with-graph-modeler (graph modeler)
     (let* ((schema-code |schema_code|)
            (schema (ter:get-schema graph :code schema-code)))

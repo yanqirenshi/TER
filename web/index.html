@@ -64,9 +64,9 @@
         <app></app>
 
         <script>
-         ACTIONS.fetchEnvironment('FIRST');
+         ACTIONS.fetchEnvironments('FIRST');
          STORE.subscribe((action) => {
-             if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST') {
+             if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST') {
                  riot.mount('app');
                  Metronome.start();
              }

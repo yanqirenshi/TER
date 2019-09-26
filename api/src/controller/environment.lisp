@@ -6,14 +6,6 @@
     (list :|systems| (mapcar #'(lambda (d)
                                  (system2system graph d))
                              systems)
-          :|campuses| (reduce #'(lambda (a system)
-                                  (nconc a
-                                         (ter:find-campus graph :system system)))
-                              systems :initial-value nil)
-          :|schemas| (reduce #'(lambda (a system)
-                                  (nconc a
-                                         (ter:find-schema graph :system system)))
-                              systems :initial-value nil)
           :|active| (list :|system| (ter::config :active :system)
                           :|ter|    (list :|campus| :null)
                           :|er|     (list :|schema| :null)))))

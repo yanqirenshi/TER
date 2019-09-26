@@ -28,12 +28,12 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  Fetch Environment
      * **************************************************************** */
-    fetchEnvironment (mode) {
-        API.get('/environment', function (response) {
-            STORE.dispatch(this.fetchedEnvironment(mode, response));
+    fetchEnvironments (mode) {
+        API.get('/environments', function (response) {
+            STORE.dispatch(this.fetchedEnvironments(mode, response));
         }.bind(this));
     }
-    fetchedEnvironment (mode, response) {
+    fetchedEnvironments (mode, response) {
         let state = STORE.get('active');
 
         let getActiveSystem = () => {
@@ -82,13 +82,10 @@ class Actions extends Vanilla_Redux_Actions {
         }
 
         return {
-            type: 'FETCHED-ENVIRONMENT',
+            type: 'FETCHED-ENVIRONMENTS',
             mode: mode,
             data: {
                 systems: this.list2Pool(response.systems),
-                campuses: this.list2Pool(response.campuses),
-                schemas: this.list2Pool(response.schemas),
-                camera: response.CAMERA,
                 active: state,
             }
         };

@@ -73,7 +73,7 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
              this.tags['app-page-area'].update({ opts: { route: action.route }});
          }
 
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
+         if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST')
              this.tags['menu-bar'].update();
 
          if (action.type=='CLOSE-ALL-SUB-PANELS' ||
@@ -1244,7 +1244,7 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
              this.painter.movePort(edge._from._entity, action.target);
          }
 
-         if (action.type=='FETCHED-ENVIRONMENT') {
+         if (action.type=='FETCHED-ENVIRONMENTS') {
              this.startFirstLoadData();
              return;
          }

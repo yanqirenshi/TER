@@ -85,7 +85,7 @@
              this.tags['app-page-area'].update({ opts: { route: action.route }});
          }
 
-         if (action.type=='FETCHED-ENVIRONMENT' && action.mode=='FIRST')
+         if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST')
              this.tags['menu-bar'].update();
 
          if (action.type=='CLOSE-ALL-SUB-PANELS' ||

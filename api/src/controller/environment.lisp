@@ -1,11 +1,12 @@
 (in-package :ter.api.controller)
 
-(defun environments ()
+(defun environments (graph modeler)
   (let* ((graph ter.db:*graph*)
          (systems (ter::find-systems graph)))
     (list :|systems| (mapcar #'(lambda (d)
                                  (system2system graph d))
                              systems)
+          :|modeler| (modeler2modeler modeler)
           :|active| (list :|system| (ter::config :active :system)
                           :|ter|    (list :|campus| :null)
                           :|er|     (list :|schema| :null)))))

@@ -44,7 +44,23 @@
 
 
 (defun tx-grant-modeler2system-create (graph modeler system authority)
-  (shinra:tx-make-edge graph 'edge modeler system :authority authority))
+  (shinra:tx-make-edge graph 'edge-grant modeler system :grant-to `((authority ,authority))))
+
+
+(defun get-r-system-owner (graph system)
+  (find-if #'(lambda (r)
+                 (let ((edge (getf r :edge)))
+                   (eq :owner (authority edge))))
+             (shinra:find-r graph 'edge-grant :to system)))
+
+
+(defun tx-grant-modeler2system-core (graph modeler system authority)
+  (let ((r (get-r-system-owner graph system)))
+    (if (null r)
+        (tx-grant-modeler2system-create graph modeler system authority)
+        (if (eq (up:%id modeler) (up:%id (getf r :vertex)))
+            (getf r :edge)
+            (error "すでにそんざいします。")))))
 
 
 (defgeneric tx-grant-modeler2system (graph modeler system authority &key owner)
@@ -52,7 +68,4 @@
     (assert owner)
     (assert (owner-system-p graph owner system))
     (assert (grant-authority-p authority))
-    (let ((edge (get-edge-modeler2system-grant graph modeler :system system)))
-      (if edge
-          (tx-grant-modeler2system-update graph edge           authority)
-          (tx-grant-modeler2system-create graph modeler system authority)))))
+    (tx-grant-modeler2system-core graph modeler system authority)))

@@ -13,6 +13,7 @@
         (schema (tx-make-schema graph code :name name :description description))
         (camera-campus (tx-make-camera graph (make-camera-code code "campus")))
         (camera-schema (tx-make-camera graph (make-camera-code code "schema"))))
+    (tx-grant-modeler2system-core graph modeler system :owner)
     (tx-make-edge-system2campus graph system campus)
     (tx-make-edge-system2schema graph system schema)
     (tx-add-camera graph modeler camera-campus)

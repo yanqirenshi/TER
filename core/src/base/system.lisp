@@ -1,8 +1,14 @@
 (in-package :ter)
 
+(defun eq-%id (a b)
+  (format t "~S~%" (list a b))
+  (eq (up:%id a) (up:%id b)))
+
 (defun find-systems (graph &key modeler)
   (if modeler
-      (mapcar #'(lambda (r) (getf r :vertex)) (ter::find-r-modeler2system-grant graph modeler))
+      (mapcar #'(lambda (r)
+                  (getf r :vertex))
+              (ter::find-r-modeler2system-grant graph modeler))
       (shinra:find-vertex graph 'system)))
 
 (defun get-system (graph &key code %id)

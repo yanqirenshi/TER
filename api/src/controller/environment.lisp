@@ -13,14 +13,14 @@
                         :|er|     (list :|schema| :null))))
 
 
-(defun set-active-schema (schema)
+(defun set-active-schema (graph modeler schema)
   (setf (ter::config :er :schema :active) (ter::code schema))
-  (environments))
+  (environments graph modeler))
 
 
-(defun set-active-system (system)
+(defun set-active-system (graph modeler system)
   (setf (ter::config :active :system) (up:%id system))
-  (environments))
+  (environments graph modeler))
 
 
 (defun save-ter-camera-look-at (campus modeler code x y &key (graph ter.db:*graph*))

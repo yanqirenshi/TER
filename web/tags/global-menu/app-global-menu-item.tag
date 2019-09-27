@@ -42,7 +42,7 @@
          width: 100%;
      }
      app-global-menu-item > div a {
-         color: #CF2317;
+         color: #ffffff;
      }
      app-global-menu-item > div a:hover {
          color: #CF2317;

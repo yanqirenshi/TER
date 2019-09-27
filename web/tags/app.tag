@@ -3,13 +3,8 @@
                  href="https://github.com/yanqirenshi/TER"></github-link>
 
 
-    <!-- <menu-bar brand={brand()}
-         site={site()}
-         systems={systems()}
-         data={menuBarData()}
-         callback={callback}></menu-bar> -->
-
-    <app-global-menu source={site()}></app-global-menu>
+    <app-global-menu brand={brand()}
+                     source={site()}></app-global-menu>
 
     <app-page-area></app-page-area>
 
@@ -80,10 +75,16 @@
      };
 
      STORE.subscribe((action) => {
+         if (action.type=='CHANGE-SYSTEM') {
+             this.update();
+             return;
+         }
+
          if (action.type=='MOVE-PAGE') {
              this.updateMenuBar();
 
              this.tags['app-page-area'].update({ opts: { route: action.route }});
+             return;
          }
 
          if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST') {

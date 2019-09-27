@@ -1,8 +1,14 @@
 <app-global-menu-brand>
 
-    <div>
-        TER
+    <div onclick={clickBrand}>
+        {opts.source ? opts.source.label : 'TER'}
     </div>
+
+    <script>
+     this.clickBrand = () => {
+         ACTIONS.openModalChooseSystem();
+     };
+    </script>
 
     <style>
      app-global-menu-brand {

@@ -726,6 +726,27 @@ class Actions extends Vanilla_Redux_Actions {
             data: { modals: state },
         });
     }
+    openModalChooseSystem () {
+        let state = STORE.get('modals');
+
+        state['choose-system'] = {};
+
+        STORE.dispatch({
+            type: 'OPEN-MODAL-CHOOSE-SYSTEM',
+            data: { modals: state },
+        });
+    }
+    closeModalChooseSystem () {
+
+        let state = STORE.get('modals');
+
+        state['choose-system'] = null;
+
+        STORE.dispatch({
+            type: 'CLOSE-MODAL-CHOOSE-SYSTEM',
+            data: { modals: state },
+        });
+    }
     /* **************************************************************** *
      *  System
      * **************************************************************** */

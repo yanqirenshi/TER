@@ -133,6 +133,13 @@ class Store extends Vanilla_Redux_Store {
             cameras: []
         };
     }
+    initModals () {
+        return {
+            'create-system': null,
+            'choose-system': null,
+            'create-entity': null,
+        };
+    }
     init () {
         let data = {
             site:      this.site(),
@@ -157,10 +164,7 @@ class Store extends Vanilla_Redux_Store {
                     }
                 }
             },
-            modals: {
-                'create-system': null,
-                'create-entity': null,
-            },
+            modals: this.initModals(),
         };
 
         for (var i in data.site.pages) {

@@ -47,7 +47,7 @@
     (let* ((schema-code |schema_code|)
            (schema (ter:get-schema graph :code schema-code)))
       (unless schema (throw-code 404))
-      (render-json (ter.api.controller::set-active-schema schema)))))
+      (render-json (ter.api.controller::set-active-schema graph modeler schema)))))
 
 
 (defun str2keyword (str)
@@ -277,7 +277,7 @@
     (let* ((id (parse-integer id))
            (system (ter::get-system graph :%id id)))
       (unless system (throw-code 404))
-      (render-json (ter.api.controller:set-active-system system)))))
+      (render-json (ter.api.controller:set-active-system graph modeler system)))))
 
 ;;;
 ;;; edges

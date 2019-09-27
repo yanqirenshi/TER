@@ -14,7 +14,7 @@ riot.tag2('app-page-area', '', '', '', function(opts) {
      });
 });
 
-riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <app-global-menu source="{site()}"></app-global-menu> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <app-global-menu brand="{brand()}" source="{site()}"></app-global-menu> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = STORE.get('active.system');
 
@@ -69,10 +69,16 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
      };
 
      STORE.subscribe((action) => {
+         if (action.type=='CHANGE-SYSTEM') {
+             this.update();
+             return;
+         }
+
          if (action.type=='MOVE-PAGE') {
              this.updateMenuBar();
 
              this.tags['app-page-area'].update({ opts: { route: action.route }});
+             return;
          }
 
          if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST') {
@@ -1035,10 +1041,13 @@ riot.tag2('page-er_tab-tables', '<section class="section"> <div class="container
      };
 });
 
-riot.tag2('app-global-menu-brand', '<div> TER </div>', 'app-global-menu-brand { display: flex; justify-content: center; align-items: center; width: 111px; height: 111px; font-weight: bold; } app-global-menu-brand > div { width: 66px; height: 66px; color: #fff; background: #CF2317; border-radius: 5px; display: flex; justify-content: center; align-items: center; }', '', function(opts) {
+riot.tag2('app-global-menu-brand', '<div onclick="{clickBrand}"> {opts.source ? opts.source.label : \'TER\'} </div>', 'app-global-menu-brand { display: flex; justify-content: center; align-items: center; width: 111px; height: 111px; font-weight: bold; } app-global-menu-brand > div { width: 66px; height: 66px; color: #fff; background: #CF2317; border-radius: 5px; display: flex; justify-content: center; align-items: center; }', '', function(opts) {
+     this.clickBrand = () => {
+         ACTIONS.openModalChooseSystem();
+     };
 });
 
-riot.tag2('app-global-menu-item', '<div class="{isSelected()}"> <a href="{\'#\' + opts.source.code}"> {opts.source.label} </a> </div>', 'app-global-menu-item { display: flex; justify-content: center; width: 100%; font-weight: bold; } app-global-menu-item > div { height: 33px; width: 88px; font-size: 12px; display: flex; align-items: center; justify-content: center; } app-global-menu-item > div.selected { background: #ffffff; height: 33px; width: 88px; width: 100%; } app-global-menu-item > div a { color: #CF2317; } app-global-menu-item > div a:hover { color: #CF2317; } app-global-menu-item > div.selected a { color: #CF2317; }', '', function(opts) {
+riot.tag2('app-global-menu-item', '<div class="{isSelected()}"> <a href="{\'#\' + opts.source.code}"> {opts.source.label} </a> </div>', 'app-global-menu-item { display: flex; justify-content: center; width: 100%; font-weight: bold; } app-global-menu-item > div { height: 33px; width: 88px; font-size: 12px; display: flex; align-items: center; justify-content: center; } app-global-menu-item > div.selected { background: #ffffff; height: 33px; width: 88px; width: 100%; } app-global-menu-item > div a { color: #ffffff; } app-global-menu-item > div a:hover { color: #CF2317; } app-global-menu-item > div.selected a { color: #CF2317; }', '', function(opts) {
      this.isSelected = () => {
          if (this.opts.active_page_code == this.opts.source.code)
              return 'selected';
@@ -1050,7 +1059,7 @@ riot.tag2('app-global-menu-item', '<div class="{isSelected()}"> <a href="{\'#\' 
 riot.tag2('app-global-menu-separator', '<div></div>', 'app-global-menu-separator { padding-left: 8px; padding-right: 8px; padding-bottom: 22px; padding-top: 22px; } app-global-menu-separator > div { border: 0.33px solid #fff; }', '', function(opts) {
 });
 
-riot.tag2('app-global-menu', '<div> <div class="brand"> <app-global-menu-brand></app-global-menu-brand> </div> <div class="graphs"> <app-global-menu-item each="{obj in menus.graphs}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> <app-global-menu-separator></app-global-menu-separator> <div class="finder"> <app-global-menu-item each="{obj in menus.finder}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> <app-global-menu-separator></app-global-menu-separator> <div class="account" style="padding-bottom: 22px;"> <app-global-menu-item each="{obj in menus.account}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> </div>', 'app-global-menu > div { z-index: 666666; display: flex; flex-direction: column; height: 100vh; width: 111px; padding: 0px 0px 0px 0px; position: fixed; left: 0px; top: 0px; text-align: center; background: rgba(29, 12, 55, 0.9); } app-global-menu > div > .finder { flex-grow: 1; }', '', function(opts) {
+riot.tag2('app-global-menu', '<div> <div class="brand"> <app-global-menu-brand source="{opts.brand}"></app-global-menu-brand> </div> <div class="graphs"> <app-global-menu-item each="{obj in menus.graphs}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> <app-global-menu-separator></app-global-menu-separator> <div class="finder"> <app-global-menu-item each="{obj in menus.finder}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> <app-global-menu-separator></app-global-menu-separator> <div class="account" style="padding-bottom: 22px;"> <app-global-menu-item each="{obj in menus.account}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> </div>', 'app-global-menu > div { z-index: 666666; display: flex; flex-direction: column; height: 100vh; width: 111px; padding: 0px 0px 0px 0px; position: fixed; left: 0px; top: 0px; text-align: center; background: rgba(29, 12, 55, 0.9); } app-global-menu > div > .finder { flex-grow: 1; }', '', function(opts) {
      this.activePageCode = () => {
          return this.opts.source.active_page;
      }
@@ -1116,6 +1125,83 @@ riot.tag2('page-managements_tabs-systems', '<section class="section"> <div class
      this.list = () => {
          return this.opts.source.systems || [];
      };
+});
+
+riot.tag2('modal-choose-system-list', '<button class="button" each="{obj in opts.source}" system-id="{obj._id}" onclick="{clickItem}"> {obj.code} : {obj.name} </button>', 'modal-choose-system-list { display: block; } modal-choose-system-list > .button { float: left; margin-left: 11px; margin-bottom: 11px; }', '', function(opts) {
+     this.clickItem = (e) => {
+         let id = e.target.getAttribute('system-id')  * 1;
+
+         this.opts.callback('select-item', id)
+     };
+});
+
+riot.tag2('modal-choose-system-selected', '<p>{systemName()}</p>', 'modal-choose-system-selected { display: block; padding: 22px; background: #eeeeee; margin-bottom: 22px; border-radius: 5px; }', '', function(opts) {
+     this.systemName = () => {
+         let system = opts.source;
+
+         if (!system)
+             'Please select System....';
+
+         return system.code + " : " + system.name;
+     };
+});
+
+riot.tag2('modal-choose-system', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Choose System</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <modal-choose-system-selected source="{selectedSystem()}"></modal-choose-system-selected> <h1 class="title is-4">System List</h1> <modal-choose-system-list source="{list()}" callback="{callback}"></modal-choose-system-list> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" onclick="{clickCreate}">Select</button> </footer> </div> </div>', 'modal-choose-system .modal-card-foot { display: flex; justify-content: space-between; } modal-choose-system .modal-card-body .input, modal-choose-system .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
+     this.selected_system = null;
+     this.callback = (action, data) => {
+         if (action=='select-item') {
+             let id = data;
+             this.selected_system = STORE.get('systems.ht')[id];
+             this.update();
+
+             return;
+         }
+     };
+
+     this.list = () => {
+         return STORE.get('systems.list') || [];
+     }
+     this.selectedSystem = () => {
+         if (this.selected_system)
+             return this.selected_system;
+
+         let id = STORE.get('active.system')._id;
+
+         let system = STORE.get('systems.list').find((d)=>{
+             return d._id == id;
+         })
+
+         if (!system)
+             'Please select System....';
+
+         return system;
+     };
+
+     this.clickClose = () => {
+         ACTIONS.closeModalChooseSystem();
+     };
+     this.clickCreate = () => {
+         let system = this.selectedSystem();
+
+         ACTIONS.changeSystem(system);
+     };
+     this.isActive = () => {
+         return STORE.get('modals.choose-system') ? 'is-active' : '';
+     };
+     STORE.subscribe((action) =>{
+         if (action.type=='OPEN-MODAL-CHOOSE-SYSTEM') {
+             this.update();
+             return;
+         }
+         if (action.type=='CLOSE-MODAL-CHOOSE-SYSTEM') {
+             this.update();
+             return;
+         }
+         if (action.type=='CHANGE-SYSTEM') {
+             this.clickClose();
+             return;
+         }
+     });
 });
 
 riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create Entity</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div class="select"> <select ref="entity_type" onchange="{keyUp}"> <option value="">Entity の種類を選択してください。</option> <option value="rs">Resource</option> <option value="ev">Event</option> </select> </div> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-entity .modal-card-foot { display: flex; justify-content: space-between; } modal-create-entity .modal-card-body .input, modal-create-entity .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
@@ -1206,7 +1292,7 @@ riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="m
      });
 });
 
-riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity>', '', '', function(opts) {
+riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity> <modal-choose-system></modal-choose-system>', '', '', function(opts) {
 });
 
 riot.tag2('page-modelers', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', 'page-modelers { display: block; width: 100vw; }', '', function(opts) {

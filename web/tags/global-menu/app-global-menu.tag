@@ -2,7 +2,7 @@
 
     <div>
         <div class="brand">
-            <app-global-menu-brand></app-global-menu-brand>
+            <app-global-menu-brand source={opts.brand}></app-global-menu-brand>
         </div>
 
         <div class="graphs">

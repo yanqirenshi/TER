@@ -2,7 +2,7 @@ class Store extends Vanilla_Redux_Store {
     constructor(reducer) {
         super(reducer, Immutable.Map({}));
     }
-    siteBase () {
+    siteManagements () {
         return {
             menu_label: '管理',
             code: "managements",
@@ -28,14 +28,28 @@ class Store extends Vanilla_Redux_Store {
             tag: 'page-modelers',
             children: [
                 {
-                    code: "systems",
+                    code: "modelers",
                     children: [
                         {
                             code: "base",
-                            tag: 'page-system',
+                            tag: 'page-modeler',
                             regex: new RegExp('^\\d+$'),
                         }
                     ],
+                }
+            ],
+        };
+    }
+    siteSystems () {
+        return {
+            menu_label: 'Systems',
+            code: "systems",
+            tag: 'page-systems',
+            children: [
+                {
+                    code: "system",
+                    tag: 'page-system',
+                    regex: new RegExp('^\\d+$'),
                 }
             ],
         };
@@ -61,8 +75,9 @@ class Store extends Vanilla_Redux_Store {
             pages: [
                 this.siteTER(),
                 this.siteER(),
+                this.siteSystems(),
                 this.siteModelers(),
-                this.siteBase(),
+                this.siteManagements(),
             ]
         };
     }

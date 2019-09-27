@@ -314,6 +314,10 @@
   (with-graph-modeler (graph modeler)
     (render-json (pages-basic graph modeler))))
 
+(defroute "/pages/systems" ()
+  (with-graph-modeler (graph modeler)
+    (render-json (pages-systems graph modeler))))
+
 (defroute "/pages/systems/:id" (&key id)
   (with-graph-modeler (graph modeler)
     (let ((system (ter::get-system graph :%id (parse-integer id))))

@@ -51,6 +51,12 @@
         :|schemas|  (ter::find-schema  graph)
         :|campuses| (ter::find-campus  graph)))
 
+(defun pages-systems (graph modeler)
+  (list :|all|     (ter::find-systems graph)
+        :|granted| (list :|owner| (environments-systems graph modeler)
+                         :|reader| nil
+                         :|editor| nil)))
+
 (defun pages-system (graph system modeler)
   (list :|system|   system
         :|schemas|  (mapcar #'(lambda (schema)

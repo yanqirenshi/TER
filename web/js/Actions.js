@@ -773,6 +773,19 @@ class Actions extends Vanilla_Redux_Actions {
             response: response,
         };
     }
+    fetchPagesSystems () {
+        let path = '/pages/systems';
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedPagesSystems(response));
+        }.bind(this));
+    }
+    fetchedPagesSystems (response) {
+        return {
+            type: 'FETCHED-PAGES-SYSTEMS',
+            response: response,
+        };
+    }
     fetchPagesSystem (id) {
         let path = '/pages/systems/' + id;
 
@@ -786,5 +799,4 @@ class Actions extends Vanilla_Redux_Actions {
             response: response,
         };
     }
-
 }

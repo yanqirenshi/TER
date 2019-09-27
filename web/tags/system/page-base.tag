@@ -60,6 +60,11 @@
     </script>
 
     <style>
+     page-system {
+         display: block;
+         width: 100%;
+         padding-left: 111px;
+     }
     </style>
 
 </page-system>

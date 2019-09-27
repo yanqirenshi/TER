@@ -34,5 +34,6 @@
   (:export #:create-system)
   (:export #:find-graph)
   (:export #:pages-basic
+           #:pages-systems
            #:pages-system))
 (in-package :ter.api.controller)

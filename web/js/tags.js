@@ -1173,7 +1173,7 @@ riot.tag2('page-base-campuses', '<section class="section"> <div class="container
 riot.tag2('page-base-schemas', '<section class="section"> <div class="container"> <h1 class="title">Schemas</h1> <h2 class="subtitle"></h2> <div each="{obj in opts.source}"> <div class="contetns" style="margin-left:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <tbody> <tr> <th>ID</th> <td>{obj._id}</td> </tr> <tr> <th>Code</th> <td>{obj.code}</td> </tr> <tr> <th>Name</th> <td>{obj.name}</td> </tr> <tr> <th>Description</th> <td>{obj.description}</td> </tr> </tbody> </table> </div> <page-base-camera-list source="{obj.cameras}"></page-base-camera-list> </div> </div> </section>', '', '', function(opts) {
 });
 
-riot.tag2('page-system', '<div class="page-root"> <div style="padding: 22px 33px;"> <section-breadcrumb></section-breadcrumb> </div> <section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contetns" style="margin-left:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <tbody> <tr> <th>ID</th> <td>{systemVal(\'id\')}</td> </tr> <tr> <th>Code</th> <td>{systemVal(\'code\')}</td> </tr> <tr> <th>Name</th> <td>{systemVal(\'name\')}</td> </tr> <tr> <th>Description</th> <td>{systemVal(\'description\')</td> </tr>                         </tbody>                     </table>                 </div>             </div>         </section>         <page-base-campuses source={this.source.campuses}></page-base-campuses>         <page-base-schemas source={this.source.schemas}></page-base-schemas>     </div>}', '', '', function(opts) {
+riot.tag2('page-system', '<div class="page-root"> <div style="padding: 22px 33px;"> <section-breadcrumb></section-breadcrumb> </div> <section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contetns" style="margin-left:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <tbody> <tr> <th>ID</th> <td>{systemVal(\'id\')}</td> </tr> <tr> <th>Code</th> <td>{systemVal(\'code\')}</td> </tr> <tr> <th>Name</th> <td>{systemVal(\'name\')}</td> </tr> <tr> <th>Description</th> <td>{systemVal(\'description\')</td> </tr>                         </tbody>                     </table>                 </div>             </div>         </section>         <page-base-campuses source={this.source.campuses}></page-base-campuses>         <page-base-schemas source={this.source.schemas}></page-base-schemas>     </div>}', 'page-system { display: block; width: 100%; padding-left: 111px; }', '', function(opts) {
      this.systemVal = (key) => {
          if (!this.source.system)
              return '';
@@ -1198,6 +1198,68 @@ riot.tag2('page-system', '<div class="page-root"> <div style="padding: 22px 33px
 
              return;
          }
+     });
+});
+
+riot.tag2('page-systems-granted', '<section class="section"> <div class="container"> <h1 class="title">利用中</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Campus Count</th> <th>Schema Count</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj)}">{obj._id}</a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td class="num">{obj.campuses.length}</td> <td class="num">{obj.schemas.length}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
+     this.idLink = (obj) => {
+         return location.hash + '/' + obj._id;
+     };
+     this.list = () => {
+         let source = this.opts.source.granted;
+
+         return [].concat(
+             source.owner,
+             source.editor,
+             source.reader,
+         );
+     };
+});
+
+riot.tag2('page-systems-ungranted', '<section class="section"> <div class="container"> <h1 class="title">未利用</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Campus Count</th> <th>Schema Count</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj)}">{obj._id}</a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td class="num">{obj.campuses.length}</td> <td class="num">{obj.schemas.length}</td> </tr> </tbody> </table> </div> </div> </section>', '', '', function(opts) {
+     this.idLink = (obj) => {
+         return location.hash + '/' + obj._id;
+     };
+     this.granted = () => {
+         let source = this.opts.source.granted;
+         let keys = ['owner', 'editor', 'reader'];
+
+         let out = {};
+         for (let key of keys)
+             for (let obj of source[key]) {
+                 out[obj._id] = obj;
+             }
+
+         return out;
+     };
+     this.list = () => {
+         let granted = this.granted();
+
+         let source = this.opts.source.all;
+         return source.filter((d) => {
+             return !granted[d._id];
+         });
+     };
+});
+
+riot.tag2('page-systems', '<page-systems-granted source="{this.source}"></page-systems-granted> <page-systems-ungranted source="{this.source}"></page-systems-ungranted>', 'page-systems { display: block; width: 100vw; }', '', function(opts) {
+     this.source = {
+         all: [],
+         granted: {
+             owner:  [],
+             reader: [],
+             editor: [],
+         }
+     };
+     STORE.subscribe((action) => {
+         if (action.type=='FETCHED-PAGES-SYSTEMS') {
+             this.source = action.response;
+             this.update();
+             return;
+         }
+     });
+     this.on('mount', () => {
+         ACTIONS.fetchPagesSystems();
      });
 });
 

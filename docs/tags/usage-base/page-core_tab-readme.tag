@@ -6,16 +6,22 @@
             <h2 class="subtitle"></h2>
 
             <div class="contents">
-                <p><pre>ghost-shadow                       +---1:n---> schema ---1:n---+
-     |                             |  (have)            (have) |
-    1:1      +---1:n---> system ---|                           +---> camera
-     |       |  (selected)         |                           |       ^
-     V       |                     `---1:n---> campus ---1:n---+       |
-  modeler ---+                        (have)            (have)         |
-             |                                                         |
-             |                                                         |
-             +---1:n---------------------------------------------------+
-                (selected)</pre></p>
+                <p><pre> ghost-shadow                                      +---1:n---> schema ---1:n---+
+      |                                            |  (have)    [er]    (have) |
+     1:1                     +---1:n---> system ---|                           +---1:1---> camera
+      |                      |  (selected)         |                           |             ^
+      V                      |                     `---1:n---> campus ---1:n---+             |
+   modeler ------------------+                        (have)    [ter]   (have)               |
+      ^                      |                                                               |
+      |                      |                                                               |
+      |                      +---1:n---------------------------------------------------------+
+      |                         (selected)
+      |
+      |
+      +---1:1----> Email ---1:1---> Email-key
+      |
+      |
+      +---1:n ---> Force</pre></p>
             </div>
         </div>
     </section>

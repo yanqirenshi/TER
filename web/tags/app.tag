@@ -3,11 +3,13 @@
                  href="https://github.com/yanqirenshi/TER"></github-link>
 
 
-    <menu-bar brand={brand()}
-              site={site()}
-              systems={systems()}
-              data={menuBarData()}
-              callback={callback}></menu-bar>
+    <!-- <menu-bar brand={brand()}
+         site={site()}
+         systems={systems()}
+         data={menuBarData()}
+         callback={callback}></menu-bar> -->
+
+    <app-global-menu source={site()}></app-global-menu>
 
     <app-page-area></app-page-area>
 
@@ -41,7 +43,7 @@
      this.changeSystem = (system) => {
          ACTIONS.changeSystem(system);
 
-         this.tags['menu-bar'].update();
+         this.updateMenuBar();
      };
 
      this.systems = () => {
@@ -64,7 +66,11 @@
 
          ACTIONS.movePage({ route: route });
      });
-
+     this.updateMenuBar = () => {
+         let menubar = this.tags['app-global-menu'];
+         if (menubar)
+             menubar.update();
+     };
      this.site = () => {
          return STORE.state().get('site');
      };
@@ -73,11 +79,6 @@
          return STORE.state().get('global').menu;
      };
 
-     this.updateMenuBar = () => {
-         if (this.tags['menu-bar'])
-             this.tags['menu-bar'].update();
-     }
-
      STORE.subscribe((action) => {
          if (action.type=='MOVE-PAGE') {
              this.updateMenuBar();
@@ -85,14 +86,18 @@
              this.tags['app-page-area'].update({ opts: { route: action.route }});
          }
 
-         if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST')
-             this.tags['menu-bar'].update();
+         if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST') {
+             this.updateMenuBar()
+             return;
+         }
 
          if (action.type=='CLOSE-ALL-SUB-PANELS' ||
              action.type=='TOGGLE-MOVE-PAGE-PANEL' ||
              action.type=='OPEN-GLOBAL-MENU-SYSTEM-PANEL' ||
-             action.type=='CLOSE-GLOBAL-MENU-SYSTEM-PANEL')
-             this.tags['menu-bar'].update();
+             action.type=='CLOSE-GLOBAL-MENU-SYSTEM-PANEL') {
+             this.updateMenuBar()
+             return;
+         }
      })
 
      window.addEventListener('resize', (event) => {

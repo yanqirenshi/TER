@@ -76,6 +76,13 @@ class Store extends Vanilla_Redux_Store {
             tag: 'page-er',
         };
     }
+    siteAccount () {
+        return {
+            menu_label: 'Account',
+            code: "account",
+            tag: 'page-account',
+        };
+    }
     site () {
         return {
             active_page: 'ter',
@@ -86,6 +93,7 @@ class Store extends Vanilla_Redux_Store {
                 this.siteSystems(),
                 this.siteModelers(),
                 this.siteManagements(),
+                this.siteAccount(),
             ]
         };
     }

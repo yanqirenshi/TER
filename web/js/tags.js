@@ -1,3 +1,6 @@
+riot.tag2('page-account', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', 'page-account { display: block; width: 100vw; }', '', function(opts) {
+});
+
 riot.tag2('app-page-area', '', '', '', function(opts) {
      this.draw = () => {
          if (this.opts.route)
@@ -11,7 +14,7 @@ riot.tag2('app-page-area', '', '', '', function(opts) {
      });
 });
 
-riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <menu-bar brand="{brand()}" site="{site()}" systems="{systems()}" data="{menuBarData()}" callback="{callback}"></menu-bar> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <app-global-menu source="{site()}"></app-global-menu> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = STORE.get('active.system');
 
@@ -29,7 +32,7 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
      this.changeSystem = (system) => {
          ACTIONS.changeSystem(system);
 
-         this.tags['menu-bar'].update();
+         this.updateMenuBar();
      };
 
      this.systems = () => {
@@ -52,7 +55,11 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
 
          ACTIONS.movePage({ route: route });
      });
-
+     this.updateMenuBar = () => {
+         let menubar = this.tags['app-global-menu'];
+         if (menubar)
+             menubar.update();
+     };
      this.site = () => {
          return STORE.state().get('site');
      };
@@ -61,11 +68,6 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
          return STORE.state().get('global').menu;
      };
 
-     this.updateMenuBar = () => {
-         if (this.tags['menu-bar'])
-             this.tags['menu-bar'].update();
-     }
-
      STORE.subscribe((action) => {
          if (action.type=='MOVE-PAGE') {
              this.updateMenuBar();
@@ -73,14 +75,18 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
              this.tags['app-page-area'].update({ opts: { route: action.route }});
          }
 
-         if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST')
-             this.tags['menu-bar'].update();
+         if (action.type=='FETCHED-ENVIRONMENTS' && action.mode=='FIRST') {
+             this.updateMenuBar()
+             return;
+         }
 
          if (action.type=='CLOSE-ALL-SUB-PANELS' ||
              action.type=='TOGGLE-MOVE-PAGE-PANEL' ||
              action.type=='OPEN-GLOBAL-MENU-SYSTEM-PANEL' ||
-             action.type=='CLOSE-GLOBAL-MENU-SYSTEM-PANEL')
-             this.tags['menu-bar'].update();
+             action.type=='CLOSE-GLOBAL-MENU-SYSTEM-PANEL') {
+             this.updateMenuBar()
+             return;
+         }
      })
 
      window.addEventListener('resize', (event) => {
@@ -1026,6 +1032,42 @@ riot.tag2('page-er_tab-tables', '<section class="section"> <div class="container
          let list = STORE.get('er.tables.list');
 
          return list || [];
+     };
+});
+
+riot.tag2('app-global-menu-brand', '<div> TER </div>', 'app-global-menu-brand { display: flex; justify-content: center; align-items: center; width: 111px; height: 111px; font-weight: bold; } app-global-menu-brand > div { width: 66px; height: 66px; color: #fff; background: #CF2317; border-radius: 5px; display: flex; justify-content: center; align-items: center; }', '', function(opts) {
+});
+
+riot.tag2('app-global-menu-item', '<div class="{isSelected()}"> <a href="{\'#\' + opts.source.code}"> {opts.source.label} </a> </div>', 'app-global-menu-item { display: flex; justify-content: center; width: 100%; font-weight: bold; } app-global-menu-item > div { height: 33px; width: 88px; font-size: 12px; display: flex; align-items: center; justify-content: center; } app-global-menu-item > div.selected { background: #ffffff; height: 33px; width: 88px; width: 100%; } app-global-menu-item > div a { color: #CF2317; } app-global-menu-item > div a:hover { color: #CF2317; } app-global-menu-item > div.selected a { color: #CF2317; }', '', function(opts) {
+     this.isSelected = () => {
+         if (this.opts.active_page_code == this.opts.source.code)
+             return 'selected';
+
+         return '';
+     }
+});
+
+riot.tag2('app-global-menu-separator', '<div></div>', 'app-global-menu-separator { padding-left: 8px; padding-right: 8px; padding-bottom: 22px; padding-top: 22px; } app-global-menu-separator > div { border: 0.33px solid #fff; }', '', function(opts) {
+});
+
+riot.tag2('app-global-menu', '<div> <div class="brand"> <app-global-menu-brand></app-global-menu-brand> </div> <div class="graphs"> <app-global-menu-item each="{obj in menus.graphs}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> <app-global-menu-separator></app-global-menu-separator> <div class="finder"> <app-global-menu-item each="{obj in menus.finder}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> <app-global-menu-separator></app-global-menu-separator> <div class="account" style="padding-bottom: 22px;"> <app-global-menu-item each="{obj in menus.account}" source="{obj}" active_page_code="{activePageCode()}"></app-global-menu-item> </div> </div>', 'app-global-menu > div { z-index: 666666; display: flex; flex-direction: column; height: 100vh; width: 111px; padding: 0px 0px 0px 0px; position: fixed; left: 0px; top: 0px; text-align: center; background: rgba(29, 12, 55, 0.9); } app-global-menu > div > .finder { flex-grow: 1; }', '', function(opts) {
+     this.activePageCode = () => {
+         return this.opts.source.active_page;
+     }
+
+     this.menus = {
+         graphs: [
+             { label: 'T字形ER図', code: 'ter' },
+             { label: 'ER図',      code: 'er' },
+         ],
+         finder: [
+             { label: 'Systems',     code: 'systems' },
+             { label: 'Modelers',    code: 'modelers' },
+             { label: 'Managements', code: 'managements' },
+         ],
+         account: [
+             { label: 'Account',  code: 'account' },
+         ],
      };
 });
 

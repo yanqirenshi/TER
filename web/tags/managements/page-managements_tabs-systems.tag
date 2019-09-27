@@ -1,4 +1,4 @@
-<page-base_tabs-systems>
+<page-managements_tabs-systems>
 
     <section class="section">
         <div class="container">
@@ -38,29 +38,15 @@
          return location.hash + '/systems/' + v;
      };
      this.list = () => {
-         return this.source.systems || [];
+         return this.opts.source.systems || [];
      };
-     this.on('mount', () => {
-         ACTIONS.fetchPagesManagements();
-     });
-    </script>
-
-    <script>
-     this.source = {};
-     STORE.subscribe((action)=>{
-         if (action.type=='FETCHED-PAGES-MANAGEMENTS') {
-             this.source = action.response;
-             this.update();
-             return;
-         }
-     });
     </script>
 
     <style>
-     page-base_tabs-systems {
+     page-managements_tabs-systems {
          display: block;
          width: 100%;
      }
     </style>
 
-</page-base_tabs-systems>
+</page-managements_tabs-systems>

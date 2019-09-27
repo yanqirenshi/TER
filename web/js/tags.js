@@ -91,47 +91,6 @@ riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://gith
          location.hash='#' + STORE.get('site.home_page');
 });
 
-riot.tag2('page-base', '<div style="padding-top: 22px;"> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> </div> <div class="tabs"> <page-base_tabs-systems class="hide"></page-base_tabs-systems> <page-base_tabs-modelers class="hide"></page-base_tabs-modelers> </div>', 'page-base { display: block; width: 100vw; height: 100vh; padding-left: 111px; } page-base page-tabs li:first-child { margin-left: 88px; }', '', function(opts) {
-     this.page_tabs = new PageTabs([
-         { code: 'systems',  label: 'Systems',  tag: 'page-base_tabs-systems' },
-         { code: 'modelers', label: 'Modelers', tag: 'page-base_tabs-modelers' },
-     ]);
-
-     this.on('mount', () => {
-         this.page_tabs.switchTab(this.tags)
-         this.update();
-     });
-
-     this.clickTab = (e, action, data) => {
-         if (this.page_tabs.switchTab(this.tags, data.code))
-             this.update();
-     };
-});
-
-riot.tag2('page-base_tabs-modelers', '<section class="section"> <div class="container"> <h1 class="title">Modelers</h1> <h2 class="subtitle"></h2> <div class="contents"> </div> </div> </section>', 'page-base_tabs-modelers { display: block; width: 100%; }', '', function(opts) {
-});
-
-riot.tag2('page-base_tabs-systems', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj._id)}"> {obj._id} </a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-base_tabs-systems { display: block; width: 100%; }', '', function(opts) {
-     this.idLink = (v) => {
-         return location.hash + '/systems/' + v;
-     };
-     this.list = () => {
-         return this.source.systems || [];
-     };
-     this.on('mount', () => {
-         ACTIONS.fetchPagesManagements();
-     });
-
-     this.source = {};
-     STORE.subscribe((action)=>{
-         if (action.type=='FETCHED-PAGES-MANAGEMENTS') {
-             this.source = action.response;
-             this.update();
-             return;
-         }
-     });
-});
-
 riot.tag2('github-link', '<a id="fork" target="_blank" title="Fork Nobit@ on github" href="{opts.href}" class="github-corner"> <svg width="80" height="80" viewbox="0 0 250 250" fill="{opts.fill}" color="{opts.color}"> <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path> <path class="octo-arm" riot-d="{octo_arm.join(\',\')}" fill="currentColor" style="transform-origin: 130px 106px;"></path> <path class="octo-body" riot-d="{octo_body.join(\',\')}" fill="currentColor"></path> </svg> </a>', 'github-link > .github-corner > svg { position: fixed; top: 0; border: 0; right: 0; } github-link > .github-corner:hover .octo-arm { animation: octocat-wave 560ms ease-in-out } @keyframes octocat-wave { 0%, 100% { transform: rotate(0) } 20%, 60% { transform: rotate(-25deg) } 40%, 80% { transform: rotate(10deg) } }', '', function(opts) {
      this.octo_arm = ["M128.3",
                       "109.0 C113.8",
@@ -1067,6 +1026,53 @@ riot.tag2('page-er_tab-tables', '<section class="section"> <div class="container
          let list = STORE.get('er.tables.list');
 
          return list || [];
+     };
+});
+
+riot.tag2('page-managements', '<div style="padding-top: 22px;"> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> </div> <div class="page-tabs"> <page-managements_tabs-systems class="hide" source="{this.source}"></page-managements_tabs-systems> <page-managements_tabs-modelers class="hide" source="{this.source}"></page-managements_tabs-modelers> </div>', 'page-managements { display: block; width: 100vw; height: 100vh; padding-left: 111px; } page-managements page-tabs li:first-child { margin-left: 88px; }', '', function(opts) {
+     this.source = {};
+     STORE.subscribe((action)=>{
+         if (action.type=='FETCHED-PAGES-MANAGEMENTS') {
+             this.source = action.response;
+             this.update();
+             return;
+         }
+     });
+     this.on('mount', () => {
+         ACTIONS.fetchPagesManagements();
+     });
+
+     this.page_tabs = new PageTabs([
+         { code: 'systems',  label: 'Systems',  tag: 'page-managements_tabs-systems' },
+         { code: 'modelers', label: 'Modelers', tag: 'page-managements_tabs-modelers' },
+     ]);
+
+     this.on('mount', () => {
+         this.page_tabs.switchTab(this.tags)
+         this.update();
+     });
+
+     this.clickTab = (e, action, data) => {
+         if (this.page_tabs.switchTab(this.tags, data.code))
+             this.update();
+     };
+});
+
+riot.tag2('page-managements_tabs-modelers', '<section class="section"> <div class="container"> <h1 class="title">Modelers</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj._id)}"> {obj._id} </a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-managements_tabs-modelers { display: block; width: 100%; }', '', function(opts) {
+     this.idLink = (v) => {
+         return location.hash + '/modelers/' + v;
+     };
+     this.list = () => {
+         return this.opts.source.modelers || [];
+     };
+});
+
+riot.tag2('page-managements_tabs-systems', '<section class="section"> <div class="container"> <h1 class="title">Systems</h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Code</th> <th>Name</th> <th>Description</th> </tr> </thead> <tbody> <tr each="{obj in list()}"> <td> <a href="{idLink(obj._id)}"> {obj._id} </a> </td> <td>{obj.code}</td> <td>{obj.name}</td> <td>{obj.description}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-managements_tabs-systems { display: block; width: 100%; }', '', function(opts) {
+     this.idLink = (v) => {
+         return location.hash + '/systems/' + v;
+     };
+     this.list = () => {
+         return this.opts.source.systems || [];
      };
 });
 

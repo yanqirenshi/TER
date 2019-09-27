@@ -2,20 +2,36 @@ class Store extends Vanilla_Redux_Store {
     constructor(reducer) {
         super(reducer, Immutable.Map({}));
     }
+    childPageSystem () {
+        return {
+            code: "system",
+            tag: 'page-system',
+            regex: new RegExp('^\\d+$'),
+        };
+    }
+    childPageModeler () {
+        return {
+            code: "modeler",
+            tag: 'page-modeler',
+            regex: new RegExp('^\\d+$'),
+        };
+    }
     siteManagements () {
         return {
             menu_label: '管理',
             code: "managements",
-            tag: 'page-base',
+            tag: 'page-managements',
             children: [
                 {
                     code: "systems",
                     children: [
-                        {
-                            code: "base",
-                            tag: 'page-system',
-                            regex: new RegExp('^\\d+$'),
-                        }
+                        this.childPageSystem(),
+                    ],
+                },
+                {
+                    code: "modelers",
+                    children: [
+                        this.childPageModeler(),
                     ],
                 }
             ],
@@ -30,11 +46,7 @@ class Store extends Vanilla_Redux_Store {
                 {
                     code: "modelers",
                     children: [
-                        {
-                            code: "base",
-                            tag: 'page-modeler',
-                            regex: new RegExp('^\\d+$'),
-                        }
+                        this.childPageModeler(),
                     ],
                 }
             ],
@@ -46,11 +58,7 @@ class Store extends Vanilla_Redux_Store {
             code: "systems",
             tag: 'page-systems',
             children: [
-                {
-                    code: "system",
-                    tag: 'page-system',
-                    regex: new RegExp('^\\d+$'),
-                }
+                this.childPageSystem(),
             ],
         };
     }

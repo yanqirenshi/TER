@@ -6,22 +6,27 @@
             <h2 class="subtitle"></h2>
 
             <div class="contents">
-                <p><pre> ghost-shadow                                      +---1:n---> schema ---1:n---+
-      |                                            |  (have)    [er]    (have) |
-     1:1                     +---1:n---> system ---|                           +---1:1---> camera
-      |                      |  (selected)         |                           |             ^
-      V                      |                     `---1:n---> campus ---1:n---+             |
-   modeler ------------------+                        (have)    [ter]   (have)               |
-      ^                      |                                                               |
-      |                      |                                                               |
-      |                      +---1:n---------------------------------------------------------+
-      |                         (selected)
+                <p><pre> ghost-shadow
+      o
       |
+      +---1:1----> Email ---1:1---> Email-key  // TODO: 未設計
       |
-      +---1:1----> Email ---1:1---> Email-key
+      |                         +-------+
+      +--- edge-force [1:n] --->| force |
+      |                         +-------+
+     1:1
       |
-      |
-      +---1:n ---> Force</pre></p>
+      V
+ +---------+                          +--------+                   +--------+                     +--------+
+ | modeler |o--- edge [1:1] --------->|        |o--- edge [1:n]--->| schema |o--- edge [1:n] o--->|        |
+ |         |     (selected)           |        |     (have)        |  [er]  |     (have)          |        |
+ |         |                          | system |                   +--------+                     | camera |
+ |         |                          |        |                   +--------+                     |        |
+ |         |o--- edge-grant [1:1] --->|        |o----edge [1:n]--->| campus |o--- edge [1:n] o--->|        |
+ |         |                          +--------+     (have)        |  [ter] |     (have)p         |        |
+ |         |                                                       +--------+                     |        |
+ |         |o--- edge [1:1] --------------------------------------------------------------------->|        |
+ +---------+     (selected)                                                                       +--------+</pre></p>
             </div>
         </div>
     </section>
@@ -39,5 +44,12 @@
             </div>
         </div>
     </section>
+
+    <style>
+     page-core_tab-readme pre {
+         font-size: 14px;
+         line-height: 13px;
+     }
+    </style>
 
 </page-core_tab-readme>

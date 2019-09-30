@@ -26,9 +26,9 @@ This file is a part of ter project.
                  (:file "package")
                  (:module "classes"
                   :components ((:file "common")
-                               (:file "edge")
-                               (:module "base" :components ((:file "drawing")
+                               (:module "base" :components ((:file "common")
                                                             (:file "system")
+                                                            (:file "force")
                                                             (:file "schema")
                                                             (:file "camera")
                                                             (:file "campus")))
@@ -64,6 +64,7 @@ This file is a part of ter project.
                                               (:file "modeler2system_select")
                                               (:file "system2schema")
                                               (:file "system2campus")
+                                              (:file "force2modeler")
                                               (:file "relationship2camera")
                                               (:file "base")))
                  ;; er

@@ -8,3 +8,5 @@
               :accessor authority
               :initarg :authority
               :initform nil)))
+
+(defclass edge-force (shinra:ra) ())

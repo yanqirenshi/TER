@@ -23,8 +23,12 @@
       new-modeler)))
 
 
-(defun find-modeler (graph &key ghost-shadow)
-  (cond (ghost-shadow
+(defun find-modeler (graph &key system ghost-shadow)
+  (cond (system
+         (shinra:find-r-vertex graph 'edge-grant
+                               :from system
+                               :vertex-class 'modeler))
+        (ghost-shadow
          (shinra:find-r-vertex graph 'edge
                                :from ghost-shadow
                                :vertex-class 'modeler

@@ -820,4 +820,17 @@ class Actions extends Vanilla_Redux_Actions {
             response: response,
         };
     }
+    fetchPagesModelers () {
+        let path = '/pages/modelers';
+
+        API.get(path, function (response) {
+            STORE.dispatch(this.fetchedPagesModelers(response));
+        }.bind(this));
+    }
+    fetchedPagesModelers (response) {
+        return {
+            type: 'FETCHED-PAGES-MODELERS',
+            response: response,
+        };
+    }
 }

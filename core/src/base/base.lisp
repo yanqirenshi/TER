@@ -8,7 +8,8 @@
 (defun tx-create-system (graph modeler &key code name description)
   (let ((system (tx-make-system graph code
                                 :name name
-                                :description description))
+                                :description description
+                                :modeler modeler))
         (campus (tx-make-campus graph code :name name :description description))
         (schema (tx-make-schema graph code :name name :description description))
         (camera-campus (tx-make-camera graph (make-camera-code code "campus")))

@@ -6,10 +6,20 @@
       (eq :owner  authority)))
 
 
-(defun find-r-modeler2system-grant (graph modeler)
+(defun find-r-modeler2system-grant-all (graph modeler)
   (shinra:find-r graph 'edge-grant :from modeler
                                    :edge-type :grant-to
                                    :vertex-class 'system))
+
+
+(defun find-r-modeler2system-grant (graph modeler &key authority)
+  (let ((all (find-r-modeler2system-grant-all graph modeler)))
+    (if (null authority)
+        all
+        (flet ((is-owner (r) ;; TODO: これはキチンと抽象化したい。
+                 (let ((edge (getf r :edge)))
+                   (not (eq authority (authority edge))))))
+          (remove-if #'is-owner all)))))
 
 
 (defun get-r-modeler2system-grant (graph modeler &key system)

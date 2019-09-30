@@ -20,8 +20,19 @@
                                     :slot  'code
                                     :value code))))))
 
-(defun tx-make-system (graph code &key name description)
+
+(defvar *max-owner-system-count* 3)
+
+(defun assert-max-owner-system-count (graph modeler)
+  ;; TODO: ここは Forth 毎にわける必要がある。
+  (assert (> *max-owner-system-count*
+             (length (find-r-modeler2system-grant graph modeler :authority :owner)))))
+
+
+(defun tx-make-system (graph code &key name description modeler)
   (assert (keywordp code))
+  (assert modeler)
+  (assert-max-owner-system-count graph modeler)
   (or (progn (warn "SYSTEM: CDOE=~a は既に存在していたので作成しませんでした。" code)
              (get-system graph :code code))
       (shinra:tx-make-vertex graph 'system

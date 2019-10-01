@@ -10,6 +10,7 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
+                 (:file "utilities")
                  (:module "controller"
                   :components ((:file "package")
                                (:module "classes"

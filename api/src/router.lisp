@@ -4,7 +4,8 @@
         #:caveman2
         #:lack.middleware.validation
         #:ter.api.render
-        #:ter.api.controller)
+        #:ter.api.controller
+        #:ter.api.utilities)
   (:export #:*api-v1*))
 (in-package :ter.api.router)
 
@@ -17,22 +18,9 @@
 
 
 ;;;;;
-;;;;; utilities
-;;;;;
-(defun assert-modeler (modeler)
-  (unless modeler
-    (throw-code 401)))
-
-(defmacro with-graph-modeler ((graph modeler) &body body)
-  `(let* ((,graph ter.db:*graph*)
-          (,modeler (ter.api.controller::session-modeler ,graph)))
-     (assert-modeler modeler)
-     ,@body))
-
-
-;;;;;
 ;;;;; Routing rules
 ;;;;;
+
 
 ;;;
 ;;; Environment
@@ -42,32 +30,9 @@
     (render-json (ter.api.controller::environments graph modeler))))
 
 
-(defroute ("/environments/er/schema/active" :method :POST) (&key |schema_code|)
-  (with-graph-modeler (graph modeler)
-    (let* ((schema-code |schema_code|)
-           (schema (ter:get-schema graph :code schema-code)))
-      (unless schema (throw-code 404))
-      (render-json (ter.api.controller::set-active-schema graph modeler schema)))))
-
-
-(defun str2keyword (str)
-  (when str
-    (alexandria:make-keyword (string-upcase str))))
-
-
-
-
 ;;;
 ;;; er
 ;;;
-(defgeneric get-schema (graph schema-code)
-  (:method (graph (schema-code symbol))
-    (or (ter::get-schema graph :code schema-code)
-        (caveman2:throw-code 404)))
-  (:method (graph (schema-code string))
-    (get-schema graph (str2keyword schema-code))))
-
-
 (defroute ("/er/schemas/:schema-code/camera/:camera-code/look-at" :method :POST)
     (&key schema-code camera-code |x| |y| |z|)
   (declare (ignore |z|))
@@ -82,10 +47,16 @@
 (defroute ("/er/schemas/:schema-code/camera/:camera-code/magnification" :method :POST)
     (&key schema-code camera-code |magnification|)
   (with-graph-modeler (graph modeler)
-    (let* ((val |magnification|)
-           (schema (get-schema graph schema-code))
-           (camera-code (str2keyword camera-code)))
-      (render-json (save-er-camera-magnification schema modeler camera-code val)))))
+    (let ((schema-code   (validate schema-code     :string :require t))
+          (camera-code   (validate camera-code     :string :require t))
+          (magnification (validate |magnification| :float  :require t)))
+      (let ((schema      (get-schema graph schema-code))
+            (camera-code (str2keyword camera-code)))
+        (assert-path-object schema)
+        (render-json (save-er-camera-magnification schema
+                                                   modeler
+                                                   camera-code
+                                                   magnification))))))
 
 
 (defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code |x| |y| |z|)
@@ -162,16 +133,6 @@
 ;;;;;;;;
 ;;;;;;;; TER
 ;;;;;;;;
-(defun get-campus (graph campus-code)
-  (or (ter:get-campus graph :code (str2keyword campus-code))
-      (throw-code 404)))
-
-(defun get-camera (graph camera-code)
-  ;; TODO: modeler との関係で見ないとね
-  (or (ter::get-camera graph :code (str2keyword camera-code))
-      (throw-code 404)))
-
-
 (defroute "/ter/:campus-code/environments" (&key campus-code)
   (with-graph-modeler (graph modeler)
     (let ((system (ter::get-system graph :code (str2keyword campus-code)))
@@ -286,14 +247,6 @@
   (with-graph-modeler (graph modeler)
     (let ((campus (get-campus graph campus-code)))
       (render-json (find-edge-ters campus)))))
-
-
-;;;
-;;; Graph
-;;;
-(defroute "/graph" ()
-  (with-graph-modeler (graph modeler)
-    (render-json (ter.api.controller:find-graph graph))))
 
 
 ;;;

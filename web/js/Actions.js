@@ -92,28 +92,6 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     /* **************************************************************** *
-     *  Fetch Graph
-     * **************************************************************** */
-    fetchGraph (mode) {
-        API.get('/graph', function (response) {
-            STORE.dispatch(this.fetchedGraph(mode, response));
-        }.bind(this));
-    }
-    fetchedGraph (mode, response) {
-        let dm = new ErDataManeger();
-
-        return {
-            type: 'FETCHED-GRAPH',
-            mode: mode,
-            data: {
-                graph: {
-                    nodes: dm.makeGraphData(response.NODES),
-                    edges: dm.makeGraphData(response.EDGES),
-                }
-            }
-        };
-    }
-    /* **************************************************************** *
      *  Fetch ER
      * **************************************************************** */
     fetchErEnvironment (schema, mode) {
@@ -549,6 +527,7 @@ class Actions extends Vanilla_Redux_Actions {
     }
     saveTerCameraLookAt (schema, camera, position) {
         let path = '/ter/%s/cameras/%s/look-at'.format(schema.code, camera.code);
+        // let p = '/systems/:id/campuses/:id/cameras/:id/look-at';
 
         let post_data = {
             x: position.x || 0,

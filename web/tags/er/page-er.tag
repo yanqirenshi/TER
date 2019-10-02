@@ -20,7 +20,7 @@
          if (!active_schema)
              return;
 
-         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
+         ACTIONS.fetchErEnvironment(active_schema, 'FIRST');
      };
      this.on('mount', () => {
          this.startFirstLoad();

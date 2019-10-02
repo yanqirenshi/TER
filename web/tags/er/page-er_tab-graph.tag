@@ -193,9 +193,6 @@
              return;
          }
 
-         if (type=='click-save-column-description')
-             return ACTIONS.saveColumnInstanceDescription(data, page_code)
-
          if (type=='edit-table-description') {
              this.modal_target_table = data;
 

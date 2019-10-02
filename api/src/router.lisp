@@ -33,101 +33,134 @@
 ;;;
 ;;; er
 ;;;
-(defroute ("/er/schemas/:schema-code/camera/:camera-code/look-at" :method :POST)
-    (&key schema-code camera-code |x| |y| |z|)
-  (declare (ignore |z|))
+(defroute "/er/schemas/:schema-id/environments" (&key schema-id)
   (with-graph-modeler (graph modeler)
-    (let* ((x |x|)
-           (y |y|)
-           (schema (get-schema graph schema-code))
-           (camera-code (str2keyword camera-code)))
-      (render-json (save-er-camera-look-at schema modeler camera-code x y)))))
-
-
-(defroute ("/er/schemas/:schema-code/camera/:camera-code/magnification" :method :POST)
-    (&key schema-code camera-code |magnification|)
-  (with-graph-modeler (graph modeler)
-    (let ((schema-code   (validate schema-code     :string :require t))
-          (camera-code   (validate camera-code     :string :require t))
-          (magnification (validate |magnification| :float  :require t)))
-      (let ((schema      (get-schema graph schema-code))
-            (camera-code (str2keyword camera-code)))
+    (let ((schema-id (validate schema-id :integer :require t)))
+      (let ((schema (get-schema-by-modeler graph modeler :schema-id schema-id)))
         (assert-path-object schema)
-        (render-json (save-er-camera-magnification schema
-                                                   modeler
-                                                   camera-code
-                                                   magnification))))))
+        (render-json (er-environment-at-modeler-schema graph modeler schema))))))
 
 
-(defroute ("/er/:schema_code/tables/:code/position" :method :POST) (&key schema_code code |x| |y| |z|)
+(defroute "/er/schemas/:schema-id/nodes" (&key schema-id)
   (with-graph-modeler (graph modeler)
-    (let ((code (alexandria:make-keyword code))
-          (schema (ter:get-schema graph :code (str2keyword schema_code))))
-      (render-json (save-er-position schema code |x| |y| |z|)))))
+    (let ((schema-id (validate schema-id :integer :require t)))
+      (let ((schema (get-schema-by-modeler graph modeler :schema-id schema-id)))
+        (assert-path-object schema)
+        (render-json (find-er-vertexes schema))))))
 
 
-(defroute ("/er/:schema_code/tables/:code/size" :method :POST) (&key schema_code code |w| |h|)
+(defroute "/er/schemas/:schema-id/edges" (&key schema-id)
   (with-graph-modeler (graph modeler)
-    (let ((code (alexandria:make-keyword (string-upcase code)))
-          (schema (ter:get-schema graph :code (str2keyword schema_code))))
-      (render-json (save-er-size schema code |w| |h|)))))
+    (let ((schema-id (validate schema-id :integer :require t)))
+      (let ((schema (get-schema-by-modeler graph modeler :schema-id schema-id)))
+        (assert-path-object schema)
+        (render-json (find-er-edges schema))))))
 
 
-(defroute "/er/:schema_code/environments" (&key schema_code)
+(defroute ("/er/schemas/:schema-id/camera/:camera-id/look-at" :method :POST)
+    (&key schema-id camera-id |x| |y|)
   (with-graph-modeler (graph modeler)
-    (let* ((system (ter::get-system graph :code (str2keyword schema_code)))
-           (schema_code (alexandria:make-keyword (string-upcase schema_code)))
-           (schema (ter:get-schema graph :code schema_code)))
-      (render-json (er-environment-at-modeler-system-schema graph modeler system schema)))))
+    (let ((schema-id (validate schema-id :integer :require t))
+          (camera-id (validate camera-id :integer :require t))
+          (x         (validate |x|       :float :require t))
+          (y         (validate |y|       :float :require t)))
+      (let* ((schema (get-schema-by-modeler graph modeler :schema-id schema-id))
+             (camera (get-camera-by-schema  graph schema  :camera-id camera-id)))
+        (assert-path-object schema)
+        (assert-path-object camera)
+        (render-json (save-er-camera-look-at camera x y
+                                             :graph   graph
+                                             :modeler modeler))))))
 
-(defroute "/er/:schema_code/nodes" (&key schema_code)
+
+(defroute ("/er/schemas/:schema-id/camera/:camera-id/magnification" :method :POST)
+    (&key schema-id camera-id |magnification|)
   (with-graph-modeler (graph modeler)
-    (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
-           (schema (ter:get-schema graph :code schema_code)))
-      (render-json (find-er-vertexes schema)))))
+    (let ((schema-id     (validate schema-id       :integer :require t))
+          (camera-id     (validate camera-id       :integer :require t))
+          (magnification (validate |magnification| :float   :require t)))
+      (let* ((schema (get-schema-by-modeler graph modeler :schema-id schema-id))
+             (camera (get-camera-by-schema  graph schema  :camera-id camera-id)))
+        (assert-path-object schema)
+        (assert-path-object camera)
+        (render-json (save-er-camera-magnification camera magnification
+                                                   :graph  graph
+                                                   :modeler modeler))))))
 
-(defroute "/er/:schema_code/edges" (&key schema_code)
+
+(defroute ("/er/schemas/:schema-id/tables/:table-id/position" :method :POST)
+    (&key schema-id table-id |x| |y| |z|)
   (with-graph-modeler (graph modeler)
-    (let* ((schema_code (alexandria:make-keyword (string-upcase schema_code)))
-           (schema (ter:get-schema graph :code schema_code)))
-      (render-json (find-er-edges schema)))))
+    (let ((schema-id (validate schema-id :integer :require t))
+          (table-id  (validate table-id  :integer :require t))
+          (x         (validate |x|       :float   :require t))
+          (y         (validate |y|       :float   :require t))
+          (z         (validate |z|       :float   :require t)))
+      (let* ((schema (get-schema-by-modeler graph modeler :schema-id schema-id))
+             (table  (get-table-by-schema   schema        :table-id  table-id)))
+        (format t "~S~%" (list schema table))
+        (assert-path-object schema)
+        (assert-path-object table)
+        (render-json (save-er-position schema table x y z))))))
 
 
-(defroute ("/er/:schema-code/tables/:table-code/columns/:column-code/logical-name" :method :POST)
-    (&key schema-code table-code column-code |logical_name|)
+(defroute ("/er/schemas/:schema-id/tables/:table-id/size" :method :POST)
+    (&key schema-id table-id |w| |h|)
   (with-graph-modeler (graph modeler)
-    (let* ((logical-name |logical_name|)
-           (schema (ter:get-schema graph :code (str2keyword schema-code))))
-      (unless schema (throw-code 404))
-      (render-json (save-column-instance-logical-name schema
-                                                      (str2keyword table-code)
-                                                      (str2keyword column-code)
-                                                      logical-name)))))
+    (let ((schema-id (validate schema-id :integer :require t))
+          (table-id  (validate table-id  :integer :require t))
+          (w         (validate |w|       :float   :require t))
+          (h         (validate |h|       :float   :require t)))
+      (let* ((schema (get-schema-by-modeler graph modeler :schema-id schema-id))
+             (table  (get-table-by-schema   schema        :table-id  table-id)))
+        (assert-path-object schema)
+        (assert-path-object table)
+        (render-json (save-er-size schema table w h))))))
 
-;;;;;
-;;;;; table description
-;;;;;
-(defroute ("/er/:schema-code/tables/:table-code/description" :method :POST)
-    (&key schema-code table-code |contents|)
+
+(defroute ("/er/:schema-id/tables/:table-id/description" :method :POST)
+    (&key schema-id table-id |contents|)
   (with-graph-modeler (graph modeler)
-    (let* ((schema (ter:get-schema graph :code (str2keyword schema-code)))
-           (table-code (str2keyword table-code))
-           (description |contents|))
-      (unless schema (throw-code 404))
-      (render-json (save-table-description schema table-code description)))))
+    (let ((schema-id   (validate schema-id :integer :require t))
+          (table-id    (validate table-id  :integer :require t))
+          (description (validate |contents| :string            :url-decode t)))
+      (let* ((schema (get-schema-by-modeler graph modeler :schema-id schema-id))
+             (table  (get-table-by-schema   schema        :table-id  table-id)))
+        (assert-path-object schema)
+        (assert-path-object table)
+        (render-json (save-table-description schema table description))))))
 
 
-;;;;;
-;;;;; column description
-;;;;;
-(defroute ("/er/:schema-code/columns/instance/:id/description" :method :POST)
-    (&key schema-code id |contents|)
+(defroute ("/er/schemas/:schema-id/tables/:table-id/column-instances/:column-id/logical-name" :method :POST)
+    (&key schema-id table-id column-id |logical_name|)
   (with-graph-modeler (graph modeler)
-    (let* ((schema (ter:get-schema graph :code (str2keyword schema-code)))
-           (%id (parse-integer id))
-           (description |contents|))
-      (unless schema (throw-code 404))
-      (render-json (save-column-instance-description schema %id description)))))
+    (let ((schema-id (validate schema-id      :integer :require t))
+          (table-id  (validate table-id       :integer :require t))
+          (column-id (validate column-id      :integer :require t))
+          (logical-name (validate |logical_name| :string  :require t)))
+      (let* ((schema          (get-schema-by-modeler        graph modeler :schema-id schema-id))
+             (table           (get-table-by-schema          schema        :table-id  table-id))
+             (column-instance (get-column-instance-by-table schema table  :column-id column-id)))
+        (assert-path-object schema)
+        (assert-path-object table)
+        (assert-path-object column-instance)
+        (render-json (save-column-instance-logical-name schema column-instance logical-name))))))
+
+
+(defroute ("/er/schemas/:schema-id/tables/:table-id/column-instances/:column-id/description" :method :POST)
+    (&key schema-id table-id column-id  |contents|)
+  (with-graph-modeler (graph modeler)
+    (let ((schema-id   (validate schema-id  :integer :require t))
+          (table-id    (validate table-id   :integer :require t))
+          (column-id (validate column-id      :integer :require t))
+          (description (validate |contents| :string             :url-decode t)))
+      (let* ((schema          (get-schema-by-modeler        graph modeler :schema-id schema-id))
+             (table           (get-table-by-schema          schema        :table-id  table-id))
+             (column-instance (get-column-instance-by-table schema table  :column-id column-id)))
+        (assert-path-object schema)
+        (assert-path-object table)
+        (assert-path-object column-instance)
+        (render-json (save-column-instance-description schema column-instance description))))))
 
 
 ;;;;;;;;

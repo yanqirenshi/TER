@@ -1,7 +1,11 @@
 (in-package :ter)
 
-(defun find-table (graph)
-  (find-vertex graph 'table))
+(defun find-table (graph &key schema)
+  (if schema
+      (let ((graph (get-schema-graph schema)))
+        (assert graph)
+        (find-table graph))
+      (find-vertex graph 'table)))
 
 (defgeneric get-table (graph &key code with-columns)
   (:method ((schema schema) &key code (with-columns t))

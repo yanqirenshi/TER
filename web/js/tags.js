@@ -786,7 +786,7 @@ riot.tag2('page-er', '<div style="margin-left:55px; padding-top: 22px;"> <page-t
          if (!active_schema)
              return;
 
-         ACTIONS.fetchErEnvironment(active_schema.code, 'FIRST');
+         ACTIONS.fetchErEnvironment(active_schema, 'FIRST');
      };
      this.on('mount', () => {
          this.startFirstLoad();
@@ -1007,9 +1007,6 @@ riot.tag2('page-er_tab-graph', '<div> <svg></svg> </div> <operators data="{opera
              this.tags['er-modal-logical-name'].update();
              return;
          }
-
-         if (type=='click-save-column-description')
-             return ACTIONS.saveColumnInstanceDescription(data, page_code)
 
          if (type=='edit-table-description') {
              this.modal_target_table = data;

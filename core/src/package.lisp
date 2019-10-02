@@ -14,7 +14,9 @@
   (:export #:tx-create-system
            #:get-system
            #:find-systems)
-  (:export #:get-to-camera)
+  (:export #:get-to-camera
+           #:find-camera
+           #:get-camera)
   ;; er
   (:export #:get-schema
            #:find-table

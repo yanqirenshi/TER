@@ -3,8 +3,12 @@
   (:use #:cl)
   (:import-from :alexandria
                 #:when-let)
-  (:export #:set-active-system)
-  (:export #:finder-er-tables
+  (:export #:set-active-system
+           #:get-schema-by-modeler
+           #:get-camera-by-schema)
+  (:export #:get-table-by-schema
+           #:get-column-instance-by-table
+           #:finder-er-tables
            #:finder-er-columns
            #:finder-er-column-instances
            #:finder-er-relashonships
@@ -18,7 +22,7 @@
            #:save-column-instance-description
            #:save-er-camera-look-at
            #:save-er-camera-magnification
-           #:er-environment-at-modeler-system-schema)
+           #:er-environment-at-modeler-schema)
   (:export #:find-ter ;; TODO: こらはもういらんやろ。
            #:find-entities
            #:get-entity

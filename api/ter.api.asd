@@ -10,7 +10,6 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
-                 (:file "utilities")
                  (:module "controller"
                   :components ((:file "package")
                                (:module "classes"
@@ -18,12 +17,14 @@
                                              (:file "system")
                                              (:file "campus")
                                              (:file "schema")))
+                               (:file "base")
                                (:file "environment")
                                (:file "er")
                                (:file "ter")
                                (:file "graph")
                                (:file "common")
                                (:file "session")))
+                 (:file "utilities")
                  (:file "render")
                  (:file "router"))))
   :description ""

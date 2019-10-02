@@ -8,20 +8,24 @@
   (if modeler
       (mapcar #'(lambda (r)
                   (getf r :vertex))
-              (ter::find-r-modeler2system-grant graph modeler))
+              (find-r-modeler2system-grant graph modeler))
       (shinra:find-vertex graph 'system)))
 
-(defun get-system (graph &key code %id)
+(defun get-system (graph &key code %id schema)
   (let ((class-symbol 'system))
     (cond (%id
            (shinra:get-vertex-at graph class-symbol :%id %id))
           (code
            (car (shinra:find-vertex graph class-symbol
                                     :slot  'code
-                                    :value code))))))
+                                    :value code)))
+          (schema (car (shinra:find-r-vertex graph 'edge
+                                             :to schema
+                                             :vertex-class class-symbol
+                                             :edge-type :have-to))))))
 
 
-(defvar *max-owner-system-count* 3)
+(defvar *max-owner-system-count* 88)
 
 (defun assert-max-owner-system-count (graph modeler)
   ;; TODO: ここは Forth 毎にわける必要がある。

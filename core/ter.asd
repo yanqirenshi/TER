@@ -55,7 +55,6 @@ This file is a part of ter project.
                                               (:file "drawing")
                                               (:file "camera")
                                               (:file "campus")
-                                              (:file "common")
                                               (:file "system")
                                               (:file "ghost-shadow")
                                               (:file "modeler")

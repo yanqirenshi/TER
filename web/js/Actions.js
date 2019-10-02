@@ -26,7 +26,7 @@ class Actions extends Vanilla_Redux_Actions {
      *  Save Config
      * **************************************************************** */
     /* **************************************************************** *
-     *  Fetch Environment
+     *  Base
      * **************************************************************** */
     fetchEnvironments (mode) {
         API.get('/environments', function (response) {
@@ -91,12 +91,43 @@ class Actions extends Vanilla_Redux_Actions {
             }
         };
     }
+    changeSystem (system) {
+
+        let state = STORE.get('active');
+
+        state.system = system;
+
+        if (system.campuses.length!=0)
+            state.ter.campus = system.campuses[0];
+
+        if (system.schemas.length!=0)
+            state.er.schema = system.schemas[0];
+
+        this.saveConfigAtDefaultSystem(system);
+
+        STORE.dispatch({
+            type: 'CHANGE-SYSTEM',
+            data: { active: state },
+        });
+    }
+    saveConfigAtDefaultSystem (system) {
+        let path = '/systems/%d/active'.format(system._id);
+
+        API.post(path, null, (response) => {
+            STORE.dispatch(this.savedConfigAtDefaultSystem(response));
+        });
+    }
+    savedConfigAtDefaultSystem (response) {
+        return {
+            type: 'SAVED-CONFIG-AT-DEFAULT-SYSTEM',
+        };
+    }
     /* **************************************************************** *
-     *  Fetch ER
+     *  ER
      * **************************************************************** */
     fetchErEnvironment (schema, mode) {
-        let graph = schema;
-        let path = '/er/%s/environments'.format(graph);
+        dump(schema)
+        let path = '/er/schemas/%d/environments'.format(schema._id);
 
         API.get(path, function (response) {
             STORE.dispatch(this.fetchedErEnvironment(schema, mode, response));
@@ -134,9 +165,9 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     fetchErNodes (schema, mode) {
-        let scheme_code = schema.code.toLowerCase();
+        let path = '/er/schemas/%d/nodes'.format(schema._id);
 
-        API.get('/er/' + scheme_code + '/nodes', function (response) {
+        API.get(path, function (response) {
             STORE.dispatch(this.fetchedErNodes(mode, response));
         }.bind(this));
     }
@@ -152,9 +183,9 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     fetchErEdges (schema, mode) {
-        let scheme_code = schema.code.toLowerCase();
+        let path = '/er/schemas/%d/edges'.format(schema._id);
 
-        API.get('/er/' + scheme_code + '/edges', function (response) {
+        API.get(path, function (response) {
             STORE.dispatch(this.fetchedErEdges(mode, response));
         }.bind(this));
     }
@@ -175,9 +206,8 @@ class Actions extends Vanilla_Redux_Actions {
             data: { er: new_state }
         };
     }
-    saveTableDescription (schema_code, table, description, from) {
-        let fmt = '/er/%s/tables/%s/description';
-        let path = fmt.format(schema_code, table.code);
+    saveTableDescription (schema, table, description, from) {
+        let path = '/er/schemas/%d/tables/%d/description'.format(schema._id, table.code._id);
         let data = { contents: description };
 
         API.post(path, data, (resource)=>{
@@ -198,12 +228,9 @@ class Actions extends Vanilla_Redux_Actions {
             from: from,
         };
     }
-    /* **************************************************************** *
-     *  table
-     * **************************************************************** */
     saveColumnInstanceLogicalName (data, from) {
-        let fmt = '/er/%s/tables/%s/columns/%s/logical-name';
-        let path = fmt.format(data.schema_code, data.table_code, data.column_instance_code);
+        let fmt = '/er/schemas/%s/tables/%s/columns/%s/logical-name';
+        let path = fmt.format(data.schema_id, data.table_id, data.column_instance_id);
 
         let post_data = { logical_name: data.logical_name };
 
@@ -243,9 +270,9 @@ class Actions extends Vanilla_Redux_Actions {
             redraw: column_instance ? column_instance._table : null
         };
     }
-    saveColumnInstanceDescription (schema_code, column_instance, value, from) {
-        let fmt = '/er/%s/columns/instance/%s/description';
-        let path = fmt.format(schema_code, column_instance._id);
+    saveColumnInstanceDescription (schema, column_instance, value, from) {
+        let fmt = '/er/schemas/%s/column-instances/%s/description';
+        let path = fmt.format(schema._id, column_instance._id);
         let data = { contents: value.trim() };
 
         API.post(path, data, (resource)=>{
@@ -266,24 +293,21 @@ class Actions extends Vanilla_Redux_Actions {
         };
     }
     savePosition (schema, table) {
-        let scheme_code = schema.code.toLowerCase();
-
-        let path = '/er/' + scheme_code + '/tables/' + table.code + '/position';
+        let path = '/er/schemas/%d/tables/%d/position'.format(schema._id, table._id);
         let data = {x: table.x, y:table.y, z:0};
+
         API.post(path, data, ()=>{});
     }
     saveTableSize (schema, table) {
-        let scheme_code = schema.code.toLowerCase();
-        let table_code = table.code.toLowerCase();
-        let path = '/er/' + scheme_code + '/tables/' + table_code + '/size';
-
+        let path = '/er/schemas/%d/tables/%d/size'.format(schema._id, table._id);
         let data = { w: table.w, h: 0 };
 
         API.post(path, data, ()=>{});
     }
     saveErCameraLookAt (schema, camera, look_at) {
         let _look_at = Object.assign({}, look_at);
-        let path = '/er/schemas/%s/camera/%s/look-at'.format(schema.code, camera.code);
+        let path = '/er/schemas/%s/camera/%s/look-at'.format(schema._id, camera._id);
+
         let data = {
             x: _look_at.x || 0,
             y: _look_at.y || 0,
@@ -292,46 +316,15 @@ class Actions extends Vanilla_Redux_Actions {
         API.post(path, data, ()=>{});
     }
     saveErCameraLookMagnification (schema, camera, magnification) {
-        let path = '/er/schemas/%s/camera/%s/magnification'.format(schema.code, camera.code);
+        let path = '/er/schemas/%s/camera/%s/magnification'.format(schema._id, camera._id);
 
         let data = {
             magnification: magnification || 1
         };
         API.post(path, data, ()=>{});
     }
-    changeSystem (system) {
-
-        let state = STORE.get('active');
-
-        state.system = system;
-
-        if (system.campuses.length!=0)
-            state.ter.campus = system.campuses[0];
-
-        if (system.schemas.length!=0)
-            state.er.schema = system.schemas[0];
-
-        this.saveConfigAtDefaultSystem(system);
-
-        STORE.dispatch({
-            type: 'CHANGE-SYSTEM',
-            data: { active: state },
-        });
-    }
-    saveConfigAtDefaultSystem (system) {
-        let path = '/systems/%d/active'.format(system._id);
-
-        API.post(path, null, (response) => {
-            STORE.dispatch(this.savedConfigAtDefaultSystem(response));
-        });
-    }
-    savedConfigAtDefaultSystem (response) {
-        return {
-            type: 'SAVED-CONFIG-AT-DEFAULT-SYSTEM',
-        };
-    }
     /* **************************************************************** *
-     *  Fetch TER
+     *  TER
      * **************************************************************** */
     fetchTerEnvironment (schema, mode) {
         let graph = schema;

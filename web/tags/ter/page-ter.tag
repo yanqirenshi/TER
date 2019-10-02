@@ -50,19 +50,19 @@
          if (action.mode=='FIRST') {
 
              if (action.type=='FETCHED-TER-ENVIRONMENT')
-                 ACTIONS.fetchTerEntities(action.schema, action.mode);
+                 ACTIONS.fetchTerEntities(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-ENTITIES')
-                 ACTIONS.fetchTerIdentifiers(action.schema, action.mode);
+                 ACTIONS.fetchTerIdentifiers(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-IDENTIFIERS')
-                 ACTIONS.fetchTerAttributes(action.schema, action.mode);
+                 ACTIONS.fetchTerAttributes(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-ATTRIBUTES')
-                 ACTIONS.fetchTerPorts(action.schema, action.mode);
+                 ACTIONS.fetchTerPorts(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-PORTS')
-                 ACTIONS.fetchTerEdges(action.schema, action.mode);
+                 ACTIONS.fetchTerEdges(action.campus, action.mode);
 
              if(action.type=='FETCHED-TER-EDGES')
                  ACTIONS.fetchedAllDatas(action.mode);
@@ -84,7 +84,7 @@
          if (!active_campus)
              return;
 
-         ACTIONS.fetchTerEnvironment(active_campus.code, 'FIRST');
+         ACTIONS.fetchTerEnvironments(active_campus, 'FIRST');
      };
      this.on('mount', () => {
          this.startFirstLoadData();

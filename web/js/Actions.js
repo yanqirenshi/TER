@@ -326,15 +326,14 @@ class Actions extends Vanilla_Redux_Actions {
     /* **************************************************************** *
      *  TER
      * **************************************************************** */
-    fetchTerEnvironment (schema, mode) {
-        let graph = schema;
-        let path = '/ter/%s/environments'.format(graph);
+    fetchTerEnvironments (campus, mode) {
+        let path = '/ter/campuses/%s/environments'.format(campus._id);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerEnvironment(schema, mode, response));
+            STORE.dispatch(this.fetchedTerEnvironment(campus, mode, response));
         }.bind(this));
     }
-    fetchedTerEnvironment (schema, mode, response) {
+    fetchedTerEnvironment (campus, mode, response) {
         let new_state = STORE.get('ter');
 
         let ht = {};
@@ -361,114 +360,109 @@ class Actions extends Vanilla_Redux_Actions {
             data: {
                 ter:  new_state,
             },
-            schema: schema,
+            campus: campus,
             mode: mode,
         };
     }
-    fetchTerEntities (schema, mode) {
-        let graph = schema;
-        let path = '/ter/%s/entities'.format(graph);
+    fetchTerEntities (campus, mode) {
+        let path = '/ter/campuses/%s/entities'.format(campus._id);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerEntities(schema, mode, response));
+            STORE.dispatch(this.fetchedTerEntities(campus, mode, response));
         }.bind(this));
     }
-    fetchedTerEntities (schema, mode, response) {
+    fetchedTerEntities (campus, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.entities = new TerDataManeger().mergeStateData(response, new_state.entities);
 
         return {
             type: 'FETCHED-TER-ENTITIES',
-            schema: schema,
+            campus: campus,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerIdentifiers (schema, mode) {
-        let graph = schema;
-        let path = '/ter/%s/identifiers'.format(graph);
+    fetchTerIdentifiers (campus, mode) {
+        let path = '/ter/campuses/%s/identifiers'.format(campus._id);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerIdentifiers(schema, mode, response));
+            STORE.dispatch(this.fetchedTerIdentifiers(campus, mode, response));
         }.bind(this));
     }
-    fetchedTerIdentifiers (schema, mode, response) {
+    fetchedTerIdentifiers (campus, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.identifier_instances = new TerDataManeger().mergeStateData(response, new_state.identifier_instances);
 
         return {
             type: 'FETCHED-TER-IDENTIFIERS',
-            schema: schema,
+            campus: campus,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerAttributes (schema, mode) {
-        let graph = schema;
-        let path = '/ter/%s/attributes'.format(graph);
+    fetchTerAttributes (campus, mode) {
+        let path = '/ter/campuses/%s/attributes'.format(campus._id);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerAttributes(schema, mode, response));
+            STORE.dispatch(this.fetchedTerAttributes(campus, mode, response));
         }.bind(this));
     }
-    fetchedTerAttributes (schema, mode, response) {
+    fetchedTerAttributes (campus, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.attribute_instances = new TerDataManeger().mergeStateData(response, new_state.attribute_instances);
 
         return {
             type: 'FETCHED-TER-ATTRIBUTES',
-            schema: schema,
+            campus: campus,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerPorts (schema, mode) {
-        let graph = schema;
-        let path = '/ter/%s/ports'.format(graph);
+    fetchTerPorts (campus, mode) {
+        let path = '/ter/campuses/%s/ports'.format(campus._id);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerPorts(schema, mode, response));
+            STORE.dispatch(this.fetchedTerPorts(campus, mode, response));
         }.bind(this));
     }
-    fetchedTerPorts (schema, mode, response) {
+    fetchedTerPorts (campus, mode, response) {
         let new_state = STORE.get('ter');
 
         new_state.ports = new TerDataManeger().mergeStateData(response, new_state.ports);
 
         return {
             type: 'FETCHED-TER-PORTS',
-            schema: schema,
+            campus: campus,
             mode: mode,
             data: {
                 ter: new_state,
             }
         };
     }
-    fetchTerEdges (schema, mode) {
-        let graph = schema;
-        let path = '/ter/%s/edges'.format(graph);
+    fetchTerEdges (campus, mode) {
+        let path = '/ter/campuses/%s/edges'.format(campus._id);
 
         API.get(path, function (response) {
-            STORE.dispatch(this.fetchedTerEdges(schema, mode, response));
+            STORE.dispatch(this.fetchedTerEdges(campus, mode, response));
         }.bind(this));
     }
-    fetchedTerEdges (schema, mode, response) {
+    fetchedTerEdges (campus, mode, response) {
         let new_state   = STORE.get('ter');
 
         new_state.relationships = new TerDataManeger().mergeStateData(response, new_state.relationships);
 
         return {
             type: 'FETCHED-TER-EDGES',
-            schema: schema,
+            campus: campus,
             mode: mode,
             data: {
                 ter: new_state,
@@ -491,14 +485,14 @@ class Actions extends Vanilla_Redux_Actions {
             }
         });
     }
-    saveTerEntityPosition (schema, entity) {
-        let path = '/ter/%s/entities/%d/location'.format(schema.code, entity._id);
+    saveTerEntityPosition (campus, entity) {
+        let path = '/ter/campuses/%s/entities/%d/location'.format(campus._id, entity._id);
 
         let data = entity.position;
         API.post(path, data, ()=>{});
     }
-    saveTerPortPosition (schema, port, position) {
-        let path = "/ter/%s/ports/%d/location".format(schema.code, port._id);
+    saveTerPortPosition (campus, port, position) {
+        let path = "/ter/campuses/%s/ports/%d/location".format(campus._id, port._id);
         let post_data = { degree: position };
 
         API.post(path, post_data, (response)=>{
@@ -518,9 +512,8 @@ class Actions extends Vanilla_Redux_Actions {
             target: response,
         };
     }
-    saveTerCameraLookAt (schema, camera, position) {
-        let path = '/ter/%s/cameras/%s/look-at'.format(schema.code, camera.code);
-        // let p = '/systems/:id/campuses/:id/cameras/:id/look-at';
+    saveTerCameraLookAt (campus, camera, position) {
+        let path = '/ter/campuses/%s/cameras/%s/look-at'.format(campus._id, camera._id);
 
         let post_data = {
             x: position.x || 0,
@@ -530,8 +523,8 @@ class Actions extends Vanilla_Redux_Actions {
 
         API.post(path, post_data, ()=>{});
     }
-    saveTerCameraLookMagnification (schema, camera, magnification) {
-        let path = '/ter/%s/cameras/%s/magnification'.format(schema.code, camera.code);
+    saveTerCameraLookMagnification (campus, camera, magnification) {
+        let path = '/ter/campuses/%s/cameras/%s/magnification'.format(campus._id, camera._id);
         let post_data = {
             magnification: magnification || 1
         };

@@ -39,7 +39,7 @@
 
 
 ;;;;;
-;;;;; get-camera-by-schema
+;;;;; get-table-by-schema
 ;;;;;
 (defun get-table-by-schema.loop-tables (graph table-id tables)
   (when-let ((table (car tables)))
@@ -74,3 +74,60 @@
       (get-column-instance-by-table.loop-columns graph
                                         column-id
                                         (ter::find-r-table_column-instance graph :table table)))))
+
+
+;;;;;
+;;;;; get-campus-by-modeler
+;;;;;
+(defun get-campus-by-modeler.loop-campuses (graph campus-id campuses)
+  (when-let ((campus (car campuses)))
+    (if (= campus-id (up:%id campus))
+        campus
+        (get-campus-by-modeler.loop-campuses graph campus-id (cdr campuses)))))
+
+(defun get-campus-by-modeler.loop-systems (graph campus-id systems)
+  (when-let ((system (car systems)))
+    (let ((campuses (ter:find-campus graph :system system)))
+      (or (get-campus-by-modeler.loop-campuses graph campus-id campuses)
+          (get-campus-by-modeler.loop-systems  graph campus-id (cdr systems))))))
+
+(defun get-campus-by-modeler (graph modeler &key campus-id)
+  (assert graph)
+  (when (and modeler campus-id)
+    (get-campus-by-modeler.loop-systems graph campus-id (ter:find-systems graph :modeler modeler))))
+
+
+;;;;;
+;;;;; get-camera-by-campus
+;;;;;
+(defun get-camera-by-campus.loop-cameras (graph camera-id cameras)
+  (when-let ((camera (car cameras)))
+    (if (= camera-id (up:%id camera))
+        camera
+        (get-camera-by-campus.loop-cameras graph camera-id (cdr cameras)))))
+
+(defun get-camera-by-campus (graph campus &key camera-id)
+  (assert graph)
+  (when (and campus camera-id)
+    (get-camera-by-campus.loop-cameras graph
+                                       camera-id
+                                       (ter:find-camera graph :campus campus))))
+
+
+;;;;;
+;;;;; get-entity-by-campus
+;;;;;
+(defun get-entity-by-campus.loop-campuses (graph entity-id campuses)
+  (when-let ((campus (car campuses)))
+    (if (= entity-id (up:%id campus))
+        campus
+        (get-entity-by-campus.loop-campuses graph entity-id (cdr campuses)))))
+
+(defun get-entity-by-campus (campus &key entity-id)
+  (assert campus)
+  (let ((graph (ter::get-campus-graph campus)))
+    (assert graph)
+    (when (and campus entity-id)
+      (get-entity-by-campus.loop-campuses graph
+                                          entity-id
+                                          (ter:find-entities graph)))))

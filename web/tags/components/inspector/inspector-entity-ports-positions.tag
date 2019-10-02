@@ -46,12 +46,9 @@
              let port = opts.ports.find((d) => { return d._id = port_id; });
              let degree = this.getDegree(port_id);
 
-             let schemas = STORE.get('schemas');
-             let schema  = schemas.list.find((d) => {
-                 return d.code == schemas.active;
-             });
+             let campus = STORE.get('active.ter.campus');
 
-             ACTIONS.saveTerPortPosition(schema, port, degree);
+             ACTIONS.saveTerPortPosition(campus, port, degree);
          };
         </script>
 

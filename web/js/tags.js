@@ -454,12 +454,9 @@ riot.tag2('inspector-entity-ports-positions', '<h1 class="title is-6" style="mar
              let port = opts.ports.find((d) => { return d._id = port_id; });
              let degree = this.getDegree(port_id);
 
-             let schemas = STORE.get('schemas');
-             let schema  = schemas.list.find((d) => {
-                 return d.code == schemas.active;
-             });
+             let campus = STORE.get('active.ter.campus');
 
-             ACTIONS.saveTerPortPosition(schema, port, degree);
+             ACTIONS.saveTerPortPosition(campus, port, degree);
          };
 });
 
@@ -1456,19 +1453,19 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
          if (action.mode=='FIRST') {
 
              if (action.type=='FETCHED-TER-ENVIRONMENT')
-                 ACTIONS.fetchTerEntities(action.schema, action.mode);
+                 ACTIONS.fetchTerEntities(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-ENTITIES')
-                 ACTIONS.fetchTerIdentifiers(action.schema, action.mode);
+                 ACTIONS.fetchTerIdentifiers(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-IDENTIFIERS')
-                 ACTIONS.fetchTerAttributes(action.schema, action.mode);
+                 ACTIONS.fetchTerAttributes(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-ATTRIBUTES')
-                 ACTIONS.fetchTerPorts(action.schema, action.mode);
+                 ACTIONS.fetchTerPorts(action.campus, action.mode);
 
              if (action.type=='FETCHED-TER-PORTS')
-                 ACTIONS.fetchTerEdges(action.schema, action.mode);
+                 ACTIONS.fetchTerEdges(action.campus, action.mode);
 
              if(action.type=='FETCHED-TER-EDGES')
                  ACTIONS.fetchedAllDatas(action.mode);
@@ -1490,7 +1487,7 @@ riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-
          if (!active_campus)
              return;
 
-         ACTIONS.fetchTerEnvironment(active_campus.code, 'FIRST');
+         ACTIONS.fetchTerEnvironments(active_campus, 'FIRST');
      };
      this.on('mount', () => {
          this.startFirstLoadData();

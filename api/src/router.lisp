@@ -98,7 +98,6 @@
           (z         (validate |z|       :float   :require t)))
       (let* ((schema (get-schema-by-modeler graph modeler :schema-id schema-id))
              (table  (get-table-by-schema   schema        :table-id  table-id)))
-        (format t "~S~%" (list schema table))
         (assert-path-object schema)
         (assert-path-object table)
         (render-json (save-er-position schema table x y z))))))
@@ -118,7 +117,7 @@
         (render-json (save-er-size schema table w h))))))
 
 
-(defroute ("/er/:schema-id/tables/:table-id/description" :method :POST)
+(defroute ("/er/schemas/:schema-id/tables/:table-id/description" :method :POST)
     (&key schema-id table-id |contents|)
   (with-graph-modeler (graph modeler)
     (let ((schema-id   (validate schema-id :integer :require t))
@@ -152,7 +151,7 @@
   (with-graph-modeler (graph modeler)
     (let ((schema-id   (validate schema-id  :integer :require t))
           (table-id    (validate table-id   :integer :require t))
-          (column-id (validate column-id      :integer :require t))
+          (column-id (validate column-id    :integer :require t))
           (description (validate |contents| :string             :url-decode t)))
       (let* ((schema          (get-schema-by-modeler        graph modeler :schema-id schema-id))
              (table           (get-table-by-schema          schema        :table-id  table-id))
@@ -166,91 +165,128 @@
 ;;;;;;;;
 ;;;;;;;; TER
 ;;;;;;;;
-(defroute "/ter/:campus-code/environments" (&key campus-code)
+(defroute "/ter/campuses/:campus-id/environments" (&key campus-id)
   (with-graph-modeler (graph modeler)
-    (let ((system (ter::get-system graph :code (str2keyword campus-code)))
-          (campus (get-campus graph campus-code)))
-      (unless system (throw-code 404))
-      (unless campus (throw-code 404))
-      (render-json (ter-environment-at-modeler-system-campus graph modeler system campus)))))
+    (let ((campus-id (validate campus-id :integer :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (ter-environment-at-modeler-system-campus graph modeler campus))))))
 
 
-(defroute ("/ter/:campus-code/cameras/:camera-code/look-at" :method :post)
-    (&key campus-code camera-code |x| |y|)
+(defroute ("/ter/campuses/:campus-id/cameras/:camera-id/look-at" :method :post)
+    (&key campus-id camera-id |x| |y|)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code))
-          (camera-code (str2keyword camera-code)))
-      (render-json (save-ter-camera-look-at campus modeler camera-code |x| |y|)))))
+    (let ((campus-id (validate campus-id :integer :require t))
+          (camera-id (validate camera-id :integer :require t))
+          (x         (validate |x|       :float   :require t))
+          (y         (validate |y|       :float   :require t)))
+      (let* ((campus (get-campus-by-modeler graph modeler :campus-id campus-id))
+             (camera (get-camera-by-campus  graph campus  :camera-id camera-id)))
+        (assert-path-object campus)
+        (assert-path-object camera)
+        (render-json (save-ter-camera-look-at camera x y
+                                              :graph   graph
+                                              :modeler modeler))))))
 
 
-(defroute ("/ter/:campus-code/cameras/:camera-code/magnification" :method :post)
-    (&key campus-code camera-code |magnification|)
+(defroute ("/ter/campuses/:campus-id/cameras/:camera-id/magnification" :method :post)
+    (&key campus-id camera-id |magnification|)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code))
-          (camera-code (str2keyword camera-code)))
-      (render-json (save-ter-camera-magnification campus modeler camera-code |magnification|)))))
+    (let ((campus-id     (validate campus-id       :integer :require t))
+          (camera-id     (validate camera-id       :integer :require t))
+          (magnification (validate |magnification| :float   :require t)))
+      (let* ((campus (get-campus-by-modeler graph modeler :campus-id campus-id))
+             (camera (get-camera-by-campus  graph campus  :camera-id camera-id)))
+        (assert-path-object campus)
+        (assert-path-object camera)
+        (render-json (save-ter-camera-magnification camera magnification
+                                                    :graph   graph
+                                                    :modeler modeler))))))
 
 
 ;;;
 ;;; entity
 ;;;
-(defroute "/ter/:campus-code/entities" (&key campus-code)
+(defroute "/ter/campuses/:campus-id/entities" (&key campus-id)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code)))
-      (unless campus (throw-code 404))
-      (render-json (find-entities campus)))))
+    (let ((campus-id (validate campus-id :integer :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (find-entities campus))))))
+
 
 (defroute ("/systems/:sytem-id/campuses/:campus-id/entities" :method :post)
     (&key sytem-id campus-id |type| |code| |name| |description|)
   (with-graph-modeler (graph modeler)
     (render-json (list sytem-id campus-id |type| |code| |name| |description|))))
 
-(defroute ("/ter/:campus-code/entities/:entity-code/location" :method :post)
-    (&key campus-code entity-code |x| |y| |z|)
+
+(defroute ("/ter/campuses/:campus-id/entities/:entity-id/location" :method :post)
+    (&key campus-id entity-id |x| |y| |z|)
   (with-graph-modeler (graph modeler)
-    (let* ((campus (get-campus graph campus-code))
-           (entity-id (parse-integer entity-code))
-           (entity (get-entity campus :%id entity-id))
-           (x |x|)
-           (y |y|)
-           (z |z|))
-      (unless campus (throw-code 404))
-      (unless entity (throw-code 404))
-      (render-json (save-entity-position campus entity x y z)))))
-
-
+    (let ((campus-id (validate campus-id :integer :require t))
+          (entity-id (validate entity-id :integer :require t))
+          (x         (validate |x|       :float   :require t))
+          (y         (validate |y|       :float   :require t))
+          (z         (validate |z|       :float   :require t)))
+      (let* ((campus (get-campus-by-modeler graph modeler :campus-id campus-id))
+             (entity (get-entity-by-campus  campus        :entity-id entity-id)))
+        (assert-path-object campus)
+        (assert-path-object entity)
+        (render-json (save-entity-position campus entity x y z))))))
 
 ;;;
 ;;; identifiers
 ;;;
-(defroute "/ter/:campus-code/identifiers" (&key campus-code)
+(defroute "/ter/campuses/:campus-id/identifiers" (&key campus-id)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code)))
-      (render-json (find-identifier-instances campus)))))
+    (let ((campus-id (validate campus-id :integer :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (find-identifier-instances campus))))))
+
 
 ;;;
 ;;; attributes
 ;;;
-(defroute "/ter/:campus-code/attributes" (&key campus-code)
+(defroute "/ter/campuses/:campus-id/attributes" (&key campus-id)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code)))
-      (render-json (find-attributes-instances campus)))))
+    (let ((campus-id (validate campus-id :integer :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (find-attributes-instances campus))))))
+
 
 ;;;
 ;;; ports
 ;;;
-(defroute "/ter/:campus-code/ports" (&key campus-code)
+(defroute "/ter/campuses/:campus-id/ports" (&key campus-id)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code)))
-      (render-json (find-entities-ports campus)))))
+    (let ((campus-id (validate campus-id :integer :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (find-entities-ports campus))))))
 
-(defroute ("/ter/:campus-code/ports/:port-id/location" :method :post) (&key campus-code port-id |degree|)
+
+(defroute ("/ter/campuses/:campus-id/ports/:port-id/location" :method :post) (&key campus-id port-id |degree|)
   (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code))
-          (degree |degree|))
-      (render-json (save-port-ter-location campus
-                                           (parse-integer port-id)
-                                           degree)))))
+    (let ((campus-id (validate campus-id :integer :require t))
+          (degree    (validate |degree|  :float   :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (save-port-ter-location campus
+                                             (parse-integer port-id)
+                                             degree))))))
+
+;;;
+;;; edges
+;;;
+(defroute "/ter/campuses/:campus-id/edges" (&key campus-id)
+  (with-graph-modeler (graph modeler)
+    (let ((campus-id (validate campus-id :integer :require t)))
+      (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
+        (assert-path-object campus)
+        (render-json (find-edge-ters campus))))))
 
 
 ;;;
@@ -272,15 +308,6 @@
            (system (ter::get-system graph :%id id)))
       (unless system (throw-code 404))
       (render-json (ter.api.controller:set-active-system graph modeler system)))))
-
-;;;
-;;; edges
-;;;
-(defroute "/ter/:campus-code/edges" (&key campus-code)
-  (with-graph-modeler (graph modeler)
-    (let ((campus (get-campus graph campus-code)))
-      (render-json (find-edge-ters campus)))))
-
 
 ;;;
 ;;; rpc

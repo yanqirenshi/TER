@@ -5,7 +5,9 @@
                 #:when-let)
   (:export #:set-active-system
            #:get-schema-by-modeler
-           #:get-camera-by-schema)
+           #:get-camera-by-schema
+           #:get-campus-by-modeler
+           #:get-camera-by-campus)
   (:export #:get-table-by-schema
            #:get-column-instance-by-table
            #:finder-er-tables
@@ -26,6 +28,7 @@
   (:export #:find-ter ;; TODO: こらはもういらんやろ。
            #:find-entities
            #:get-entity
+           #:get-entity-by-campus
            #:find-identifier-instances
            #:find-attributes-instances
            #:find-edge-ters

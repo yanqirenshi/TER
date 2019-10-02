@@ -1,12 +1,14 @@
 (in-package :ter)
 
-(defun find-camera (graph &key schema)
+(defun find-camera (graph &key schema campus)
   (let ((class-symbol 'camera))
-    (if schema
-        (shinra:find-r-vertex graph 'edge :from schema
-                                          :edge-type :have-to
-                                          :vertex-class class-symbol)
-        (shinra:find-vertex graph class-symbol))))
+    (cond (schema (shinra:find-r-vertex graph 'edge :from schema
+                                                    :edge-type :have-to
+                                                    :vertex-class class-symbol))
+          (campus (shinra:find-r-vertex graph 'edge :from campus
+                                                    :edge-type :have-to
+                                                    :vertex-class class-symbol))
+          (t (shinra:find-vertex graph class-symbol)))))
 
 (defun get-camera (graph &key code %id)
   (let ((camera-class 'camera))

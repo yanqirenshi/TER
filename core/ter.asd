@@ -84,6 +84,7 @@ This file is a part of ter project.
                                              (:file "comparative")
                                              (:file "correspondence")
                                              (:file "recursion")
+                                             (:file "entity")
                                              (:file "port-ter")
                                              (:file "edge-ter")
                                              (:module "relationship" :components ((:file "entity")

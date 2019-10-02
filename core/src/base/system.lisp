@@ -1,7 +1,6 @@
 (in-package :ter)
 
 (defun eq-%id (a b)
-  (format t "~S~%" (list a b))
   (eq (up:%id a) (up:%id b)))
 
 (defun find-systems (graph &key modeler)
@@ -11,7 +10,7 @@
               (find-r-modeler2system-grant graph modeler))
       (shinra:find-vertex graph 'system)))
 
-(defun get-system (graph &key code %id schema)
+(defun get-system (graph &key code %id schema campus)
   (let ((class-symbol 'system))
     (cond (%id
            (shinra:get-vertex-at graph class-symbol :%id %id))
@@ -21,6 +20,10 @@
                                     :value code)))
           (schema (car (shinra:find-r-vertex graph 'edge
                                              :to schema
+                                             :vertex-class class-symbol
+                                             :edge-type :have-to)))
+          (campus (car (shinra:find-r-vertex graph 'edge
+                                             :to campus
                                              :vertex-class class-symbol
                                              :edge-type :have-to))))))
 

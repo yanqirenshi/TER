@@ -28,13 +28,15 @@
 ;;;
 ;;; environment
 ;;;
-(defun ter-environment-at-modeler-system-campus (graph modeler system campus)
-  (when (ter::get-edge-system2campus graph system campus)
-    (list :|system|   system
-          :|campus|   (campus2campus campus :graph graph :modeler modeler)
-          :|campuses| (mapcar #'(lambda (campus)
-                                  (campus2campus campus :graph graph :modeler modeler))
-                              (ter::find-campus graph :system system)))))
+(defun ter-environment-at-modeler-system-campus (graph modeler campus)
+  (assert graph)
+  (when (and modeler campus)
+    (let ((system (ter:get-system graph :campus campus)))
+      (list :|system|   system
+            :|campus|   (campus2campus campus :graph graph :modeler modeler)
+            :|campuses| (mapcar #'(lambda (campus)
+                                    (campus2campus campus :graph graph :modeler modeler))
+                                (ter::find-campus graph :system system))))))
 
 
 ;;;

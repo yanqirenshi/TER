@@ -35,6 +35,7 @@
            #:find-correspondence
            #:find-comparative
            #:find-recursion
+           #:find-entities
            #:find-attribute
            #:find-attribute-instance
            #:find-identifier

@@ -1,10 +1,9 @@
 (in-package :ter)
 
-(defvar *force-classes* (list :grand-master))
+(defvar *force-codes* (list :grand-master))
 
 
-(defclass force (shinra:shin rsc)
-  ((force-class :accessor force-class :initarg :force-class :initform nil)))
+(defclass force (shinra:shin rsc) ())
 
 
 (defmethod jojo:%to-json ((obj force))
@@ -13,5 +12,4 @@
     (jojo:write-key-value "code"          (slot-value obj 'code))
     (jojo:write-key-value "name"          (or (slot-value obj 'name) :null))
     (jojo:write-key-value "description"   (or (slot-value obj 'description) :null))
-    (jojo:write-key-value "force-class"   (slot-value obj 'force-class))
     (jojo:write-key-value "_class" "FORCE")))

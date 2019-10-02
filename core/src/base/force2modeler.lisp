@@ -1,10 +1,10 @@
 (in-package :ter)
 
 
-(defun get-r-force2modeler-by-modeler (graph modeler)
+(defun get-r-force2modeler-by-modeler (graph force modeler)
   (find-if #'(lambda (r)
-                 (let ((edge (getf r :edge)))
-                   (eq :owner (authority edge))))
+                 (let ((vertex (getf r :vertex)))
+                   (= (up:%id force) (up:%id vertex))))
              (shinra:find-r graph 'edge-force :to modeler)))
 
 
@@ -15,19 +15,16 @@
       (error "すでにそんざいします。")))
 
 
-(defun tx-create-force2modeler-core (graph force modeler &key force-class)
-  (assert force-class)
-  (assert (find force-class *force-classes*))
+(defun tx-create-force2modeler-core (graph force modeler)
   (shinra:tx-make-edge graph
                        'edge-force
                        force modeler
-                       :have-to
-                       `((force-class ,force-class))))
+                       :have-to))
 
 
-(defgeneric tx-create-force2modeler (graph force modeler &key force-class)
-  (:method (graph (force force) (modeler modeler) &key force-class)
-    (let ((r (get-r-force2modeler-by-modeler graph modeler)))
+(defgeneric tx-create-force2modeler (graph force modeler)
+  (:method (graph (force force) (modeler modeler))
+    (let ((r (get-r-force2modeler-by-modeler graph force modeler)))
       (if (null r)
-          (tx-create-force2modeler-core graph force modeler :force-class force-class)
+          (tx-create-force2modeler-core graph force modeler)
           (error-create-force2modeler   graph force modeler r)))))

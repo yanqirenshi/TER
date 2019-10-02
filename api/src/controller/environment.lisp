@@ -2,15 +2,16 @@
 
 (defun environments-systems (graph modeler)
   (mapcar #'(lambda (d)
-              (system2system graph d))
+              (system2system graph d :modeler modeler))
           (ter::find-systems graph :modeler modeler)))
 
 (defun environments (graph modeler)
-  (list :|systems| (environments-systems graph modeler)
+  (list :|forces|  (ter:find-force graph :modeler modeler)
+        :|systems| (environments-systems graph modeler)
         :|modeler| (modeler2modeler modeler)
-        :|active| (list :|system| (ter::config :active :system)
-                        :|ter|    (list :|campus| :null)
-                        :|er|     (list :|schema| :null))))
+        :|active|  (list :|system| (ter::config :active :system)
+                         :|ter|    (list :|campus| :null)
+                         :|er|     (list :|schema| :null))))
 
 
 (defun set-active-schema (graph modeler schema)

@@ -13,10 +13,12 @@
            #:*schema-directory-root*)
   (:export #:tx-create-system
            #:get-system
-           #:find-systems)
-  (:export #:get-to-camera
+           #:find-systems
+           #:get-to-camera
            #:find-camera
-           #:get-camera)
+           #:get-camera
+           #:find-force
+           #:get-force)
   ;; er
   (:export #:get-schema
            #:find-table

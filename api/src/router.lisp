@@ -57,7 +57,7 @@
         (render-json (find-er-edges schema))))))
 
 
-(defroute ("/er/schemas/:schema-id/camera/:camera-id/look-at" :method :POST)
+(defroute ("/er/schemas/:schema-id/cameras/:camera-id/look-at" :method :POST)
     (&key schema-id camera-id |x| |y|)
   (with-graph-modeler (graph modeler)
     (let ((schema-id (validate schema-id :integer :require t))
@@ -73,7 +73,7 @@
                                              :modeler modeler))))))
 
 
-(defroute ("/er/schemas/:schema-id/camera/:camera-id/magnification" :method :POST)
+(defroute ("/er/schemas/:schema-id/cameras/:camera-id/magnification" :method :POST)
     (&key schema-id camera-id |magnification|)
   (with-graph-modeler (graph modeler)
     (let ((schema-id     (validate schema-id       :integer :require t))

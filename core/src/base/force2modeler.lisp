@@ -28,3 +28,20 @@
       (if (null r)
           (tx-create-force2modeler-core graph force modeler)
           (error-create-force2modeler   graph force modeler r)))))
+
+
+(defun have-force-p.core (have-forces target-forces)
+  (let ((target-force (car target-forces)))
+    (if (null target-force)
+        t
+        (if (null (find target-force have-forces))
+            nil
+            (have-force-p.core have-forces (cdr target-forces))))))
+
+
+(defun have-force-p (graph modeler forces)
+  (when-let ((r-list (shinra:find-r graph 'edge-force :to modeler)))
+    (have-force-p.core (mapcar #'(lambda (r)
+                                   (code (getf r :vertex)))
+                               r-list)
+                       forces)))

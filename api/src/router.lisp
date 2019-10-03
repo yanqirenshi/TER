@@ -38,6 +38,7 @@
     (let ((schema-id (validate schema-id :integer :require t)))
       (let ((schema (get-schema-by-modeler graph modeler :schema-id schema-id)))
         (assert-path-object schema)
+        (assert-authority graph schema modeler :owner :writer :reader)
         (render-json (er-environment-at-modeler-schema graph modeler schema))))))
 
 
@@ -46,6 +47,7 @@
     (let ((schema-id (validate schema-id :integer :require t)))
       (let ((schema (get-schema-by-modeler graph modeler :schema-id schema-id)))
         (assert-path-object schema)
+        (assert-authority graph schema modeler :owner :writer :reader)
         (render-json (find-er-vertexes schema))))))
 
 
@@ -54,6 +56,7 @@
     (let ((schema-id (validate schema-id :integer :require t)))
       (let ((schema (get-schema-by-modeler graph modeler :schema-id schema-id)))
         (assert-path-object schema)
+        (assert-authority graph schema modeler :owner :writer :reader)
         (render-json (find-er-edges schema))))))
 
 
@@ -68,6 +71,7 @@
              (camera (get-camera-by-schema  graph schema  :camera-id camera-id)))
         (assert-path-object schema)
         (assert-path-object camera)
+        (assert-authority graph schema modeler :owner :writer :reader)
         (render-json (save-er-camera-look-at camera x y
                                              :graph   graph
                                              :modeler modeler))))))
@@ -83,6 +87,7 @@
              (camera (get-camera-by-schema  graph schema  :camera-id camera-id)))
         (assert-path-object schema)
         (assert-path-object camera)
+        (assert-authority graph schema modeler :owner :writer :reader)
         (render-json (save-er-camera-magnification camera magnification
                                                    :graph  graph
                                                    :modeler modeler))))))
@@ -100,6 +105,7 @@
              (table  (get-table-by-schema   schema        :table-id  table-id)))
         (assert-path-object schema)
         (assert-path-object table)
+        (assert-authority graph schema modeler :owner :writer)
         (render-json (save-er-position schema table x y z))))))
 
 
@@ -114,6 +120,7 @@
              (table  (get-table-by-schema   schema        :table-id  table-id)))
         (assert-path-object schema)
         (assert-path-object table)
+        (assert-authority graph schema modeler :owner :writer)
         (render-json (save-er-size schema table w h))))))
 
 
@@ -127,6 +134,7 @@
              (table  (get-table-by-schema   schema        :table-id  table-id)))
         (assert-path-object schema)
         (assert-path-object table)
+        (assert-authority graph schema modeler :owner :writer)
         (render-json (save-table-description schema table description))))))
 
 
@@ -143,6 +151,7 @@
         (assert-path-object schema)
         (assert-path-object table)
         (assert-path-object column-instance)
+        (assert-authority graph schema modeler :owner :writer)
         (render-json (save-column-instance-logical-name schema column-instance logical-name))))))
 
 
@@ -159,6 +168,7 @@
         (assert-path-object schema)
         (assert-path-object table)
         (assert-path-object column-instance)
+        (assert-authority graph schema modeler :owner :writer)
         (render-json (save-column-instance-description schema column-instance description))))))
 
 
@@ -170,6 +180,7 @@
     (let ((campus-id (validate campus-id :integer :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (ter-environment-at-modeler-system-campus graph modeler campus))))))
 
 
@@ -184,6 +195,7 @@
              (camera (get-camera-by-campus  graph campus  :camera-id camera-id)))
         (assert-path-object campus)
         (assert-path-object camera)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (save-ter-camera-look-at camera x y
                                               :graph   graph
                                               :modeler modeler))))))
@@ -199,6 +211,7 @@
              (camera (get-camera-by-campus  graph campus  :camera-id camera-id)))
         (assert-path-object campus)
         (assert-path-object camera)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (save-ter-camera-magnification camera magnification
                                                     :graph   graph
                                                     :modeler modeler))))))
@@ -212,6 +225,7 @@
     (let ((campus-id (validate campus-id :integer :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (find-entities campus))))))
 
 
@@ -233,6 +247,7 @@
              (entity (get-entity-by-campus  campus        :entity-id entity-id)))
         (assert-path-object campus)
         (assert-path-object entity)
+        (assert-authority graph campus modeler :owner :writer)
         (render-json (save-entity-position campus entity x y z))))))
 
 ;;;
@@ -243,6 +258,7 @@
     (let ((campus-id (validate campus-id :integer :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (find-identifier-instances campus))))))
 
 
@@ -254,6 +270,7 @@
     (let ((campus-id (validate campus-id :integer :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (find-attributes-instances campus))))))
 
 
@@ -265,6 +282,7 @@
     (let ((campus-id (validate campus-id :integer :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (find-entities-ports campus))))))
 
 
@@ -274,6 +292,7 @@
           (degree    (validate |degree|  :float   :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer)
         (render-json (save-port-ter-location campus
                                              (parse-integer port-id)
                                              degree))))))
@@ -286,6 +305,7 @@
     (let ((campus-id (validate campus-id :integer :require t)))
       (let ((campus (get-campus-by-modeler graph modeler :campus-id campus-id)))
         (assert-path-object campus)
+        (assert-authority graph campus modeler :owner :writer :reader)
         (render-json (find-edge-ters campus))))))
 
 
@@ -325,6 +345,7 @@
 ;;;
 (defroute "/pages/managements" ()
   (with-graph-modeler (graph modeler)
+    (assert-force graph modeler :grand-master)
     (render-json (pages-basic graph modeler))))
 
 (defroute "/pages/systems" ()

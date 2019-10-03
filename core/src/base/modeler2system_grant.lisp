@@ -79,3 +79,18 @@
     (assert (owner-system-p graph owner system))
     (assert (grant-authority-p authority))
     (tx-grant-modeler2system-core graph modeler system authority)))
+
+
+(defgeneric can-use-system-p (graph target modeler authorities)
+  (:method (graph (schema schema) modeler authorities)
+    (when-let ((system (get-system graph :schema schema)))
+      (can-use-system-p graph system modeler authorities)))
+
+  (:method (graph (campus campus) modeler authorities)
+    (when-let ((system (get-system graph :campus campus)))
+      (can-use-system-p graph system modeler authorities)))
+
+  (:method (graph (system system) modeler authorities)
+    (let ((edge (get-edge-modeler2system-grant graph modeler :system system)))
+      (when edge
+        (if (find (authority edge) authorities) t nil)))))

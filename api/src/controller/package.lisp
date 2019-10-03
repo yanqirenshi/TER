@@ -3,6 +3,8 @@
   (:use #:cl)
   (:import-from :alexandria
                 #:when-let)
+  (:export #:assert-authority
+           #:assert-force)
   (:export #:set-active-system
            #:get-schema-by-modeler
            #:get-camera-by-schema

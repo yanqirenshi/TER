@@ -1,5 +1,12 @@
 (in-package :ter.api.controller)
 
+(defun assert-authority (graph target modeler &rest authorities)
+  (assert (ter::can-use-system-p graph target modeler authorities)))
+
+(defun assert-force (graph modeler &rest forces)
+  (assert (ter::have-force-p graph modeler forces)))
+
+
 ;;;;;
 ;;;;; get-schema-by-modeler
 ;;;;;

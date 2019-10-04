@@ -138,11 +138,11 @@ class Er extends ErDataManeger {
 
         this._table = null;
 
-        this._table     = this.initTable (options);
+        this._values    = this.initValues(options);
         this._callbacks = this.initCallbacks(options);
     }
-    initTable (options) {
-        let default_table = {
+    initValues (options) {
+        let default_values = {
             table: {
                 columns: {
                     column: {
@@ -152,10 +152,10 @@ class Er extends ErDataManeger {
             },
         };
 
-        if (!options.callbacks)
-            return default_table;
+        if (!options.values)
+            return default_values;
 
-        return Object.assign({}, options.callbacks);
+        return Object.assign({}, options.values);
     }
     initCallbacks (options) {
         let default_callbacks = {
@@ -217,7 +217,7 @@ class Er extends ErDataManeger {
         if (!this._table)
             this._table = new ErTable({
                 d3svg:d3svg,
-                table: this._table,
+                values: this._values,
                 callbacks: this._callbacks.table,
             });
 

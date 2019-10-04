@@ -3,12 +3,12 @@ class ErTable {
         this._d3svg = options.d3svg;
         this._padding = 11;
 
-        this._table     = options.table;
+        this._values    = options.values;
         this._callbacks = options.callbacks;
 
         this._TableColumn = new TableColumn({
             padding: this._padding,
-            column: this._table.columns.column,
+            values:  this._values,
         });
         this._Edge = new Edge();
         this._Port = new Port();

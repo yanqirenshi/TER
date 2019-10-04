@@ -84,7 +84,8 @@ class TableColumn {
             })
             .text((d) => {
                 let type = this._values.table.columns.column;
-
+                dump(type);
+                dump(d);
                 if (type=='physical_name' && d.physical_name)
                     return d.physical_name;
 

@@ -83,11 +83,15 @@ class TableColumn {
                 return d.h;
             })
             .text((d) => {
-                dump(this._values);
-                if (d.logical_name)
-                    return d.logical_name;
+                let type = this._values.table.columns.column;
 
-                return d.physical_name;
+                if (type=='physical_name' && d.physical_name)
+                    return d.physical_name;
+
+                if (!d.physical_name)
+                    return d.physical_name;
+
+                return d.logical_name;
             }).each(function (d) {
                 // table ごとの max を算出
                 let w = Math.ceil(this.getBBox().width) + padding * 4;

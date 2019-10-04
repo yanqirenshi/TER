@@ -104,7 +104,7 @@ class ErDataManeger {
     /////
     ///// response
     /////
-    responseNode2Data (response) {
+    responseNode2Data (response, state) {
         let relashonships    = this.makeGraphDataR(response.RELASHONSHIPS);
         let tables           = this.makeGraphData(response.TABLES);
         let column_instances = this.makeGraphData(response.COLUMN_INSTANCES);
@@ -114,14 +114,13 @@ class ErDataManeger {
         this.injectTable2ColumnInstances(tables, column_instances, relashonships);
         this.injectColumnInstances2Ports (column_instances, ports, relashonships);
 
-        return {
-            tables:           this.makeGraphData(response.TABLES),
-            columns:          this.makeGraphData(response.COLUMNS),
-            column_instances: column_instances,
-            ports:            ports,
-            relashonships:    relashonships,
-            cameras:          response.CAMERAS
-        };
+        state.tables =           this.makeGraphData(response.TABLES);
+        state.columns =          this.makeGraphData(response.COLUMNS);
+        state.column_instances = column_instances;
+        state.ports =            ports;
+        state.relashonships =    relashonships;
+
+        return state;
     }
     responseEdge2Data (relashonships, ports) {
         return this.makeGraphData(this.makeEdges(relashonships, ports));
@@ -138,7 +137,25 @@ class Er extends ErDataManeger {
         super();
 
         this._table = null;
-        this._callbacks = this.initCallbacks(options.callbacks);
+
+        this._table     = this.initTable (options);
+        this._callbacks = this.initCallbacks(options);
+    }
+    initTable (options) {
+        let default_table = {
+            table: {
+                columns: {
+                    column: {
+                        value: 'logical_name', // 'physical_name'
+                    }
+                },
+            },
+        };
+
+        if (!options.callbacks)
+            return default_table;
+
+        return Object.assign({}, options.callbacks);
     }
     initCallbacks (options) {
         let default_callbacks = {
@@ -200,6 +217,7 @@ class Er extends ErDataManeger {
         if (!this._table)
             this._table = new ErTable({
                 d3svg:d3svg,
+                table: this._table,
                 callbacks: this._callbacks.table,
             });
 
@@ -218,5 +236,65 @@ class Er extends ErDataManeger {
     reDrawTable (table) {
         if (table)
             this._table.reDraw(table);
+    }
+    stateER2Json (state) {
+        let out = {};
+
+        out.tables  = state.tables.list.map((obj) => {
+            let new_data = Object.assign({}, obj);
+
+            delete new_data._column_instances;
+            delete new_data._edges;
+            delete new_data._ports;
+
+            return new_data;
+        });
+        out.columns = state.columns.list.slice();
+        out.cameras = state.cameras.slice();
+        out.column_instances = state.column_instances.list.map((obj) => {
+            let new_data = Object.assign({}, obj);
+
+            delete new_data._table;
+
+            return new_data;
+        });
+
+        out.ports = state.ports.list.map((obj) => {
+            let new_data = Object.assign({}, obj);
+
+            delete new_data._column_instance;
+
+            return new_data;
+        });
+
+        out.relashonships = state.relashonships.list.map((obj) => {
+            let new_data = Object.assign({}, obj);
+
+            delete new_data._port_from;
+            delete new_data._port_to;
+
+            return new_data;
+        });
+
+        out.edges = state.edges.list.map((obj) => {
+            let new_data = Object.assign({}, obj);
+
+            delete new_data._port_from;
+            delete new_data._port_to;
+
+            return new_data;
+        });
+
+        return JSON.stringify(out, null, 3);
+    }
+    downloadJson (name, json) {
+        var blob = new Blob([ json ], {type : 'application/json'});
+
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.target = '_blank';
+        a.download = name + '.' + moment().format('YYYYMMDDHHmmssZZ') + '.json';
+        a.click();
+
     }
 }

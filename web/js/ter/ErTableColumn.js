@@ -1,6 +1,7 @@
 class TableColumn {
     constructor(param) {
         this._padding = param.padding ? param.padding : 0;
+        this._column  = param.column;
     }
     columnsWidth (d) {
         let padding = this._padding;
@@ -82,6 +83,7 @@ class TableColumn {
                 return d.h;
             })
             .text((d) => {
+                dump(this._column);
                 if (d.logical_name)
                     return d.logical_name;
 

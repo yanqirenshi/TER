@@ -137,7 +137,25 @@ class Er extends ErDataManeger {
         super();
 
         this._table = null;
+
+        this._table     = this.initTable (options);
         this._callbacks = this.initCallbacks(options);
+    }
+    initTable (options) {
+        let default_table = {
+            table: {
+                columns: {
+                    column: {
+                        value: 'logical_name', // 'physical_name'
+                    }
+                },
+            },
+        };
+
+        if (!options.callbacks)
+            return default_table;
+
+        return Object.assign({}, options.callbacks);
     }
     initCallbacks (options) {
         let default_callbacks = {
@@ -199,6 +217,7 @@ class Er extends ErDataManeger {
         if (!this._table)
             this._table = new ErTable({
                 d3svg:d3svg,
+                table: this._table,
                 callbacks: this._callbacks.table,
             });
 

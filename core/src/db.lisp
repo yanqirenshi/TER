@@ -24,8 +24,9 @@
   (when *graph* (stop))
   (setf *graph*
         (make-banshou 'banshou *graph-stor-dir*))
-  (up:execute-transaction
-   (ter::tx-ensure-forces *graph*)))
+  ;; (up:execute-transaction
+  ;;  (ter::tx-ensure-forces *graph*))
+  )
 
 (defun snapshot ()
   (up:snapshot *graph*))

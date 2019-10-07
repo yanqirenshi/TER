@@ -1,5 +1,6 @@
 (in-package :cl-user)
 (defpackage ter.api.controller
+  (:nicknames :ter.api.ctrl)
   (:use #:cl)
   (:import-from :alexandria
                 #:when-let)

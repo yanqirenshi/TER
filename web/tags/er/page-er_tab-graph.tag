@@ -84,7 +84,16 @@
 
     <script>
      this.sketcher = null;
-     this.painter = new Er({ callbacks: this.callbacks });
+     this.painter = new Er({
+         callbacks: this.callbacks,
+         values: {
+             table: {
+                 columns: {
+                     column: 'physical_name', // 'logical_name'
+                 },
+             },
+         },
+     });
 
      this.getActiveSchema = () => {
          let active_schema = STORE.get('active.er.schema');

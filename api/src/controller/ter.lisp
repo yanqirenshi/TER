@@ -126,6 +126,17 @@
                                 `((ter::location ,new-location))))))
 
 
+;;;
+;;; create-entity
+;;;
+(defun create-entity (campus &key type code name description)
+  (let ((graph (ter::get-campus-graph campus)))
+    (cond ((string= "rs" type)
+           (up:execute-transaction
+            (ter::tx-make-resource graph code name :description description)))
+          (t (error "")))))
+
+
 ;;;;;
 ;;;;; System
 ;;;;;

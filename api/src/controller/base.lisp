@@ -101,7 +101,17 @@
 (defun get-campus-by-modeler (graph modeler &key campus-id)
   (assert graph)
   (when (and modeler campus-id)
-    (get-campus-by-modeler.loop-systems graph campus-id (ter:find-systems graph :modeler modeler))))
+    (let ((systems (ter:find-systems graph :modeler modeler)))
+      (get-campus-by-modeler.loop-systems graph campus-id systems))))
+
+
+;;;;;
+;;;;; get-campus-by-system-and-modeler
+;;;;;
+(defun get-campus-by-system-and-modeler (graph system modeler &key campus-id)
+  (let ((campuse (get-campus-by-modeler graph modeler :campus-id campus-id)))
+    (when (ter::get-r-system2campus graph system campuse)
+      campuse)))
 
 
 ;;;;;

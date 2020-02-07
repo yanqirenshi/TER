@@ -3,12 +3,14 @@
 (defun eq-%id (a b)
   (eq (up:%id a) (up:%id b)))
 
+
 (defun find-systems (graph &key modeler)
   (if modeler
       (mapcar #'(lambda (r)
                   (getf r :vertex))
               (find-r-modeler2system-grant graph modeler))
       (shinra:find-vertex graph 'system)))
+
 
 (defun get-system (graph &key code %id schema campus)
   (let ((class-symbol 'system))

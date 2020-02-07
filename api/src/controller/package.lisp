@@ -10,7 +10,8 @@
            #:get-schema-by-modeler
            #:get-camera-by-schema
            #:get-campus-by-modeler
-           #:get-camera-by-campus)
+           #:get-camera-by-campus
+           #:get-campus-by-system-and-modeler)
   (:export #:get-table-by-schema
            #:get-column-instance-by-table
            #:finder-er-tables
@@ -41,7 +42,8 @@
            #:save-ter-camera-look-at
            #:save-ter-camera-magnification
            #:ter-environment-at-modeler-system-campus)
-  (:export #:create-system)
+  (:export #:create-system
+           #:create-entity)
   (:export #:find-graph)
   (:export #:pages-basic
            #:pages-systems

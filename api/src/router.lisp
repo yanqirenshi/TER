@@ -232,7 +232,21 @@
 (defroute ("/systems/:sytem-id/campuses/:campus-id/entities" :method :post)
     (&key sytem-id campus-id |type| |code| |name| |description|)
   (with-graph-modeler (graph modeler)
-    (render-json (list sytem-id campus-id |type| |code| |name| |description|))))
+    (let ((system-id   (validate sytem-id      :integer :require t))
+          (campus-id   (validate campus-id     :integer :require t))
+          (type        (validate |type|        :string  :require t   :url-decode t))
+          (code        (validate |code|        :string  :require t   :url-decode t))
+          (name        (validate |name|        :string  :require t   :url-decode t))
+          (description (validate |description| :string  :require nil :url-decode t :default-value "")))
+      (let ((system (ter::get-system graph :%id system-id)))
+        (unless system (throw-code 404))
+        (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
+          (unless campus (throw-code 404))
+          (render-json (ter.api.controller:create-entity campus
+                                                         :type type
+                                                         :code code
+                                                         :name name
+                                                         :description description)))))))
 
 
 (defroute ("/ter/campuses/:campus-id/entities/:entity-id/location" :method :post)

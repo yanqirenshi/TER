@@ -2,15 +2,6 @@
 
 
 ;;;;;
-;;;;; entity : attribute
-;;;;;
-
-
-
-
-
-
-;;;;;
 ;;;;; entity : attribute-instance
 ;;;;;
 (defun get-entity-attribute-at-code (graph entity code)

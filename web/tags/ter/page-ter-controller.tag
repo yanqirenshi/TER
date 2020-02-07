@@ -1,25 +1,39 @@
 <page-ter-controller>
 
     <button class="button"
-            onclick={clickCreateEntity}>Create Entity</button>
+            onclick={clickCreateEntity}>
+        Create Entity
+    </button>
 
-    <button class="button">Create Relationship</button>
+    <button class="button">
+        Create Relationship
+    </button>
 
-    <button class="button">Save Graph</button>
+    <button class="button"
+            onclick={clickSaveGraph}>
+        Save Graph
+    </button>
 
-    <button class="button" onclick={clickDownload}>Download</button>
+    <button class="button"
+            onclick={clickDownload}>
+        Download
+    </button>
 
     <script>
+     this.clickSaveGraph = () => {
+         let state = STORE.get('active');
+         let system = state.system;
+         let campus = state.ter.campus;
+
+         ACTIONS.saveTerCampusGraph(system, campus);
+     };
      this.clickDownload = () => {
          let ter = new Ter();
          let file_name = STORE.get('schemas.active') + '.ter';
 
          ter.downloadJson(file_name,
                           ter.stateTER2Json(STORE.state().get('ter')));
-     }
-    </script>
-
-    <script>
+     };
      this.clickCreateEntity = () => {
          ACTIONS.openModalCreateEntity();
      };

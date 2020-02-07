@@ -1212,12 +1212,16 @@ riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="m
          ACTIONS.closeModalCreateEntity();
      };
      this.clickCreate = () => {
-         ACTIONS.createTerEntity({
-             type: this.refs.entity_type.value,
-             code: this.refs.code.value.trim(),
-             name: this.refs.name.value.trim(),
-             description: this.refs.description.value.trim(),
-         })
+         let state = STORE.get('active');
+         ACTIONS.createTerEntity(
+             state.system,
+             state.ter.campus,
+             {
+                 type: this.refs.entity_type.value,
+                 code: this.refs.code.value.trim(),
+                 name: this.refs.name.value.trim(),
+                 description: this.refs.description.value.trim(),
+             })
      };
      this.isActive = () => {
          return STORE.get('modals.create-entity') ? 'is-active' : '';
@@ -1411,15 +1415,21 @@ riot.tag2('page-systems', '<page-systems-granted source="{this.source}"></page-s
      });
 });
 
-riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEntity}">Create Entity</button> <button class="button">Create Relationship</button> <button class="button">Save Graph</button> <button class="button" onclick="{clickDownload}">Download</button>', 'page-ter-controller { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; } page-ter-controller > * { margin-top: 22px; }', '', function(opts) {
+riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEntity}"> Create Entity </button> <button class="button"> Create Relationship </button> <button class="button" onclick="{clickSaveGraph}"> Save Graph </button> <button class="button" onclick="{clickDownload}"> Download </button>', 'page-ter-controller { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; } page-ter-controller > * { margin-top: 22px; }', '', function(opts) {
+     this.clickSaveGraph = () => {
+         let state = STORE.get('active');
+         let system = state.system;
+         let campus = state.ter.campus;
+
+         ACTIONS.saveTerCampusGraph(system, campus);
+     };
      this.clickDownload = () => {
          let ter = new Ter();
          let file_name = STORE.get('schemas.active') + '.ter';
 
          ter.downloadJson(file_name,
                           ter.stateTER2Json(STORE.state().get('ter')));
-     }
-
+     };
      this.clickCreateEntity = () => {
          ACTIONS.openModalCreateEntity();
      };

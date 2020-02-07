@@ -130,11 +130,17 @@
 ;;; create-entity
 ;;;
 (defun create-entity (campus &key type code name description)
+  (let ((graph (ter::get-campus-graph campus))
+        (type-keyword (alexandria:make-keyword (string-upcase type))))
+    (assert graph)
+    (up:execute-transaction
+     (ter::tx-build-identifier graph type-keyword code name :description description))))
+
+
+(defun snapshot-campus-graph (campus)
   (let ((graph (ter::get-campus-graph campus)))
-    (cond ((string= "rs" type)
-           (up:execute-transaction
-            (ter::tx-make-resource graph code name :description description)))
-          (t (error "")))))
+    (assert graph)
+    (up:snapshot graph)))
 
 
 ;;;;;

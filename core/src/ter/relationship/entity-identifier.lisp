@@ -1,18 +1,6 @@
 (in-package :ter)
 
 
-;;;;;
-;;;;; entity : identifier
-;;;;;
-
-
-
-
-
-
-;;;;;
-;;;;; entity : identifier-instance
-;;;;;
 (defun get-entity-identifier-at-code (graph entity code)
   (get-entity-column-at-code graph entity 'identifier-instance code))
 
@@ -93,8 +81,8 @@
 ;;;;;
 ;;;;; TX-BUILD-IDENTIFIER
 ;;;;;
-(defgeneric tx-build-identifier (graph type code name)
-  (:method (graph (type symbol) (code symbol) (name string))
+(defgeneric tx-build-identifier (graph type code name &key description)
+  (:method (graph (type symbol) (code symbol) (name string) &key (description ""))
     (assert (and graph type code name))
     (assert (or (eq :ev type) (eq :rs type)))
     (flet ((str2keyword (str)
@@ -114,8 +102,8 @@
                                                                 identifier-name
                                                                 identifier-data-type))
               (entity (if (eq :rs type)
-                          (tx-make-resource graph entity-code name)
-                          (tx-make-event    graph entity-code name))))
+                          (tx-make-resource graph entity-code name :description description)
+                          (tx-make-event    graph entity-code name :description description))))
           (declare (ignore identifier)) ;; TODO; create identifier to identifier-instance
           (tx-add-identifier-instance graph entity identifier-instance :type :native))))))
 

@@ -229,6 +229,19 @@
         (render-json (find-entities campus))))))
 
 
+(defroute ("/systems/:sytem-id/campuses/:campus-id/graph/save" :method :post)
+    (&key sytem-id campus-id)
+  (with-graph-modeler (graph modeler)
+    (let ((system-id (validate sytem-id  :integer :require t))
+          (campus-id (validate campus-id :integer :require t)))
+      (let ((system (ter::get-system graph :%id system-id)))
+        (unless system (throw-code 404))
+        (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
+          (unless campus (throw-code 404))
+          (snapshot-campus-graph campus)
+          (render-json :null))))))
+
+
 (defroute ("/systems/:sytem-id/campuses/:campus-id/entities" :method :post)
     (&key sytem-id campus-id |type| |code| |name| |description|)
   (with-graph-modeler (graph modeler)

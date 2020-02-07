@@ -46,5 +46,6 @@
   (or (ter::get-camera graph :code (str2keyword camera-code))
       (throw-code 404)))
 
+
 (defun assert-path-object (obj)
   (unless obj (throw-code 404)))

@@ -697,13 +697,11 @@ class Ter {
         this.moveEntity(d);
     }
     dragEnd (entity) {
-        let state = STORE.state().get('schemas');
-        let code = state.active;
-        let schema = state.list.find((d) => { return d.code == code; });
+        let campus = STORE.get('active.ter.campus');
 
         delete entity._drag;
 
-        ACTIONS.saveTerEntityPosition(schema, entity);
+        ACTIONS.saveTerEntityPosition(campus, entity);
     }
     /* **************************************************************** *
      *  Draw

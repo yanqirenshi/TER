@@ -58,12 +58,16 @@
          ACTIONS.closeModalCreateEntity();
      };
      this.clickCreate = () => {
-         ACTIONS.createTerEntity({
-             type: this.refs.entity_type.value,
-             code: this.refs.code.value.trim(),
-             name: this.refs.name.value.trim(),
-             description: this.refs.description.value.trim(),
-         })
+         let state = STORE.get('active');
+         ACTIONS.createTerEntity(
+             state.system,
+             state.ter.campus,
+             {
+                 type: this.refs.entity_type.value,
+                 code: this.refs.code.value.trim(),
+                 name: this.refs.name.value.trim(),
+                 description: this.refs.description.value.trim(),
+             })
      };
      this.isActive = () => {
          return STORE.get('modals.create-entity') ? 'is-active' : '';

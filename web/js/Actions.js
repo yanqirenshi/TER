@@ -531,6 +531,20 @@ class Actions extends Vanilla_Redux_Actions {
 
         API.post(path, post_data, ()=>{});
     }
+    saveTerCampusGraph (system, campus) {
+        let path = "/systems/%d/campuses/%d/graph/save".format(system._id, campus._id);
+
+        API.post(path, null, (response)=>{
+            STORE.dispatch(this.savedTerCampusGraph(response));
+        });
+    }
+    savedTerCampusGraph (response) {
+        let new_state = STORE.get('ter');
+
+        return {
+            type: 'SAVED-TER-CAMPUS-GRAPH',
+        };
+    }
     /* **************************************************************** *
      *  Inspector
      * **************************************************************** */
@@ -729,9 +743,12 @@ class Actions extends Vanilla_Redux_Actions {
             data: {},
         };
     }
-    createTerEntity (data) {
-        let path = '/systems/:code/campus/:code/entities';
+    createTerEntity (system, campus, data) {
+        let path = '/systems/%d/campuses/%d/entities'.format(system._id, campus._id);
         let post_data = data;
+
+        for (let key in post_data)
+            post_data[key] = encodeURI(post_data[key]);
 
         API.post(path, post_data, function (response) {
             STORE.dispatch(this.createdTerEntity(response));
@@ -739,7 +756,7 @@ class Actions extends Vanilla_Redux_Actions {
     }
     createdTerEntity (response) {
         return {
-            type: 'CREATED-SYSTEM',
+            type: 'CREATED-ENTITY',
             data: {},
         };
     }

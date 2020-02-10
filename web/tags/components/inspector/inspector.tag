@@ -66,6 +66,6 @@
 
          if (action.type=='CLOSE-ALL-SUB-PANELS')
              this.update();
-     })
+     });
     </script>
 </inspector>

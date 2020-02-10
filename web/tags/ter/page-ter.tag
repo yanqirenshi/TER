@@ -14,6 +14,8 @@
         <page-ter_tab-attributes  class="hide"></page-ter_tab-attributes>
     </div>
 
+    <inspector></inspector>
+
     <script>
      this.campuses = () => {
          let system = STORE.get('active.system');

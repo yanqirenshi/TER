@@ -1,6 +1,7 @@
 (in-package :ter)
 
-(defun tx-make-relationship-evt2evt-to (graph from to)
+
+(defun tx-make-relationship-correspondence (graph from to)
   ;; TODO: add assert relationships
   (let* ((correspondence nil)
          (port-from   (add-port graph from))

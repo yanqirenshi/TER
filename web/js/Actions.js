@@ -726,6 +726,27 @@ class Actions extends Vanilla_Redux_Actions {
             data: { modals: state },
         });
     }
+    openModalCreateRelationship (data) {
+        let state = STORE.get('modals');
+
+        state['create-relationship'] = data;
+
+        STORE.dispatch({
+            type: 'OPEN-MODAL-CREATE-RELATIONSHIP',
+            data: { modals: state },
+        });
+    }
+    closeModalCreateRelationship () {
+
+        let state = STORE.get('modals');
+
+        state['create-relationship'] = null;
+
+        STORE.dispatch({
+            type: 'CLOSE-MODAL-CREATE-RELATIONSHIP',
+            data: { modals: state },
+        });
+    }
     /* **************************************************************** *
      *  System
      * **************************************************************** */
@@ -757,6 +778,23 @@ class Actions extends Vanilla_Redux_Actions {
     createdTerEntity (response) {
         return {
             type: 'CREATED-ENTITY',
+            data: {},
+        };
+    }
+    createTerRelationship (system, campus, data) {
+        let path = "/systems/%d/campuses/%d/relationships".format(system._id, campus._id);
+        let post_data = data;
+
+        for (let key in post_data)
+            post_data[key] = encodeURI(post_data[key]);
+
+        API.post(path, post_data, function (response) {
+            STORE.dispatch(this.createdTerRelationship(response));
+        }.bind(this));
+    }
+    createdTerRelationship (response) {
+        return {
+            type: 'CREATED-RELATIONSHIP',
             data: {},
         };
     }

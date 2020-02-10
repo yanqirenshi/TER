@@ -4,8 +4,9 @@
   (shinra:find-vertex graph 'comparative))
 
 
-(defun get-comparative (graph &key code)
-  (car (shinra:find-vertex graph 'comparative :slot 'code :value code)))
+(defun get-comparative (graph &key %id code)
+  (cond (%id (shinra:get-vertex-at graph 'comparative :%id %id))
+        (code (car (shinra:find-vertex graph 'comparative :slot 'code :value code)))))
 
 
 (defun tx-make-comparative-add-identifier (graph entity original)

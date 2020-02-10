@@ -277,6 +277,28 @@
         (assert-authority graph campus modeler :owner :writer)
         (render-json (save-entity-position campus entity x y z))))))
 
+
+(defun get-camups (graph system-id campus-id modeler)
+  (let ((system (ter::get-system graph :%id system-id)))
+    (unless system (throw-code 404))
+    (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
+      (unless campus (throw-code 404))
+      campus)))
+
+
+(defroute ("/systems/:sytem-id/campuses/:campus-id/relationships" :method :post)
+    (&key sytem-id campus-id |from| |to| |type|)
+  (with-graph-modeler (graph modeler)
+    (let ((system-id   (validate sytem-id  :integer :require t))
+          (campus-id   (validate campus-id :integer :require t))
+          (from-id     (validate |from|    :integer :require t))
+          (to-id       (validate |to|      :integer :require t))
+          (type-str    (validate |type|    :string  :require t :url-decode t)))
+      (let ((campus (get-camups graph system-id campus-id modeler))
+            (type (alexandria:make-keyword (string-upcase type-str))))
+        (render-json (ter.api.controller:create-relationship campus from-id to-id type))))))
+
+
 ;;;
 ;;; identifiers
 ;;;

@@ -1257,9 +1257,194 @@ riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="m
      });
 });
 
+riot.tag2('modal-create-relationship-entitiy-selector', '<div style="margin-bottom:8px;"> <h1 class="title is-5">{opts.position===\'from\' ? \'From\' : \'To\'}</h1> </div> <div class="item-selected"> <p>{selectedItem()}</p> </div> <div style="display:flex;"> <div style="flex-grow:1;"> <input class="input is-small" type="text" placeholder="Search" ref="name" onkeyup="{changeSearchKeyword}"> </div> </div> <div style="height: 333px;overflow: auto;"> <div each="{entity in list()}" class="item" onclick="{clickItem}" entity-id="{entity._id}"> <p entity-id="{entity._id}">{entity._class}</p> <p entity-id="{entity._id}">{entity.code}</p> <p entity-id="{entity._id}">{entity.name}</p> </div> </div>', 'modal-create-relationship-entitiy-selector .item { font-size:12px; margin-bottom:8px; margin-bottom: 8px; border: 1px solid #eee; border-radius: 3px; padding: 3px 6px; } modal-create-relationship-entitiy-selector .item-selected { font-size: 12px; margin-bottom:8px; background:#eee; border-radius:3px; padding: 3px 6px; }', '', function(opts) {
+     this.state = {
+         search: null,
+     }
+     this.clickItem = (e) => {
+         let entity_id = e.target.getAttribute('entity-id') * 1;
+
+         let entity = STORE.get('ter.entities.list').find((entity) => {
+             return entity._id === entity_id;
+         });
+
+         this.opts.callback('change-entity', { position: opts.position, entity: entity });
+     };
+     this.changeSearchKeyword = (e) => {
+         let val = e.target.value;
+
+         this.state.search = val;
+
+         this.update();
+     };
+     this.selectedItem = () => {
+         let opts = this.opts;
+         let entity = opts.source[opts.position];
+
+         if (!entity)
+             return 'Please Select';
+
+         return entity._class + '\n' + entity.code + '\n' + entity.name;
+     };
+     this.list = () => {
+         let list = STORE.get('ter.entities.list');
+
+         let search_keyword = this.state.search;
+
+         let out;
+         if (!search_keyword) {
+             out = list;
+         } else {
+             search_keyword = search_keyword.toUpperCase();
+             out = list.filter((entity) => {
+                 let str = (entity.code + entity.name).toUpperCase();
+
+                 return str.indexOf(search_keyword) !== -1 ||
+                        str.indexOf(search_keyword) !== -1;
+             });
+         }
+
+         return out.sort((a, b) => {
+             return a.code < b.code ? -1 : 1;
+         });
+     };
+});
+
+riot.tag2('modal-create-relationship-type-selector', '<div style="margin-bottom:8px;"> <h1 class="title is-5">Type</h1> </div> <div class="item-selected"> <p>{selectedItem()}</p> </div> <div style="display:flex;"> <div style="flex-grow:1;"> <input class="input is-small" type="text" placeholder="Search" ref="name" onkeyup="{changeSearchKeyword}"> </div> </div> <div style="height: 333px;overflow: auto;"> <div each="{item in list()}" class="item" onclick="{clickItem}" code="{item.code}"> <p code="{item.code}">{item.name}</p> <p code="{item.code}"> {item.pattern.from + \' \'} - {\' \' + item.pattern.to} </p> </div> </div>', 'modal-create-relationship-type-selector .item { font-size:12px; margin-bottom:8px; margin-bottom: 8px; border: 1px solid #eee; border-radius: 3px; padding: 3px 6px; } modal-create-relationship-type-selector .item-selected { font-size: 12px; margin-bottom:8px; background:#eee; border-radius:3px; padding: 3px 6px; }', '', function(opts) {
+     this.state = {
+         search: null,
+         list: [
+             { code: 'COMPARATIVE',      name: '対照表',      pattern: {from: 'RESOURCE', to: 'RESOURCE'} },
+             { code: 'RECURSION',        name: '再帰',        pattern: {from: 'RESOURCE', to: 'RESOURCE'} },
+             { code: 'RESOURCE-SUBSET',  name: 'サブセット',  pattern: {from: 'RESOURCE', to: 'RESOURCE'} },
+             { code: 'INJECT',           name: 'イベント',    pattern: {from: 'RESOURCE', to: 'EVENT'} },
+             { code: 'CORRESPONDENCE',   name: '対応表',      pattern: {from: 'EVENT',    to: 'EVENT'} },
+             { code: 'INJECT',           name: 'ヘッダ-明細', pattern: {from: 'EVENT',    to: 'EVENT'} },
+             { code: 'EVENT-SUBSET',     name: 'サブセット',  pattern: {from: 'EVENT',    to: 'EVENT'} },
+             { code: 'COMPARATIVE',      name: '対照表',      pattern: {from: 'EVENT',    to: 'RESOURCE'} },
+         ],
+         master: {
+             'EVENT':           'EVENT',
+             'EVENT-SUBSET':    'EVENT',
+             'RESOURCE':        'RESOURCE',
+             'RESOURCE-SUBSET': 'RESOURCE',
+         }
+     }
+     this.clickItem = (e) => {
+         let code = e.target.getAttribute('code');
+
+         let item = this.state.list.find((item) => {
+             return item.code === code;
+         });
+         this.opts.callback('change-type', item);
+     };
+     this.changeSearchKeyword = (e) => {
+         let val = e.target.value;
+
+         this.state.search = val;
+
+         this.update();
+     };
+     this.selectedItem = () => {
+         let item = this.opts.source.type;
+
+         if (!item)
+             return 'Please Select';
+
+         return item.name + '\n' + item.pattern.from + ' - ' + item.pattern.to;
+     };
+     this.listFilter = (position, source, out) => {
+         let entity = source[position];
+
+         if (!entity)
+             return out;
+
+         let _class = this.state.master[entity._class];
+
+         return out.filter((d) => {
+             return d.pattern[position]===_class;
+         }) ;
+     }
+     this.list = () => {
+         let out = this.state.list;
+
+         let source = this.opts.source;
+         if (!source.from && !source.to)
+             return [];
+
+         out = this.listFilter('from', source, out);
+         out = this.listFilter('to',   source, out);
+
+         return out.sort((a, b) => {
+             return a.code < b.code ? -1 : 1;
+         });
+     };
+});
+
+riot.tag2('modal-create-relationship', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create Relationship</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div style="display:flex;"> <div style="width: 333px;"> <modal-create-relationship-entitiy-selector position="from" callback="{callback}" source="{state}"> </modal-create-relationship-entitiy-selector> </div> <div style="width: 333px; margin-left:11px; margin-right:11px;"> <modal-create-relationship-entitiy-selector position="to" callback="{callback}" source="{state}"> </modal-create-relationship-entitiy-selector> </div> <div style="width: 333px;"> <modal-create-relationship-type-selector callback="{callback}" source="{state}"> </modal-create-relationship-type-selector> </div> </div> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-relationship .modal-card-foot { display: flex; justify-content: space-between; } modal-create-relationship .modal-card-body .input { margin-bottom: 11px; }', '', function(opts) {
+     this.state = {
+         from: null,
+         to: null,
+         type: null,
+     };
+     this.callback = (action, data) => {
+         if ('change-entity'===action ) {
+             this.state[data.position] = data.entity
+             this.update();
+             return;
+         }
+         if ('change-type'===action ) {
+             this.state.type = data
+             this.update();
+             return;
+         }
+     };
+
+     this.clickClose = () => {
+         ACTIONS.closeModalCreateRelationship();
+     };
+     this.clickCreate = () => {
+         let data = STORE.get('modals.create-relationship');
+
+         ACTIONS.createTerRelationship(
+             data.system,
+             data.campus,
+             {
+                 from: this.state.from._id,
+                 to:   this.state.to._id,
+                 type: this.state.type.code,
+             });
+     };
+     this.isActive = () => {
+         return STORE.get('modals.create-relationship') ? 'is-active' : '';
+     };
+     this.isCanNotCreate = () => {
+         let state = this.state;
+
+         return !(state.from && state.to && state.type)
+     };
+     this.keyUp = () => {
+         this.update();
+     };
+     STORE.subscribe((action)=>{
+         if (action.type=='OPEN-MODAL-CREATE-RELATIONSHIP') {
+             this.update();
+             return;
+         }
+         if (action.type=='CLOSE-MODAL-CREATE-RELATIONSHIP') {
+             this.update();
+             return;
+         }
+         if (action.type=='CREATED-RELATIONSHIP-SYSTEM') {
+             this.clickClose();
+             return;
+         }
+     });
+});
+
 riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create System</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-system .modal-card-foot { display: flex; justify-content: space-between; } modal-create-system .modal-card-body .input { margin-bottom: 11px; }', '', function(opts) {
      this.clickClose = () => {
-         ACTIONS.closeModalCreateSystem();
+         ACTIONS.closeModalCreateRelationship();
      };
      this.clickCreate = () => {
          ACTIONS.createSystem({
@@ -1299,7 +1484,7 @@ riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="m
      });
 });
 
-riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity> <modal-choose-system></modal-choose-system>', '', '', function(opts) {
+riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity> <modal-choose-system></modal-choose-system> <modal-create-relationship></modal-create-relationship>', '', '', function(opts) {
 });
 
 riot.tag2('page-modelers', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Name</th> </tr> </thead> <tbody> <tr each="{obj in source}"> <td>{obj._id}</td> <td>{obj.name}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-modelers { display: block; width: 100vw; }', '', function(opts) {
@@ -1415,7 +1600,17 @@ riot.tag2('page-systems', '<page-systems-granted source="{this.source}"></page-s
      });
 });
 
-riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEntity}"> Create Entity </button> <button class="button"> Create Relationship </button> <button class="button" onclick="{clickSaveGraph}"> Save Graph </button> <button class="button" onclick="{clickDownload}"> Download </button>', 'page-ter-controller { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; } page-ter-controller > * { margin-top: 22px; }', '', function(opts) {
+riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEntity}"> Create Entity </button> <button class="button" onclick="{clickCreateRelationship}"> Create Relationship </button> <button class="button" onclick="{clickSaveGraph}"> Save Graph </button> <button class="button" onclick="{clickDownload}"> Download </button>', 'page-ter-controller { position: fixed; right: 22px; bottom: 22px; display: flex; flex-direction: column; } page-ter-controller > * { margin-top: 22px; }', '', function(opts) {
+     this.clickCreateRelationship = () => {
+         let state = STORE.get('active');
+         let system = state.system;
+         let campus = state.ter.campus;
+
+         ACTIONS.openModalCreateRelationship({
+             system: system,
+             campus: campus,
+         });
+     };
      this.clickSaveGraph = () => {
          let state = STORE.get('active');
          let system = state.system;

@@ -1,6 +1,7 @@
 (in-package :ter)
 
-(defun tx-make-relationship-rsc2rsc-th (graph from-rsc to-rsc)
+
+(defun tx-make-relationship-comparative (graph from-rsc to-rsc)
   (let ((from-identifier (get-native-identifier graph from-rsc))
         (to-identifier   (get-native-identifier graph to-rsc))
         (code            (format nil "TH_~a_~a"     (code from-rsc) (code to-rsc)))

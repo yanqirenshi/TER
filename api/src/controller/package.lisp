@@ -43,7 +43,8 @@
            #:save-ter-camera-magnification
            #:ter-environment-at-modeler-system-campus)
   (:export #:create-system
-           #:create-entity)
+           #:create-entity
+           #:create-relationship)
   (:export #:find-graph
            #:snapshot-campus-graph)
   (:export #:pages-basic

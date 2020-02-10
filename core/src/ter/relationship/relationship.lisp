@@ -1,30 +1,39 @@
 (in-package :ter)
 
+
 (defgeneric tx-make-relationship (graph from to &key type)
 
   ;;;;;
   ;;;;; resource --- resource
   ;;;;;
   (:method (graph (from resource) (to resource)  &key type)
-    (declare (ignore type))
-    (tx-make-relationship-rsc2rsc-th graph from to))
+    (assert (validate-relationship-type from to type))
+    ;; このオペレータではサブセットは対応しない。 tx-add-subset をつかう。
+    (assert (not (eq :resource-subset type)))
+    (tx-make-relationship-rsc2rsc graph from to type))
 
   ;;;;;
   ;;;;; resource --- event
   ;;;;;
   (:method (graph (from resource) (to event)  &key type)
-    (declare (ignore type))
-    (tx-make-relationship-rsc2evt-to graph from to))
+    (assert (validate-relationship-type from to type))
+    (tx-make-relationship-rsc2evt graph from to type))
+
+  ;;;;;
+  ;;;;; event --- resource
+  ;;;;;
+  (:method (graph (from event) (to resource)  &key type)
+    (assert (validate-relationship-type from to type))
+    (tx-make-relationship-evt2rsc graph from to type))
 
   ;;;;;
   ;;;;; event --- event
   ;;;;;
   (:method (graph (from event) (to event) &key type)
-    (cond ((eq :hdr-dtl type)
-           (tx-make-relationship-rsc2evt-to graph from to))
-          ((null type)
-           (error "Not Supported yet. Please wait build."))
-          (t (error "Bad type. type=~S" type))))
+    (assert (validate-relationship-type from to type))
+    ;; このオペレータではサブセットは対応しない。 tx-add-subset をつかう。
+    (assert (not (eq :event-subset type)))
+    (tx-make-relationship-evt2evt graph from to type))
 
   ;;;;;
   ;;;;; identifier-instance --- identifier

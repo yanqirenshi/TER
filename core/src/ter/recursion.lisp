@@ -3,8 +3,9 @@
 (defun find-recursion (graph)
   (shinra:find-vertex graph 'recursion))
 
-(defun get-recursion (graph &key code)
-  (car (shinra:find-vertex graph 'recursion :slot 'code :value code)))
+(defun get-recursion (graph &key %id code)
+  (cond (%id (shinra:get-vertex-at graph 'recursion :%id %id))
+        (code (car (shinra:find-vertex graph 'recursion :slot 'code :value code)))))
 
 (defun tx-make-recursion (graph code name data-type)
   (or (get-recursion graph :code code)

@@ -5,7 +5,8 @@
         Create Entity
     </button>
 
-    <button class="button">
+    <button class="button"
+            onclick={clickCreateRelationship}>
         Create Relationship
     </button>
 
@@ -20,6 +21,16 @@
     </button>
 
     <script>
+     this.clickCreateRelationship = () => {
+         let state = STORE.get('active');
+         let system = state.system;
+         let campus = state.ter.campus;
+
+         ACTIONS.openModalCreateRelationship({
+             system: system,
+             campus: campus,
+         });
+     };
      this.clickSaveGraph = () => {
          let state = STORE.get('active');
          let system = state.system;

@@ -47,7 +47,7 @@
 
     <script>
      this.clickClose = () => {
-         ACTIONS.closeModalCreateSystem();
+         ACTIONS.closeModalCreateRelationship();
      };
      this.clickCreate = () => {
          ACTIONS.createSystem({

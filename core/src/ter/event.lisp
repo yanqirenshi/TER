@@ -3,8 +3,9 @@
 (defun find-event (graph)
   (shinra:find-vertex graph 'event))
 
-(defun get-event (graph &key code)
-  (car (shinra:find-vertex graph 'event :slot 'code :value code)))
+(defun get-event (graph &key %id code)
+  (cond (%id (shinra:get-vertex-at graph 'event :%id %id))
+        (code (car (shinra:find-vertex graph 'event :slot 'code :value code)))))
 
 (defun tx-make-event-core
     (graph class-symbol code name &key

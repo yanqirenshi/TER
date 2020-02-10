@@ -137,6 +137,22 @@
      (ter::tx-build-identifier graph type-keyword code name :description description))))
 
 
+;;;
+;;; create-relationship
+;;;
+(defun create-relationship (campus from-id to-id type)
+  (let ((graph (ter::get-campus-graph campus)))
+    (assert (and graph from-id to-id type))
+    (let ((entity-from (ter:get-entity graph :%id from-id))
+          (entity-to   (ter:get-entity graph :%id to-id)))
+      (assert (and entity-from entity-to))
+      (up:execute-transaction
+       (ter:tx-make-relationship graph entity-from entity-to :type type)))))
+
+
+;;;
+;;; create-entity
+;;;
 (defun snapshot-campus-graph (campus)
   (let ((graph (ter::get-campus-graph campus)))
     (assert graph)

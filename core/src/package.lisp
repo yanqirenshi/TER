@@ -30,6 +30,8 @@
   (:export #:get-campus
            #:tx-update-camera-look-at
            #:tx-update-camera-magnification
+           #:tx-make-relationship
+           #:get-entity
            #:find-schema
            #:find-campus
            #:find-resource

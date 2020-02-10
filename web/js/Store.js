@@ -138,6 +138,7 @@ class Store extends Vanilla_Redux_Store {
             'create-system': null,
             'choose-system': null,
             'create-entity': null,
+            'create-relationship': null,
         };
     }
     init () {

@@ -262,6 +262,28 @@
                                                          :description description)))))))
 
 
+(defroute ("/systems/:sytem_id/campuses/:campus_id/entities/:entity_id/attributes" :method :post)
+    (&key sytem_id campus_id entity_id |code| |name| |data_type| |description|)
+  (with-graph-modeler (graph modeler)
+    (let ((system-id   (validate sytem_id      :integer :require t))
+          (campus-id   (validate campus_id     :integer :require t))
+          (entity-id   (validate entity_id     :integer :require t))
+          (code        (validate |code|        :string  :require t   :url-decode t))
+          (name        (validate |name|        :string  :require t   :url-decode t))
+          (data-type   (validate |data_type|   :string  :require t   :url-decode t))
+          (description (validate |description| :string  :require nil :url-decode t :default-value "")))
+      (let ((system (ter::get-system graph :%id system-id)))
+        (unless system (throw-code 404))
+        (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
+          (unless campus (throw-code 404))
+          (let ((entity entity-id))
+            (unless entity (throw-code 404))
+          (render-json (list :data-type data-type
+                             :code code
+                             :name name
+                             :description description))))))))
+
+
 (defroute ("/ter/campuses/:campus-id/entities/:entity-id/location" :method :post)
     (&key campus-id entity-id |x| |y| |z|)
   (with-graph-modeler (graph modeler)

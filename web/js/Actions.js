@@ -22,6 +22,21 @@ class Actions extends Vanilla_Redux_Actions {
 
         return pool;
     }
+    encodePostData (data_ht) {
+        if (!data_ht) return {};
+
+        let out = Object.assign({}, data_ht);
+        for (let key in out) {
+            let val = out[key];
+
+            if (key=='description' || key=='name')
+                val = val ? '' : val.trim();
+
+            out[key] = encodeURIComponent(out[key]);
+        }
+
+        return out;
+    }
     /* **************************************************************** *
      *  Save Config
      * **************************************************************** */
@@ -545,6 +560,21 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'SAVED-TER-CAMPUS-GRAPH',
         };
     }
+    addTerAttribute2Entity (system, campus, entity, data) {
+        let path = "/systems/%d/campuses/%d/entities/%d/attributes".format(system._id, campus._id, entity._id);
+        let post_data = this.encodePostData(data);
+
+        API.post(path, post_data, (response)=>{
+            STORE.dispatch(this.addedTerAttribute2Entity(response));
+        });
+    }
+    addedTerAttribute2Entity (response) {
+        let new_state = STORE.get('ter');
+
+        return {
+            type: 'ADDED-TER-ATTRIBUTE-2-ENTITY',
+        };
+    }
     /* **************************************************************** *
      *  Inspector
      * **************************************************************** */
@@ -744,6 +774,27 @@ class Actions extends Vanilla_Redux_Actions {
 
         STORE.dispatch({
             type: 'CLOSE-MODAL-CREATE-RELATIONSHIP',
+            data: { modals: state },
+        });
+    }
+    openModalAddAttribute2Entity (data) {
+        let state = STORE.get('modals');
+
+        state['add-attribute-2-entity'] = data;
+
+        STORE.dispatch({
+            type: 'OPEN-MODAL-ADD-ATTRIBUTE-2-ENTITY',
+            data: { modals: state },
+        });
+    }
+    closeModalAddAttribute2Entity () {
+
+        let state = STORE.get('modals');
+
+        state['add-attribute-2-entity'] = null;
+
+        STORE.dispatch({
+            type: 'CLOSE-MODAL-ADD-ATTRIBUTE-2-ENTITY',
             data: { modals: state },
         });
     }

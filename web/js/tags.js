@@ -416,6 +416,25 @@ riot.tag2('inspector-column', '<section class="section"> <div class="container">
      });
 });
 
+riot.tag2('inspector-entity-attributes', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable"> <thead> <tr> <th>Code</th> <th>Name</th> <th>Type</th> <th></th> </tr> </thead> <tbody> <tr each="{attr in list()}"> <td>{attr.code}</td> <td>{attr.name}</td> <td>{attr.data_type}</td> <td> <button class="button is-small is-warning" disabled>Edit</button> <button class="button is-small is-danger" disabled>Delete</button> </td> </tr> </tbody> </table> <div style="display:flex;justify-content: flex-end;"> <button class="button is-primary" onclick="{clickAdd}">Add</button> </div> </div>', '', '', function(opts) {
+     this.clickAdd = () => {
+         let state = STORE.get('active');
+
+         ACTIONS.openModalAddAttribute2Entity({
+             system: state.system,
+             campus: state.ter.campus,
+             entity: this.opts.entity,
+         });
+     };
+
+     this.list = () => {
+         if (!this.opts.entity)
+             return [];
+
+         return this.opts.entity.attributes.items.list;
+     };
+});
+
 riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable"> <tbody> <tr> <th>Type</th> <td>{dataType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
      this.entityName = () => {
          let data = this.opts.entity;
@@ -550,10 +569,11 @@ riot.tag2('inspector-entity-ports', '<inspector-entity-ports-relationships ports
      };
 });
 
-riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="title is-5">{entityName()}</h1> </div> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div class="tabs"> <inspector-entity-basic class="hide" entity="{entityData()}"></inspector-entity-basic> <inspector-entity-ports class="hide" entity="{entityData()}"></inspector-entity-ports> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="title is-5">{entityName()}</h1> </div> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div class="tabs"> <inspector-entity-basic class="hide" entity="{entityData()}"></inspector-entity-basic> <inspector-entity-attributes class="hide" entity="{entityData()}"></inspector-entity-attributes> <inspector-entity-ports class="hide" entity="{entityData()}"></inspector-entity-ports> </div>', '', '', function(opts) {
      this.page_tabs = new PageTabs([
-         {code: 'basic', label: 'Basic', tag: 'inspector-entity-basic' },
-         {code: 'ports', label: 'Ports', tag: 'inspector-entity-ports' },
+         {code: 'basic',      label: 'Basic',      tag: 'inspector-entity-basic' },
+         {code: 'attributes', label: 'Attributes', tag: 'inspector-entity-attributes' },
+         {code: 'ports',      label: 'Ports',      tag: 'inspector-entity-ports' },
      ]);
 
      this.on('mount', () => {
@@ -577,7 +597,7 @@ riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="titl
          let data = this.opts.source;
 
          if (!data) return null;
-         dump(data._class);
+
          if (data._class=='RESOURCE' ||
              data._class=='RESOURCE-SUBSET' ||
              data._class=='EVENT' ||
@@ -1130,131 +1150,145 @@ riot.tag2('page-managements_tabs-systems', '<section class="section"> <div class
      };
 });
 
-riot.tag2('modal-choose-system-list', '<button class="button" each="{obj in opts.source}" system-id="{obj._id}" onclick="{clickItem}"> {obj.code} : {obj.name} </button>', 'modal-choose-system-list { display: block; } modal-choose-system-list > .button { float: left; margin-left: 11px; margin-bottom: 11px; }', '', function(opts) {
-     this.clickItem = (e) => {
-         let id = e.target.getAttribute('system-id')  * 1;
-
-         this.opts.callback('select-item', id)
+riot.tag2('modal-add-attribute-2-entity', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Add Attribute</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div style="margin-bottom:22px;"> <modal-add-attribute-2-entity_entity source="{entity()}"> </modal-add-attribute-2-entity_entity> </div> <div> <modal-add-attribute-2-entity_form source="{attribute}" callback="{callback}"> </modal-add-attribute-2-entity_form> </div> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-add-attribute-2-entity .modal-card-foot { display: flex; justify-content: space-between; } modal-add-attribute-2-entity .modal-card-body .input { margin-bottom: 11px; } modal-add-attribute-2-entity .field:not(:last-child) { margin-bottom: 0px; }', '', function(opts) {
+     this.attribute = {
+         code: '',
+         name: '',
+         description: '',
+         data_type: null
      };
-});
-
-riot.tag2('modal-choose-system-selected', '<p>{systemName()}</p>', 'modal-choose-system-selected { display: block; padding: 22px; background: #eeeeee; margin-bottom: 22px; border-radius: 5px; }', '', function(opts) {
-     this.systemName = () => {
-         let system = opts.source;
-
-         if (!system)
-             'Please select System....';
-
-         return system.code + " : " + system.name;
-     };
-});
-
-riot.tag2('modal-choose-system', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Choose System</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <modal-choose-system-selected source="{selectedSystem()}"></modal-choose-system-selected> <h1 class="title is-4">System List</h1> <modal-choose-system-list source="{list()}" callback="{callback}"></modal-choose-system-list> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" onclick="{clickCreate}">Select</button> </footer> </div> </div>', 'modal-choose-system .modal-card-foot { display: flex; justify-content: space-between; } modal-choose-system .modal-card-body .input, modal-choose-system .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
-     this.selected_system = null;
      this.callback = (action, data) => {
-         if (action=='select-item') {
-             let id = data;
-             this.selected_system = STORE.get('systems.ht')[id];
-             this.update();
+         if ('change-data'===action) {
+             this.attribute[data.key] = data.val;
 
+             this.update();
              return;
          }
      };
 
-     this.list = () => {
-         return STORE.get('systems.list') || [];
-     }
-     this.selectedSystem = () => {
-         if (this.selected_system)
-             return this.selected_system;
+     this.entity = () => {
+         let state = STORE.get('modals.add-attribute-2-entity');
 
-         let id = STORE.get('active.system')._id;
+         if (!state)
+             return null;
 
-         let system = STORE.get('systems.list').find((d)=>{
-             return d._id == id;
-         })
-
-         if (!system)
-             'Please select System....';
-
-         return system;
+         return state.entity;
      };
 
      this.clickClose = () => {
-         ACTIONS.closeModalChooseSystem();
+         ACTIONS.closeModalAddAttribute2Entity();
      };
      this.clickCreate = () => {
-         let system = this.selectedSystem();
+         let state = STORE.get('modals.add-attribute-2-entity');
 
-         ACTIONS.changeSystem(system);
+         ACTIONS.addTerAttribute2Entity(
+             state.system,
+             state.campus,
+             state.entity,
+             {
+                 code: this.attribute.code.trim(),
+                 name: this.attribute.name.trim(),
+                 description: this.attribute.description.trim(),
+                 data_type: this.attribute.data_type
+             })
      };
      this.isActive = () => {
-         return STORE.get('modals.choose-system') ? 'is-active' : '';
+         return STORE.get('modals.add-attribute-2-entity') ? 'is-active' : '';
      };
-     STORE.subscribe((action) =>{
-         if (action.type=='OPEN-MODAL-CHOOSE-SYSTEM') {
+     this.isCanNotCreate = () => {
+         return this.attribute.code.trim() == '' ||
+                this.attribute.name.trim() === '' ||
+                this.attribute.data_type === null;
+     };
+     this.keyUp = () => {
+         this.update();
+     };
+     STORE.subscribe((action)=>{
+         if (action.type=='OPEN-MODAL-ADD-ATTRIBUTE-2-ENTITY') {
              this.update();
              return;
          }
-         if (action.type=='CLOSE-MODAL-CHOOSE-SYSTEM') {
+         if (action.type=='CLOSE-MODAL-ADD-ATTRIBUTE-2-ENTITY') {
+             this.attribute = {
+                 code: '',
+                 name: '',
+                 description: '',
+                 data_type: null
+             };
+
              this.update();
              return;
          }
-         if (action.type=='CHANGE-SYSTEM') {
+         if (action.type=='CREATED-SYSTEM') {
              this.clickClose();
              return;
          }
      });
 });
 
-riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create Entity</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div class="select"> <select ref="entity_type" onchange="{keyUp}"> <option value="">Entity の種類を選択してください。</option> <option value="rs">Resource</option> <option value="ev">Event</option> </select> </div> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-entity .modal-card-foot { display: flex; justify-content: space-between; } modal-create-entity .modal-card-body .input, modal-create-entity .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
-     this.clickClose = () => {
-         ACTIONS.closeModalCreateEntity();
-     };
-     this.clickCreate = () => {
-         let state = STORE.get('active');
-         ACTIONS.createTerEntity(
-             state.system,
-             state.ter.campus,
-             {
-                 type: this.refs.entity_type.value,
-                 code: this.refs.code.value.trim(),
-                 name: this.refs.name.value.trim(),
-                 description: this.refs.description.value.trim(),
-             })
-     };
-     this.isActive = () => {
-         return STORE.get('modals.create-entity') ? 'is-active' : '';
-     };
-     this.isCanNotCreate = () => {
-         if (this.refs.entity_type.value.length==0)
-             return true;
+riot.tag2('modal-add-attribute-2-entity_entity', '<h1 class="title is-4" style="margin-bottom: 8px;">Entity</h1> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <tbody> <tr> <th>Type</th> <td>{entityType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table>', '', '', function(opts) {
+         this.entityType = () => {
+             if (!this.opts || !this.opts.source)
+                 return '';
 
-         if (this.refs.code.value.trim().length==0)
-             return true;
+             return this.opts.source._class;
+         }
+         this.entityCode = () => {
+             if (!this.opts || !this.opts.source)
+                 return '';
 
-         if (this.refs.name.value.trim().length==0)
-             return true;
+             return this.opts.source._core.code;
+         }
+         this.entityName = () => {
+             if (!this.opts || !this.opts.source)
+                 return '';
 
-         return false;
+             return this.opts.source._core.name;
+         }
+});
+
+riot.tag2('modal-add-attribute-2-entity_form', '<div> <h1 class="title is-4" style="margin-bottom: 8px;">New Attribute</h1> <div class="field"> <label class="label">Code</label> <input class="input" type="text" placeholder="Code" ref="code" riot-value="{fieldVal(\'code\')}" onkeyup="{keyUp}"> </div> <div class="field"> <label class="label">Name</label> <input class="input" type="text" placeholder="Name" ref="name" riot-value="{opts.source.name}" onkeyup="{keyUp}"> </div> <div class="field"> <label class="label">Data Type</label> <div class="select"> <select ref="data_type" onchange="{changeVal}"> <option each="{d in list()}" riot-value="{d.value}" selected="{isSelected(d)}"> {d.label} </option> </select> </div> </div> <div class="field"> <label class="label">Description</label> <textarea class="textarea" placeholder="Description" ref="description" riot-value="{opts.source.description}" onkeyup="{keyUp}"></textarea> </div> </div>', 'modal-add-attribute-2-entity_form .field:not(:last-child) { margin-bottom: 0px; }', '', function(opts) {
+     this.fieldVal = (code) => {
+         let source = this.opts.source;
+
+         return source[code];
      };
-     this.keyUp = () => {
-         this.update();
+     this.isSelected = (d) => {
+         let source = this.opts.source;
+
+         return source.data_type === d.value;
      };
-     STORE.subscribe((action)=>{
-         if (action.type=='OPEN-MODAL-CREATE-ENTITY') {
-             this.update();
-             return;
-         }
-         if (action.type=='CLOSE-MODAL-CREATE-ENTITY') {
-             this.update();
-             return;
-         }
-         if (action.type=='CREATED-ENTITY') {
-             ACTIONS.closeModalCreateEntity();
-             return;
-         }
-     });
+
+     this.keyUp = (e) => {
+         let key = e.target.getAttribute('ref');
+         let val = e.target.value;
+
+         this.opts.callback ('change-data', {
+             key: key,
+             val: val,
+         });
+     };
+     this.changeVal = (e) => {
+         let key = e.target.getAttribute('ref');
+         let val = e.target.value;
+
+         if (val==='')
+             val = null;
+
+         this.opts.callback ('change-data', {
+             key: key,
+             val: val,
+         });
+     };
+
+     this.list = () => [
+         { label: 'Please Select', value: null },
+         { label: 'STRING',        value: 'STRING' },
+         { label: 'TEXT',          value: 'TEXT' },
+         { label: 'INTEGER',       value: 'INTEGER' },
+         { label: 'FLOAT',         value: 'FLOAT' },
+         { label: 'TIMESTAMP',     value: 'TIMESTAMP' },
+     ];
 });
 
 riot.tag2('modal-create-relationship-entitiy-selector', '<div style="margin-bottom:8px;"> <h1 class="title is-5">{opts.position===\'from\' ? \'From\' : \'To\'}</h1> </div> <div class="item-selected"> <p>{selectedItem()}</p> </div> <div style="display:flex;"> <div style="flex-grow:1;"> <input class="input is-small" type="text" placeholder="Search" ref="name" onkeyup="{changeSearchKeyword}"> </div> </div> <div style="height: 333px;overflow: auto;"> <div each="{entity in list()}" class="item" onclick="{clickItem}" entity-id="{entity._id}"> <p entity-id="{entity._id}">{entity._class}</p> <p entity-id="{entity._id}">{entity.code}</p> <p entity-id="{entity._id}">{entity.name}</p> </div> </div>', 'modal-create-relationship-entitiy-selector .item { font-size:12px; margin-bottom:8px; margin-bottom: 8px; border: 1px solid #eee; border-radius: 3px; padding: 3px 6px; } modal-create-relationship-entitiy-selector .item-selected { font-size: 12px; margin-bottom:8px; background:#eee; border-radius:3px; padding: 3px 6px; }', '', function(opts) {
@@ -1442,6 +1476,133 @@ riot.tag2('modal-create-relationship', '<div class="modal {isActive()}"> <div cl
      });
 });
 
+riot.tag2('modal-choose-system-list', '<button class="button" each="{obj in opts.source}" system-id="{obj._id}" onclick="{clickItem}"> {obj.code} : {obj.name} </button>', 'modal-choose-system-list { display: block; } modal-choose-system-list > .button { float: left; margin-left: 11px; margin-bottom: 11px; }', '', function(opts) {
+     this.clickItem = (e) => {
+         let id = e.target.getAttribute('system-id')  * 1;
+
+         this.opts.callback('select-item', id)
+     };
+});
+
+riot.tag2('modal-choose-system-selected', '<p>{systemName()}</p>', 'modal-choose-system-selected { display: block; padding: 22px; background: #eeeeee; margin-bottom: 22px; border-radius: 5px; }', '', function(opts) {
+     this.systemName = () => {
+         let system = opts.source;
+
+         if (!system)
+             'Please select System....';
+
+         return system.code + " : " + system.name;
+     };
+});
+
+riot.tag2('modal-choose-system', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Choose System</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <modal-choose-system-selected source="{selectedSystem()}"></modal-choose-system-selected> <h1 class="title is-4">System List</h1> <modal-choose-system-list source="{list()}" callback="{callback}"></modal-choose-system-list> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" onclick="{clickCreate}">Select</button> </footer> </div> </div>', 'modal-choose-system .modal-card-foot { display: flex; justify-content: space-between; } modal-choose-system .modal-card-body .input, modal-choose-system .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
+     this.selected_system = null;
+     this.callback = (action, data) => {
+         if (action=='select-item') {
+             let id = data;
+             this.selected_system = STORE.get('systems.ht')[id];
+             this.update();
+
+             return;
+         }
+     };
+
+     this.list = () => {
+         return STORE.get('systems.list') || [];
+     }
+     this.selectedSystem = () => {
+         if (this.selected_system)
+             return this.selected_system;
+
+         let id = STORE.get('active.system')._id;
+
+         let system = STORE.get('systems.list').find((d)=>{
+             return d._id == id;
+         })
+
+         if (!system)
+             'Please select System....';
+
+         return system;
+     };
+
+     this.clickClose = () => {
+         ACTIONS.closeModalChooseSystem();
+     };
+     this.clickCreate = () => {
+         let system = this.selectedSystem();
+
+         ACTIONS.changeSystem(system);
+     };
+     this.isActive = () => {
+         return STORE.get('modals.choose-system') ? 'is-active' : '';
+     };
+     STORE.subscribe((action) =>{
+         if (action.type=='OPEN-MODAL-CHOOSE-SYSTEM') {
+             this.update();
+             return;
+         }
+         if (action.type=='CLOSE-MODAL-CHOOSE-SYSTEM') {
+             this.update();
+             return;
+         }
+         if (action.type=='CHANGE-SYSTEM') {
+             this.clickClose();
+             return;
+         }
+     });
+});
+
+riot.tag2('modal-create-entity', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create Entity</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <div class="select"> <select ref="entity_type" onchange="{keyUp}"> <option value="">Entity の種類を選択してください。</option> <option value="rs">Resource</option> <option value="ev">Event</option> </select> </div> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-entity .modal-card-foot { display: flex; justify-content: space-between; } modal-create-entity .modal-card-body .input, modal-create-entity .modal-card-body .select { margin-bottom: 11px; }', '', function(opts) {
+     this.clickClose = () => {
+         ACTIONS.closeModalCreateEntity();
+     };
+     this.clickCreate = () => {
+         let state = STORE.get('active');
+         ACTIONS.createTerEntity(
+             state.system,
+             state.ter.campus,
+             {
+                 type: this.refs.entity_type.value,
+                 code: this.refs.code.value.trim(),
+                 name: this.refs.name.value.trim(),
+                 description: this.refs.description.value.trim(),
+             })
+     };
+     this.isActive = () => {
+         return STORE.get('modals.create-entity') ? 'is-active' : '';
+     };
+     this.isCanNotCreate = () => {
+         if (this.refs.entity_type.value.length==0)
+             return true;
+
+         if (this.refs.code.value.trim().length==0)
+             return true;
+
+         if (this.refs.name.value.trim().length==0)
+             return true;
+
+         return false;
+     };
+     this.keyUp = () => {
+         this.update();
+     };
+     STORE.subscribe((action)=>{
+         if (action.type=='OPEN-MODAL-CREATE-ENTITY') {
+             this.update();
+             return;
+         }
+         if (action.type=='CLOSE-MODAL-CREATE-ENTITY') {
+             this.update();
+             return;
+         }
+         if (action.type=='CREATED-ENTITY') {
+             ACTIONS.closeModalCreateEntity();
+             return;
+         }
+     });
+});
+
 riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="modal-background"></div> <div class="modal-card"> <header class="modal-card-head"> <p class="modal-card-title">Create System</p> <button class="delete" aria-label="close" onclick="{clickClose}"></button> </header> <section class="modal-card-body"> <input class="input" type="text" placeholder="Code" ref="code" onkeyup="{keyUp}"> <input class="input" type="text" placeholder="Name" ref="name" onkeyup="{keyUp}"> <textarea class="textarea" placeholder="Description" ref="description"></textarea> </section> <footer class="modal-card-foot"> <button class="button" onclick="{clickClose}">Cancel</button> <button class="button is-success" disabled="{isCanNotCreate()}" onclick="{clickCreate}">Create</button> </footer> </div> </div>', 'modal-create-system .modal-card-foot { display: flex; justify-content: space-between; } modal-create-system .modal-card-body .input { margin-bottom: 11px; }', '', function(opts) {
      this.clickClose = () => {
          ACTIONS.closeModalCreateRelationship();
@@ -1484,7 +1645,7 @@ riot.tag2('modal-create-system', '<div class="modal {isActive()}"> <div class="m
      });
 });
 
-riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity> <modal-choose-system></modal-choose-system> <modal-create-relationship></modal-create-relationship>', '', '', function(opts) {
+riot.tag2('modal-pool', '<modal-create-system></modal-create-system> <modal-create-entity></modal-create-entity> <modal-choose-system></modal-choose-system> <modal-create-relationship></modal-create-relationship> <modal-add-attribute-2-entity></modal-add-attribute-2-entity>', '', '', function(opts) {
 });
 
 riot.tag2('page-modelers', '<section class="section"> <div class="container"> <h1 class="title"></h1> <h2 class="subtitle"></h2> <div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th>ID</th> <th>Name</th> </tr> </thead> <tbody> <tr each="{obj in source}"> <td>{obj._id}</td> <td>{obj.name}</td> </tr> </tbody> </table> </div> </div> </section>', 'page-modelers { display: block; width: 100vw; }', '', function(opts) {

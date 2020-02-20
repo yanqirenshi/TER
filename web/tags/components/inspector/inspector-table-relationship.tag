@@ -1,6 +1,6 @@
 <inspector-table-relationship>
     <div class="contents">
-        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth ter-table"">
             <thead>
                 <tr><th>Type</th><th>From</th><th>To</th></tr>
             </thead>

@@ -124,6 +124,8 @@ class Store extends Vanilla_Redux_Store {
             camera:               null, // TODO: これは不要な気がするな。
             cameras:              { ht: {}, list: [] }, // TODO: これは不要な気がするな。
             campus:               null, // TODO: これは不要な気がするな。
+            //
+            messages:             [],
         };
     }
     initHomeGraph () {

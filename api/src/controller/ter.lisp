@@ -130,12 +130,10 @@
 ;;; create-entity
 ;;;
 (defun create-entity (campus &key type code name description)
-  (let ((graph (ter::get-campus-graph campus))
-        (type-keyword (alexandria:make-keyword (string-upcase type))))
+  (let ((graph (ter::get-campus-graph campus)))
     (assert graph)
     (up:execute-transaction
-     (ter::tx-build-identifier graph type-keyword code name :description description))))
-
+     (ter:tx-build-identifier graph type code name :description description))))
 
 ;;;
 ;;; create-relationship
@@ -157,6 +155,20 @@
   (let ((graph (ter::get-campus-graph campus)))
     (assert graph)
     (up:snapshot graph)))
+
+
+;;;
+;;; add-attribute-2-entity
+;;;
+(defun add-attribute-2-entity (graph entity &key data-type code name description)
+  (assert (and graph entity))
+  (up:execute-transaction
+   (ter::tx-add-attribute-instance graph
+                                   entity
+                                   (list :code code
+                                         :name name
+                                         :data-type data-type
+                                         :description description))))
 
 
 ;;;;;

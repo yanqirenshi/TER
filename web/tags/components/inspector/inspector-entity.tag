@@ -53,4 +53,19 @@
          return null;
      };
     </script>
+
+    <style>
+     inspector-entity {
+         display: block;
+         width: 100%;
+         height: 100%;
+
+         display: flex;
+         flex-direction: column;
+     }
+     inspector-entity .tabs {
+         flex-grow: 1;
+     }
+    </style>
+
 </inspector-entity>

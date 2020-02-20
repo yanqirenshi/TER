@@ -1,6 +1,6 @@
 <inspector-entity-ports-relationships>
     <div style="margin-top:22px;">
-        <table class="table is-bordered is-striped is-narrow is-hoverable">
+        <table class="table is-bordered is-striped is-narrow is-hoverable ter-table">
             <thead>
                 <tr>
                     <th rowspan="3">ID</th>

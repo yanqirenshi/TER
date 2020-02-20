@@ -2,7 +2,7 @@
 
     <div style="margin-top:22px;">
 
-        <table class="table is-bordered is-narrow is-hoverable">
+        <table class="table is-bordered is-narrow is-hoverable ter-table ter-table">
             <thead>
                 <tr>
                     <th>Code</th>

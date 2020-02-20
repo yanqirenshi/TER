@@ -112,7 +112,7 @@
              this.update();
              return;
          }
-         if (action.type=='CREATED-SYSTEM') {
+         if (action.type=='ADDED-TER-ATTRIBUTE-2-ENTITY') {
              this.clickClose();
              return;
          }

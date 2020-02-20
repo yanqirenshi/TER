@@ -2,7 +2,7 @@
 
         <h1 class="title is-6" style="margin-bottom:11px;" >Positions</h1>
 
-        <table class="table is-bordered is-striped is-narrow is-hoverable">
+        <table class="table is-bordered is-striped is-narrow is-hoverable ter-table">
             <thead>
                 <tr>
                     <th rowspan="2">ID</th>
@@ -20,12 +20,12 @@
                     <td>{Math.floor(port.position.x * 100)/100}</td>
                     <td>{Math.floor(port.position.y * 100)/100}</td>
                     <td>
-                        <input class="input"
+                        <input class="input is-small"
                                type="text"
                                placeholder="Degree"
                                value="{port._core.position}"
                                ref="degree-{port._core._id}" />
-                        <button class="button"
+                        <button class="button is-small"
                                 onclick={clickSaveDegree}
                                 port-id={port._core._id}>Save</button>
                     </td>

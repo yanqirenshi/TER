@@ -14,7 +14,7 @@ riot.tag2('app-page-area', '', '', '', function(opts) {
      });
 });
 
-riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <app-global-menu brand="{brand()}" source="{site()}"></app-global-menu> <app-page-area></app-page-area> <modal-pool></modal-pool>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
+riot.tag2('app', '<github-link fill="#1D0C37" color="#CF2317" href="https://github.com/yanqirenshi/TER"></github-link> <app-global-menu brand="{brand()}" source="{site()}"></app-global-menu> <app-page-area></app-page-area> <modal-pool></modal-pool> <messenger></messenger>', 'app > .page { width: 100vw; height: 100vh; overflow: hidden; display: block; } app .hide,[data-is="app"] .hide{ display: none; }', '', function(opts) {
      this.brand = () => {
          let brand = STORE.get('active.system');
 
@@ -416,7 +416,7 @@ riot.tag2('inspector-column', '<section class="section"> <div class="container">
      });
 });
 
-riot.tag2('inspector-entity-attributes', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable"> <thead> <tr> <th>Code</th> <th>Name</th> <th>Type</th> <th></th> </tr> </thead> <tbody> <tr each="{attr in list()}"> <td>{attr.code}</td> <td>{attr.name}</td> <td>{attr.data_type}</td> <td> <button class="button is-small is-warning" disabled>Edit</button> <button class="button is-small is-danger" disabled>Delete</button> </td> </tr> </tbody> </table> <div style="display:flex;justify-content: flex-end;"> <button class="button is-primary" onclick="{clickAdd}">Add</button> </div> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity-attributes', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable ter-table ter-table"> <thead> <tr> <th>Code</th> <th>Name</th> <th>Type</th> <th></th> </tr> </thead> <tbody> <tr each="{attr in list()}"> <td>{attr.code}</td> <td>{attr.name}</td> <td>{attr.data_type}</td> <td> <button class="button is-small is-warning" disabled>Edit</button> <button class="button is-small is-danger" disabled>Delete</button> </td> </tr> </tbody> </table> <div style="display:flex;justify-content: flex-end;"> <button class="button is-primary" onclick="{clickAdd}">Add</button> </div> </div>', '', '', function(opts) {
      this.clickAdd = () => {
          let state = STORE.get('active');
 
@@ -435,7 +435,18 @@ riot.tag2('inspector-entity-attributes', '<div style="margin-top:22px;"> <table 
      };
 });
 
-riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable"> <tbody> <tr> <th>Type</th> <td>{dataType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <table class="table is-bordered is-narrow is-hoverable ter-table""> <tbody> <tr> <th>Type</th> <td>{dataType()}</td> </tr> <tr> <th>Code</th> <td>{entityCode()}</td> </tr> <tr> <th>Name</th> <td>{entityName()}</td> </tr> </tbody> </table> </div> <div class="description"> <h1 class="title is-6" style="margin-bottom: 8px;"> Description </h1> <div class="contents"> <div ref="description"> </div> </div> </div> <div> <button class="button is-small" style="width:100%;">Edit</button> </div>', 'inspector-entity-basic { display:block; height: 100%; max-width: 100%; display: flex; flex-direction: column; } inspector-entity-basic .description { margin-top: 22px; flex-grow: 1; display: flex; flex-direction: column; } inspector-entity-basic .description .contents { flex-grow: 1; width: 100%; overflow: auto; }', '', function(opts) {
+     this.on('update', () => {
+         this.refs.description.innerHTML = marked(this.description() || '');
+     });
+     this.description = () => {
+         let data = this.opts.entity;
+
+         if (!data || !data.description)
+             return '';
+
+         return data.description.contents;
+     };
      this.entityName = () => {
          let data = this.opts.entity;
 
@@ -460,7 +471,7 @@ riot.tag2('inspector-entity-basic', '<div style="margin-top:22px;"> <table class
      }
 });
 
-riot.tag2('inspector-entity-ports-positions', '<h1 class="title is-6" style="margin-bottom:11px;">Positions</h1> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="2">ID</th> <th colspan="3">Position</th> </tr> <tr> <th>x</th> <th>y</th> <th>degree</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{Math.floor(port.position.x * 100)/100}</td> <td>{Math.floor(port.position.y * 100)/100}</td> <td> <input class="input" type="text" placeholder="Degree" riot-value="{port._core.position}" ref="degree-{port._core._id}"> <button class="button" onclick="{clickSaveDegree}" port-id="{port._core._id}">Save</button> </td> </tr> </tbody> </table>', 'inspector-entity-ports-positions { display: block; } inspector-entity-ports-positions .table td { vertical-align: middle; } inspector-entity-ports-positions .table td .input { text-align: right; width:66px; }', '', function(opts) {
+riot.tag2('inspector-entity-ports-positions', '<h1 class="title is-6" style="margin-bottom:11px;">Positions</h1> <table class="table is-bordered is-striped is-narrow is-hoverable ter-table"> <thead> <tr> <th rowspan="2">ID</th> <th colspan="3">Position</th> </tr> <tr> <th>x</th> <th>y</th> <th>degree</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{Math.floor(port.position.x * 100)/100}</td> <td>{Math.floor(port.position.y * 100)/100}</td> <td> <input class="input is-small" type="text" placeholder="Degree" riot-value="{port._core.position}" ref="degree-{port._core._id}"> <button class="button is-small" onclick="{clickSaveDegree}" port-id="{port._core._id}">Save</button> </td> </tr> </tbody> </table>', 'inspector-entity-ports-positions { display: block; } inspector-entity-ports-positions .table td { vertical-align: middle; } inspector-entity-ports-positions .table td .input { text-align: right; width:66px; }', '', function(opts) {
          this.getDegree = (port_id) => {
              let key = 'degree-'+port_id;
              let str = this.refs[key].value;
@@ -479,7 +490,7 @@ riot.tag2('inspector-entity-ports-positions', '<h1 class="title is-6" style="mar
          };
 });
 
-riot.tag2('inspector-entity-ports-relationships', '<div style="margin-top:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable"> <thead> <tr> <th rowspan="3">ID</th> <th colspan="3">Relationship</th> </tr> <tr> <th rowspan="2">from</th> <th colspan="2">to</th> </tr> <tr> <th>entity</th> <th>identifier</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{fromIdentiferName(port)}</td> <td>{toEntity(port)}</td> <td>{toIdentiferName(port)}</td> </tr> </tbody> </table> </div>', 'inspector-entity-ports-relationships { display: block;}', '', function(opts) {
+riot.tag2('inspector-entity-ports-relationships', '<div style="margin-top:22px;"> <table class="table is-bordered is-striped is-narrow is-hoverable ter-table"> <thead> <tr> <th rowspan="3">ID</th> <th colspan="3">Relationship</th> </tr> <tr> <th rowspan="2">from</th> <th colspan="2">to</th> </tr> <tr> <th>entity</th> <th>identifier</th> </tr> </thead> <tbody> <tr each="{port in opts.ports}"> <td>{port._core._id}</td> <td>{fromIdentiferName(port)}</td> <td>{toEntity(port)}</td> <td>{toIdentiferName(port)}</td> </tr> </tbody> </table> </div>', 'inspector-entity-ports-relationships { display: block;}', '', function(opts) {
      this.getEdge = (port) => {
          let port_id = port._core._id;
          let port_direction = port._core.direction;
@@ -569,7 +580,7 @@ riot.tag2('inspector-entity-ports', '<inspector-entity-ports-relationships ports
      };
 });
 
-riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="title is-5">{entityName()}</h1> </div> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div class="tabs"> <inspector-entity-basic class="hide" entity="{entityData()}"></inspector-entity-basic> <inspector-entity-attributes class="hide" entity="{entityData()}"></inspector-entity-attributes> <inspector-entity-ports class="hide" entity="{entityData()}"></inspector-entity-ports> </div>', '', '', function(opts) {
+riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="title is-5">{entityName()}</h1> </div> <page-tabs core="{page_tabs}" callback="{clickTab}"></page-tabs> <div class="tabs"> <inspector-entity-basic class="hide" entity="{entityData()}"></inspector-entity-basic> <inspector-entity-attributes class="hide" entity="{entityData()}"></inspector-entity-attributes> <inspector-entity-ports class="hide" entity="{entityData()}"></inspector-entity-ports> </div>', 'inspector-entity { display: block; width: 100%; height: 100%; display: flex; flex-direction: column; } inspector-entity .tabs { flex-grow: 1; }', '', function(opts) {
      this.page_tabs = new PageTabs([
          {code: 'basic',      label: 'Basic',      tag: 'inspector-entity-basic' },
          {code: 'attributes', label: 'Attributes', tag: 'inspector-entity-attributes' },
@@ -609,7 +620,7 @@ riot.tag2('inspector-entity', '<div style="margin-bottom:11px;"> <h1 class="titl
      };
 });
 
-riot.tag2('inspector-table-basic', '<section-container no="5" title="Name" name="{opts.name}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{opts.columns}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" style="font-size:12px;"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container>', '', '', function(opts) {
+riot.tag2('inspector-table-basic', '<section-container no="5" title="Name" name="{opts.name}"> <section-contents name="{opts.name}"> <p>{opts.name}</p> </section-contents> </section-container> <section-container no="5" title="Columns" columns="{opts.columns}"> <section-contents columns="{opts.columns}"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth ter-table"> <thead> <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr> </thead> <tbody> <tr each="{opts.columns}"> <td>{physical_name}</td> <td>{logical_name}</td> <td>{data_type}</td> </tr> </tbody> </table> </section-contents> </section-container>', '', '', function(opts) {
 });
 
 riot.tag2('inspector-table-description', '<div> <markdown-preview data="{marked(description())}"></markdown-preview> </div> <div style="margin-top:22px;"> <button class="button is-danger" onclick="{clickSave}">Edit</button> </div>', '', '', function(opts) {
@@ -626,7 +637,7 @@ riot.tag2('inspector-table-description', '<div> <markdown-preview data="{marked(
      };
 });
 
-riot.tag2('inspector-table-relationship', '<div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"> <thead> <tr><th>Type</th><th>From</th><th>To</th></tr> </thead> <tbody> <tr each="{edges()}"> <td>{data_type}</td> <td>{_port_from._column_instance._table.name}</td> <td>{_port_to._column_instance._table.name}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
+riot.tag2('inspector-table-relationship', '<div class="contents"> <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth ter-table""> <thead> <tr><th>Type</th><th>From</th><th>To</th></tr> </thead> <tbody> <tr each="{edges()}"> <td>{data_type}</td> <td>{_port_from._column_instance._table.name}</td> <td>{_port_to._column_instance._table.name}</td> </tr> </tbody> </table> </div>', '', '', function(opts) {
      this.edges = () => {
          if (this.opts && this.opts.data && this.opts.data._edges)
              return this.opts.data._edges
@@ -712,6 +723,29 @@ riot.tag2('markdown-preview', '', 'markdown-preview h1 { font-weight: bold; font
 
     this.root.innerHTML = opts.data
 
+});
+
+riot.tag2('messenger-article', '<div class="head"> <p class="contents">Header</p> <p class="operator" onclick="{clickClose}"> <i class="fas fa-times-circle"></i> </p> </div> <div class="body"> <p>{opts.source.contents}</p> </div> <div class="foot"> <p>{moment(opts.source._timestamp).format(\'YYYY-MM-DD HH:mm:ss\')}</p> </div>', 'messenger-article { display: flex; flex-direction: column; width: 222px; background: #fff; border-radius: 5px; margin-bottom: 22px; box-shadow: 0px 0px 11px #eee; } messenger-article.warning { box-shadow: 0px 0px 11px #ffec47; } messenger-article.error { box-shadow: 0px 0px 11px #CF2317; } messenger-article .head{ border-radius: 5px 5px 0px 0px; background: #372247; color: #fff; font-weight: bold; font-size: 12px; padding: 6px 11px; } messenger-article .head { display: flex; } messenger-article .head .contents { flex-grow: 1; } messenger-article .body{ flex-grow 1; padding: 8px; word-break: break-all; } messenger-article .foot{ padding: 3px 6px; font-size: 9px; text-align: right; color: #888; }', 'class="{opts.source.type}"', function(opts) {
+     this.clickClose = () => {
+         ACTIONS.closeMessage(this.opts.source);
+     };
+});
+
+riot.tag2('messenger', '<div if="{this.list().length<=1}" style="height:36px; margin-bottom: 22px;"> </div> <div if="{this.list().length>1}" style="margin-bottom: 22px;"> <button class="button is-warning" style="width:100%;" action="normal" onclick="{onClickClearAll}"> Clear All </button> </div> <section> <messenger-article each="{msg in list()}" source="{msg}"></messenger-article> </section>', 'messenger { position: fixed; right: 22px; top: 22px; z-index: 9999999; }', '', function(opts) {
+     this.list = () => { return STORE.get('ter.messages'); };
+     this.onClickClearAll = () => {
+         ACTIONS.closeAllMessage();
+     };
+     STORE.subscribe((action) => {
+         if (action.type=='PUSH-MESSAGE') {
+             this.update();
+             return;
+         }
+         if (action.type=='CLOSE-MESSAGE' || action.type=='CLOSE-ALL-MESSAGE') {
+             this.update();
+             return;
+         }
+     });
 });
 
 riot.tag2('sections-list', '<table class="table"> <tbody> <tr each="{opts.data}"> <td><a href="{hash}">{title}</a></td> </tr> </tbody> </table>', '', '', function(opts) {
@@ -1219,7 +1253,7 @@ riot.tag2('modal-add-attribute-2-entity', '<div class="modal {isActive()}"> <div
              this.update();
              return;
          }
-         if (action.type=='CREATED-SYSTEM') {
+         if (action.type=='ADDED-TER-ATTRIBUTE-2-ENTITY') {
              this.clickClose();
              return;
          }
@@ -1469,7 +1503,7 @@ riot.tag2('modal-create-relationship', '<div class="modal {isActive()}"> <div cl
              this.update();
              return;
          }
-         if (action.type=='CREATED-RELATIONSHIP-SYSTEM') {
+         if (action.type=='CREATED-RELATIONSHIP') {
              this.clickClose();
              return;
          }
@@ -1794,7 +1828,7 @@ riot.tag2('page-ter-controller', '<button class="button" onclick="{clickCreateEn
 riot.tag2('page-ter-inspectors', '<div> XXX </div>', 'page-ter-inspectors { position: absolute; height:100%; max-width: 50%; right:0px; top:0px; } page-ter-inspectors > div{ height:100%; background: #fff; border-left: solid 1px #aaa; border-top: solid 1px #aaa; border-bottom: solid 1px #aaa; }', '', function(opts) {
 });
 
-riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{campuses()}" active="{activeCampus()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div> <inspector></inspector>', 'page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; } page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; }', '', function(opts) {
+riot.tag2('page-ter', '<div style="margin-left:55px; padding-top: 22px;"> <page-tabs-with-selecter core="{page_tabs}" source="{campuses()}" active="{activeCampus()}" callback="{clickTab}"></page-tabs-with-selecter> </div> <div class="tabs" style="margin-bottom: 0px;"> <page-ter_tab-graph class="hide"></page-ter_tab-graph> <page-ter_tab-entities class="hide"></page-ter_tab-entities> <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers> <page-ter_tab-attributes class="hide"></page-ter_tab-attributes> </div> <inspector></inspector>', 'page-ter { display: flex; flex-direction: column; width: 100vw; height: 100vh; } page-ter .tabs { flex-grow: 1; } page-ter page-tabs-with-selecter { display: flex; flex-direction: column; } page-ter page-tabs-with-selecter li:first-child { margin-left: 88px; }', '', function(opts) {
      this.campuses = () => {
          let system = STORE.get('active.system');
 

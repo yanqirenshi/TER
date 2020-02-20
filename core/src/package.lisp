@@ -28,6 +28,7 @@
            #:find-er-cameras)
   ;; ter
   (:export #:get-campus
+           #:get-campus-graph
            #:tx-update-camera-look-at
            #:tx-update-camera-magnification
            #:tx-make-relationship
@@ -46,7 +47,8 @@
            #:find-identifier-instance
            #:find-ter-all-edges
            #:find-entity-identifiers
-           #:find-identifier-ports)
+           #:find-identifier-ports
+           #:tx-build-identifier)
   ;; modeler
   (:export #:tx-make-modeler-with-ghost
            #:get-modeler)

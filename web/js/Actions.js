@@ -519,6 +519,11 @@ class Actions extends Vanilla_Redux_Actions {
 
         new_state.ports = new TerDataManeger().mergeStateData([response], new_state.ports);
 
+        ACTIONS.pushMessage({
+            type: 'normal',
+            contents: 'ポートの位置保存が完了しました。',
+        });
+
         return {
             type: 'SAVED-TER-PORT-POSITION',
             data: {
@@ -558,21 +563,6 @@ class Actions extends Vanilla_Redux_Actions {
 
         return {
             type: 'SAVED-TER-CAMPUS-GRAPH',
-        };
-    }
-    addTerAttribute2Entity (system, campus, entity, data) {
-        let path = "/systems/%d/campuses/%d/entities/%d/attributes".format(system._id, campus._id, entity._id);
-        let post_data = this.encodePostData(data);
-
-        API.post(path, post_data, (response)=>{
-            STORE.dispatch(this.addedTerAttribute2Entity(response));
-        });
-    }
-    addedTerAttribute2Entity (response) {
-        let new_state = STORE.get('ter');
-
-        return {
-            type: 'ADDED-TER-ATTRIBUTE-2-ENTITY',
         };
     }
     /* **************************************************************** *
@@ -822,11 +812,22 @@ class Actions extends Vanilla_Redux_Actions {
         for (let key in post_data)
             post_data[key] = encodeURI(post_data[key]);
 
-        API.post(path, post_data, function (response) {
-            STORE.dispatch(this.createdTerEntity(response));
+        API.post(path, post_data, function (response, success) {
+            if (success)
+                STORE.dispatch(this.createdTerEntity(response));
+            else
+                ACTIONS.pushMessage({
+                    type: 'error',
+                    contents: 'エンティティの作成が失敗しました。',
+                });
         }.bind(this));
     }
     createdTerEntity (response) {
+        ACTIONS.pushMessage({
+            type: 'normal',
+            contents: 'エンティティの作成が完了しました。',
+        });
+
         return {
             type: 'CREATED-ENTITY',
             data: {},
@@ -839,14 +840,51 @@ class Actions extends Vanilla_Redux_Actions {
         for (let key in post_data)
             post_data[key] = encodeURI(post_data[key]);
 
-        API.post(path, post_data, function (response) {
-            STORE.dispatch(this.createdTerRelationship(response));
+        API.post(path, post_data, function (response, success) {
+            if (success)
+                STORE.dispatch(this.createdTerRelationship(response));
+            else
+                ACTIONS.pushMessage({
+                    type: 'error',
+                    contents: 'リレーションシップの作成に失敗しました。',
+                });
         }.bind(this));
     }
     createdTerRelationship (response) {
+        ACTIONS.pushMessage({
+            type: 'normal',
+            contents: 'リレーションシップの作成が完了しました。',
+        });
+
         return {
             type: 'CREATED-RELATIONSHIP',
             data: {},
+        };
+    }
+    addTerAttribute2Entity (system, campus, entity, data) {
+        let path = "/systems/%d/campuses/%d/entities/%d/attributes".format(system._id, campus._id, entity._id);
+        let post_data = this.encodePostData(data);
+
+        API.post(path, post_data, (response, success)=>{
+            if (success)
+                STORE.dispatch(this.addedTerAttribute2Entity(response));
+            else
+                ACTIONS.pushMessage({
+                    type: 'error',
+                    contents: 'アトリビュートの追加に失敗しました。',
+                });
+        });
+    }
+    addedTerAttribute2Entity (response) {
+        ACTIONS.pushMessage({
+            type: 'normal',
+            contents: 'アトリビュートの追加が完了しました。',
+        });
+
+        let new_state = STORE.get('ter');
+
+        return {
+            type: 'ADDED-TER-ATTRIBUTE-2-ENTITY',
         };
     }
     /* **************************************************************** *
@@ -855,8 +893,14 @@ class Actions extends Vanilla_Redux_Actions {
     fetchPagesManagements () {
         let path = '/pages/managements';
 
-        API.get(path, function (response) {
-            STORE.dispatch(this.fetchedPagesManagements(response));
+        API.get(path, function (response, success) {
+            if (success)
+                STORE.dispatch(this.fetchedPagesManagements(response));
+            else
+                ACTIONS.pushMessage({
+                    type: 'error',
+                    contents: 'fetchPagesManagements に失敗しました。',
+                });
         }.bind(this));
     }
     fetchedPagesManagements (response) {
@@ -903,5 +947,60 @@ class Actions extends Vanilla_Redux_Actions {
             type: 'FETCHED-PAGES-MODELERS',
             response: response,
         };
+    }
+    /* **************************************************************** *
+     *  Page
+     * **************************************************************** */
+    pushMessage (msg) {
+        let new_state = STORE.get('ter');
+
+        if (!this._msg_counter)
+            this._msg_counter = 1;
+
+        let message = {...msg};
+
+        message._id = this._msg_counter++;
+        message._timestamp = new Date();
+
+        new_state.messages.push(message);
+
+        STORE.dispatch({
+            type: 'PUSH-MESSAGE',
+            data: {
+                ter: new_state
+            },
+        });
+    }
+    closeMessage (msg) {
+        let new_state = STORE.get('ter');
+
+        let new_messages = [];
+
+        for (let obj of new_state.messages)
+            if (msg._id!==obj._id)
+                new_messages.push(obj);
+
+        new_state.messages = new_messages;
+
+        STORE.dispatch({
+            type: 'CLOSE-MESSAGE',
+            data: {
+                ter: new_state
+            },
+        });
+
+    }
+    closeAllMessage (msg) {
+        let new_state = STORE.get('ter');
+
+        new_state.messages = [];
+
+        STORE.dispatch({
+            type: 'CLOSE-ALL-MESSAGE',
+            data: {
+                ter: new_state
+            },
+        });
+
     }
 }

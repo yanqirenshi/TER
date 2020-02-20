@@ -5,3 +5,13 @@ app .page-root {
     display: block;
     padding-left: 55px;
 }
+
+
+.table.ter-table {
+    font-size: 12px;
+}
+
+.table.ter-table thead th {
+    background: #2C1D44;
+    color: #ffffff;
+}

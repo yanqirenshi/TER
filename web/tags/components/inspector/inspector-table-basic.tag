@@ -7,8 +7,7 @@
 
     <section-container no="5" title="Columns" columns={opts.columns}>
         <section-contents columns={opts.columns}>
-            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth"
-                   style="font-size:12px;">
+            <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth ter-table">
                 <thead>
                     <tr> <th>物理名</th> <th>論理名</th> <th>タイプ</th></tr>
                 </thead>

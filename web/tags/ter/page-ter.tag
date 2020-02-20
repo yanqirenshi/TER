@@ -7,7 +7,7 @@
                                  callback={clickTab}></page-tabs-with-selecter>
     </div>
 
-    <div class="tabs">
+    <div class="tabs" style="margin-bottom: 0px;">
         <page-ter_tab-graph       class="hide"></page-ter_tab-graph>
         <page-ter_tab-entities    class="hide"></page-ter_tab-entities>
         <page-ter_tab-identifiers class="hide"></page-ter_tab-identifiers>

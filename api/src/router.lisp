@@ -229,6 +229,14 @@
         (render-json (find-entities campus))))))
 
 
+(defun get-path-camups (graph system-id campus-id modeler)
+  (let ((system (ter::get-system graph :%id system-id)))
+    (unless system (throw-code 404))
+    (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
+      (unless campus (throw-code 404))
+      campus)))
+
+
 (defroute ("/systems/:sytem-id/campuses/:campus-id/graph/save" :method :post)
     (&key sytem-id campus-id)
   (with-graph-modeler (graph modeler)
@@ -240,6 +248,15 @@
           (unless campus (throw-code 404))
           (snapshot-campus-graph campus)
           (render-json :null))))))
+
+
+(defun get-path-entity (graph system-id campus-id entity-id modeler)
+  (let ((campus (get-path-camups graph system-id campus-id modeler)))
+    (unless campus (throw-code 404))
+    (let ((campus-graph (ter:get-campus-graph campus)))
+      (let ((entity (ter:get-entity campus-graph :%id entity-id)))
+        (unless entity (throw-code 404))
+        (values entity campus-graph)))))
 
 
 (defroute ("/systems/:sytem-id/campuses/:campus-id/entities" :method :post)
@@ -256,8 +273,8 @@
         (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
           (unless campus (throw-code 404))
           (render-json (ter.api.controller:create-entity campus
-                                                         :type type
-                                                         :code code
+                                                         :type (str2keyword type)
+                                                         :code (str2keyword code)
                                                          :name name
                                                          :description description)))))))
 
@@ -272,16 +289,15 @@
           (name        (validate |name|        :string  :require t   :url-decode t))
           (data-type   (validate |data_type|   :string  :require t   :url-decode t))
           (description (validate |description| :string  :require nil :url-decode t :default-value "")))
-      (let ((system (ter::get-system graph :%id system-id)))
-        (unless system (throw-code 404))
-        (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
-          (unless campus (throw-code 404))
-          (let ((entity entity-id))
-            (unless entity (throw-code 404))
-          (render-json (list :data-type data-type
-                             :code code
-                             :name name
-                             :description description))))))))
+      (multiple-value-bind (entity campus-graph)
+          (get-path-entity graph system-id campus-id entity-id modeler)
+        (describe campus-graph)
+        (render-json (ter.api.controller:add-attribute-2-entity campus-graph
+                                                                entity
+                                                                :data-type (str2keyword data-type)
+                                                                :code      (str2keyword code)
+                                                                :name      name
+                                                                :description description))))))
 
 
 (defroute ("/ter/campuses/:campus-id/entities/:entity-id/location" :method :post)
@@ -300,14 +316,6 @@
         (render-json (save-entity-position campus entity x y z))))))
 
 
-(defun get-camups (graph system-id campus-id modeler)
-  (let ((system (ter::get-system graph :%id system-id)))
-    (unless system (throw-code 404))
-    (let ((campus (get-campus-by-system-and-modeler graph system modeler :campus-id campus-id)))
-      (unless campus (throw-code 404))
-      campus)))
-
-
 (defroute ("/systems/:sytem-id/campuses/:campus-id/relationships" :method :post)
     (&key sytem-id campus-id |from| |to| |type|)
   (with-graph-modeler (graph modeler)
@@ -316,8 +324,8 @@
           (from-id     (validate |from|    :integer :require t))
           (to-id       (validate |to|      :integer :require t))
           (type-str    (validate |type|    :string  :require t :url-decode t)))
-      (let ((campus (get-camups graph system-id campus-id modeler))
-            (type (alexandria:make-keyword (string-upcase type-str))))
+      (let ((campus (get-path-camups graph system-id campus-id modeler))
+            (type   (str2keyword type-str)))
         (render-json (ter.api.controller:create-relationship campus from-id to-id type))))))
 
 

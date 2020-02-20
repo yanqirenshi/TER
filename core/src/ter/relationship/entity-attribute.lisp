@@ -27,12 +27,13 @@
                                                   :data-type (data-type attribute))))
 
   (:method (graph (entity entity) (params list))
-    (let ((code (getf params :code))
-          (name (getf params :name))
-          (data-type (getf params :data-type)))
+    (let ((code        (getf params :code))
+          (name        (getf params :name))
+          (data-type   (getf params :data-type))
+          (description (getf params :description)))
       (assert-not-exist-entity-attribute graph entity :code code)
       (tx-add-attribute-instance graph entity
-                                 (tx-make-attribute-instance graph code name data-type)))))
+                                 (tx-make-attribute-instance graph code name data-type :description description)))))
 
 
 ;;;;;

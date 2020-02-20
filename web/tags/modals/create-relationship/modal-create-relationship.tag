@@ -109,7 +109,7 @@
              this.update();
              return;
          }
-         if (action.type=='CREATED-RELATIONSHIP-SYSTEM') {
+         if (action.type=='CREATED-RELATIONSHIP') {
              this.clickClose();
              return;
          }

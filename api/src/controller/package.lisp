@@ -44,7 +44,8 @@
            #:ter-environment-at-modeler-system-campus)
   (:export #:create-system
            #:create-entity
-           #:create-relationship)
+           #:create-relationship
+           #:add-attribute-2-entity)
   (:export #:find-graph
            #:snapshot-campus-graph)
   (:export #:pages-basic

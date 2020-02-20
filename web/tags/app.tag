@@ -10,6 +10,8 @@
 
     <modal-pool></modal-pool>
 
+    <messenger></messenger>
+
     <style>
      app > .page {
          width: 100vw;

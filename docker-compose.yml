@@ -1,0 +1,54 @@
+##### ################################################################
+#####
+#####  RUN
+#####  ===
+#####   docker-compose up -d
+#####   docker-compose stop
+#####   docker-compose rm
+#####   docker-compose ps
+#####
+#####  + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+#####  : Docker Compose                                                              :
+#####  :                                                                             :
+#####  :   +---------------+      +----------------------------------------------+   :     +-------------------+
+#####  :   | web           |      | api                                          |   :     | Database          |
+#####  :   |  +-------+    |      |  +------------------+   +----------------+   |   :     |  +------------+   |
+#####  :   |  | nginx |<------------>| woo(stroborihts) |<->| glpgs-hooligan |<-------------->| postgresql |   |
+#####  :   |  +-------+    |      |  +------------------+   +----------------+   |   :     |  +------------+   |
+#####  :   |               |      |                                              |   :     |                   |
+#####  :   |               |      |                                              |   :     |                   |
+#####  :   |               |      |                                              |   :     |                   |
+#####  :   +---------------+      +----------------------------------------------+   :     +-------------------+
+#####  :                                                                             :
+#####  + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+#####
+##### ################################################################
+version: '3'
+services:
+
+  api:
+    build: ./
+    image: ter-api
+    container_name: ter-api
+    restart: always
+    ports:
+      - ${TER_API-PORT}:55555
+    tty: true
+    # 必要な時だけ利用する。
+    # environment:
+    #   API_PORT : ${TER_API_PORT}
+    #   API_SESSION_NAME : ${TER_API_SESSION_NAME}
+    #   DIR_GRAPH_COMMON : ${TER_DIR_GRAPH_COMMON}
+    #   DIR_GRAPH_CAMPUS : ${TER_DIR_GRAPH_CAMPUS}
+    #   DIR_GRAPH_SCHEMA : ${TER_DIR_GRAPH_SCHEMA}
+    volumes:
+      - "/Users/satoshi.iwasaki/var/ter/graph/common:/home/cl_user/var/ter/graph/common"
+      - "/Users/satoshi.iwasaki/var/ter/graph/campus:/home/cl_user/var/ter/graph/campus"
+      - "/Users/satoshi.iwasaki/var/ter/graph/schema:/home/cl_user/var/ter/graph/schema"
+  # web:
+  #   image: nginx
+  #   container_name: ter-api-proxy
+  #   restart: always
+  #   ports:
+  #     - 8080:80
+  #   tty: true

@@ -1,0 +1,82 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  ;;#+quicklisp (ql:quickload '() :silent t)
+  )
+
+(defpackage :ros.script.ter-api.3791660211
+  (:use :cl))
+(in-package :ros.script.ter-api.3791660211)
+
+(defun main (&rest argv)
+  (declare (ignorable argv)))
+;;; vim: set ft=lisp lisp:
+
+;;;;;
+;;;;; SBCL
+;;;;;
+(setf sb-impl::*default-external-format* :utf-8)
+(setf sb-alien::*default-c-string-external-format* :utf-8)
+(push #P"~/.asdf/" asdf:*central-registry*)
+
+;;;;;
+;;;;; Load Libs
+;;;;;
+
+;;; strobolights
+(ql:quickload :strobolights)
+
+;; Ghost
+(ql:quickload :ghost.graph)
+(ql:quickload :ghost)
+;;(ql:quickload :ghost.api)
+
+
+;;;;;
+;;;;; TER
+;;;;;
+(ql:quickload :ter)
+(ql:quickload :ter.api)
+;; (ql:quickload :takara8.api)
+
+(defun setting-ter ()
+  (let ((dir-common (uiop:getenv "TER_DIR_GRAPH_COMMON"))
+        (dir-campus (uiop:getenv "TER_DIR_GRAPH_CAMPUS"))
+        (dir-shcema (uiop:getenv "TER_DIR_GRAPH_SCHEMA")))
+    (format t "dir-common=~S~%" dir-common)
+    (format t "dir-campus=~S~%" dir-campus)
+    (format t "dir-shcema=~S~%" dir-shcema)
+    (setf ter:*graph-stor-dir*        dir-common)
+    (setf ter:*campus-directory-root* dir-campus)
+    (setf ter:*schema-directory-root* dir-shcema)))
+
+(defun invoke-woo ()
+  (let ((server      (uiop:getenv "TER_API_SERVER"))
+        (port        (uiop:getenv "TER_API_PORT"))
+        (session-key (uiop:getenv "TER_API_SESSION_NAME")))
+    (setf strobolights:*session-key* session-key)
+    (setf strobolights:*additional-components*
+          '((:mount "/api/v1" ter.api.router:*api-v1*)))
+    (strobolights:start :server (alexandria:make-keyword (string-upcase server))
+                        :port   (parse-integer port))))
+
+(defun gc-loop ()
+  (do ((counter 0 (1+ counter))
+       (gc-point 88888888))
+      (nil counter)
+    (sleep 1)
+    (when (= counter gc-point)
+      (setf counter 0)
+      (sb-ext:gc))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (ghost.graph:start)
+  (setting-ter)
+  (ter.db:start)
+  (invoke-woo)
+  (gc-loop))

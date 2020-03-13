@@ -32,7 +32,7 @@ services:
     container_name: ter-api
     restart: always
     ports:
-      - ${TER_API-PORT}:55555
+      - ${TER_API_PORT}:55555
     tty: true
     # 必要な時だけ利用する。
     # environment:

@@ -1,0 +1,23 @@
+##### ################################################################
+#####
+#####  API サーバーのための Dockerfile
+#####
+#####   Build
+#####   =====
+#####    docker build -t ter.api -f Dockerfile.Common-Lisp .
+#####
+#####   Run
+#####   ===
+#####    docker run -it -d ter.api
+#####    docker exec -it ter bash
+#####
+#####   Variables
+#####   =========
+#####    API-PORT : 55555
+#####    API-SESSION-NAME : ter.session
+#####    DIR-GRAPH-COMMON :
+#####    DIR-GRAPH-CAMPUS :
+#####    DIR-GRAPH-SCHEMA :
+#####
+##### ################################################################
+FROM renshi/common-lisp

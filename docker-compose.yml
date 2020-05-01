@@ -26,7 +26,7 @@
 version: '3'
 services:
 
-  api:
+  ter:
     build: ./
     image: ter-api
     container_name: ter-api
@@ -45,10 +45,3 @@ services:
       - "/Users/satoshi.iwasaki/var/ter/graph/common:/home/cl_user/var/ter/graph/common"
       - "/Users/satoshi.iwasaki/var/ter/graph/campus:/home/cl_user/var/ter/graph/campus"
       - "/Users/satoshi.iwasaki/var/ter/graph/schema:/home/cl_user/var/ter/graph/schema"
-  # web:
-  #   image: nginx
-  #   container_name: ter-api-proxy
-  #   restart: always
-  #   ports:
-  #     - 8080:80
-  #   tty: true

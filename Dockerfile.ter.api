@@ -4,12 +4,11 @@
 #####
 #####   Build
 #####   =====
-#####    docker build -t ter.api -f Dockerfile.Common-Lisp .
+#####    docker build -t ter.api -f Dockerfile.ter.api .
 #####
 #####   Run
 #####   ===
-#####    docker run -it -d ter.api
-#####    docker exec -it ter bash
+#####    docker run -it ter.api /bin/bash
 #####
 #####   Variables
 #####   =========
@@ -20,4 +19,13 @@
 #####    DIR-GRAPH-SCHEMA :
 #####
 ##### ################################################################
-FROM renshi/common-lisp
+FROM renshi/strobolights
+
+MAINTAINER Renshi <yanqirenshi@gmail.com>
+
+
+##### ################################################################
+#####   Main
+##### ################################################################
+USER appl-user
+WORKDIR /home/appl-user

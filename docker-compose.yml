@@ -26,13 +26,23 @@
 version: '3'
 services:
 
-  ter:
+  ter.webfront:
     build: ./
-    image: ter-api
-    container_name: ter-api
+    image: nginx
+    container_name: ter-webfront
     restart: always
     ports:
-      - ${TER_API_PORT}:55555
+      - 8080:80
+    volumes:
+      - /some/content:/usr/share/nginx/html:ro
+
+  ter.api-and-db:
+    build: ./
+    image: ter.api
+    container_name: ter-api-and-db
+    restart: always
+    ports:
+      - 55559:55555
     tty: true
     # 必要な時だけ利用する。
     # environment:

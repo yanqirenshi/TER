@@ -4,7 +4,7 @@
 #####
 #####   Build
 #####   =====
-#####    docker build -t renshi/ter -f Dockerfile.ter .
+#####    docker build -t renshi/ter -f Dockerfile .
 #####
 #####   Run
 #####   ===
@@ -71,7 +71,7 @@ RUN ln -s /home/appl-user/prj/TER/core/ter.asd    /home/appl-user/.asdf/ter.asd
 #####   Main
 ##### ################################################################
 USER appl-user
-WORKDIR /home/appl-user/prj/TER
+WORKDIR /home/appl-user/prj/TER/docker
 
 RUN mkdir -p /home/appl-user/var/log/TER
 

@@ -39,7 +39,7 @@ services:
       API_path : /api/v1
 
   ter.api-and-db:
-    image: renshi/ter
+    image: renshi/ter.api
     container_name: ter-api-and-db
     restart: always
     ports:

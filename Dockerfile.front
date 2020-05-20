@@ -9,6 +9,7 @@
 #####   Run
 #####   ===
 #####     docker run  -it -p 8080:80 renshi/ter.front
+#####     docker run  -d -p 8080:80 renshi/ter.front
 #####     docker exec -it renshi/ter.front /bin/bash
 #####
 #####   Variables
@@ -34,32 +35,11 @@ ENV API_PATH_PREFIX /api/v1
 ##### ################################################################
 WORKDIR /tmp
 
-RUN mkdir /tmp/TER
+RUN mkdir -p /var/www/TER
 
-COPY ./ /tmp/TER/
+COPY ./ /var/www/TER
 
-RUN rm /usr/share/nginx/html/*
+RUN rm /etc/nginx/conf.d/default.conf
+RUN cp /var/www/TER/docker/nginx.default.conf /etc/nginx/conf.d/default.conf
 
-RUN cp -r /tmp/TER/web/* /usr/share/nginx/html/
-
-RUN echo > /usr/share/nginx/html/config.js
-
-RUN echo "\n\
-const _CONFIG = {\n\
-    api : {\n\
-        scheme: '${API_SCHEME}',\n\
-        host: '${API_HOST}',\n\
-        port: '${API_PORT}',\n\
-        path: {\n\
-            prefix: '${API_PATH_PREFIX}'\n\
-        }\n\
-    },\n\
-    auth: {\n\
-        sign: {\n\
-                in: {\n\
-                    url: '/sign/in'\n\
-                },\n\
-        },\n\
-    },\n\
-};\n\
-" > /usr/share/nginx/html/config.js
+CMD ["/bin/bash", "/var/www/TER/docker/scripts/start-front.sh"]

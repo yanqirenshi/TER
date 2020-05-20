@@ -4,7 +4,7 @@
 #####
 #####   Build
 #####   =====
-#####    docker build -t renshi/ter -f Dockerfile .
+#####    docker build -t renshi/ter -f Dockerfile.api .
 #####
 #####   Run
 #####   ===
@@ -43,36 +43,37 @@ RUN ln -s /home/appl-user/prj/libs/parser.schema.rb/parser.schema.rb.asd /home/a
 ##### ################################################################
 #####   Appl : Git Clone
 ##### ################################################################
+# USER appl-user
+# WORKDIR /home/appl-user/prj
+# RUN git clone https://github.com/yanqirenshi/plist-printer
+#
+# RUN git clone https://github.com/yanqirenshi/TER.git
+#
+# RUN ln -s /home/appl-user/prj/TER/api/ter.api.asd /home/appl-user/.asdf/ter.api.asd
+# RUN ln -s /home/appl-user/prj/TER/core/ter.asd    /home/appl-user/.asdf/ter.asd
+#
+#
+##### ################################################################
+#####   Appl : Copy
+##### ################################################################
 USER appl-user
 WORKDIR /home/appl-user/prj
-RUN git clone https://github.com/yanqirenshi/plist-printer
 
-RUN git clone https://github.com/yanqirenshi/TER.git
+RUN mkdir -p /home/appl-user/prj/TER
+
+COPY --chown=appl-user:appl-users ./  /home/appl-user/prj/TER/
 
 RUN ln -s /home/appl-user/prj/TER/api/ter.api.asd /home/appl-user/.asdf/ter.api.asd
 RUN ln -s /home/appl-user/prj/TER/core/ter.asd    /home/appl-user/.asdf/ter.asd
 
 
 ##### ################################################################
-#####   Appl : Copy
-##### ################################################################
-# USER appl-user
-# WORKDIR /home/appl-user/prj
-# 
-# RUN mkdir -p /home/appl-user/prj/TER
-# 
-# COPY --chown=appl-user:appl-users ./  /home/appl-user/prj/TER/
-# 
-# RUN ln -s /home/appl-user/prj/TER/api/ter.api.asd /home/appl-user/.asdf/ter.api.asd
-# RUN ln -s /home/appl-user/prj/TER/core/ter.asd    /home/appl-user/.asdf/ter.asd
-#
-#
-##### ################################################################
 #####   Main
 ##### ################################################################
 USER appl-user
-WORKDIR /home/appl-user/prj/TER/docker
+WORKDIR /home/appl-user/prj/TER/docker/scripts
 
 RUN mkdir -p /home/appl-user/var/log/TER
 
-CMD ["./ter.sh"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["ter.sh"]

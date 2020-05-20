@@ -27,14 +27,11 @@ version: '3'
 services:
 
   ter.web:
-    image: nginx
-    container_name: ter-web
+    image: renshi/ter.front
+    container_name: ter-front
     restart: always
     ports:
-      - 8081:80
-    volumes:
-      - ${PWD}/web:/usr/share/nginx/html:ro
-      - ${PWD}/docker/web.config.js:/usr/share/nginx/html/config.js
+      - 8080:80
     environment:
       API_SCHEME : http
       API_HOST : localhost
@@ -46,7 +43,7 @@ services:
     container_name: ter-api-and-db
     restart: always
     ports:
-      - 55559:55555
+      - 55555:55555
     tty: true
     environment:
       API_PORT : 55555

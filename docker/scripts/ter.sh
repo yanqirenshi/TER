@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TARGET_SCRIPT=/home/appl-user/prj/TER/ter.lisp
+TARGET_SCRIPT=/home/appl-user/prj/TER/docker/scripts/ter.lisp
 
 LOG_DIR=/home/appl-user/var/log/TER/
 

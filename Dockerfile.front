@@ -1,0 +1,65 @@
+##### ################################################################
+#####
+#####  Front のための Dockerfile
+#####
+#####   Build
+#####   =====
+#####    docker build -t renshi/ter.front -f Dockerfile.front .
+#####
+#####   Run
+#####   ===
+#####     docker run  -it -p 8080:80 renshi/ter.front
+#####     docker exec -it renshi/ter.front /bin/bash
+#####
+#####   Variables
+#####   =========
+#####
+##### ################################################################
+FROM nginx
+
+MAINTAINER Renshi <yanqirenshi@gmail.com>
+
+
+##### ################################################################
+#####   Environment Variables
+##### ################################################################
+ENV API_SCHEME      http
+ENV API_HOST        localhost
+ENV API_PORT        55555
+ENV API_PATH_PREFIX /api/v1
+
+
+##### ################################################################
+#####   libs
+##### ################################################################
+WORKDIR /tmp
+
+RUN mkdir /tmp/TER
+
+COPY ./ /tmp/TER/
+
+RUN rm /usr/share/nginx/html/*
+
+RUN cp -r /tmp/TER/web/* /usr/share/nginx/html/
+
+RUN echo > /usr/share/nginx/html/config.js
+
+RUN echo "\n\
+const _CONFIG = {\n\
+    api : {\n\
+        scheme: '${API_SCHEME}',\n\
+        host: '${API_HOST}',\n\
+        port: '${API_PORT}',\n\
+        path: {\n\
+            prefix: '${API_PATH_PREFIX}'\n\
+        }\n\
+    },\n\
+    auth: {\n\
+        sign: {\n\
+                in: {\n\
+                    url: '/sign/in'\n\
+                },\n\
+        },\n\
+    },\n\
+};\n\
+" > /usr/share/nginx/html/config.js

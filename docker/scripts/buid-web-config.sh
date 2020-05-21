@@ -14,7 +14,7 @@ echo "    },"                                   >> $CONFIG_FILE
 echo "    auth: {"                              >> $CONFIG_FILE
 echo "        sign: {"                          >> $CONFIG_FILE
 echo "                in: {"                    >> $CONFIG_FILE
-echo "                    url: '/sign/in'"      >> $CONFIG_FILE
+echo "                    url: '/sign/in/'"     >> $CONFIG_FILE
 echo "                },"                       >> $CONFIG_FILE
 echo "        },"                               >> $CONFIG_FILE
 echo "    },"                                   >> $CONFIG_FILE

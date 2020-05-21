@@ -76,4 +76,4 @@ WORKDIR /home/appl-user/prj/TER/docker/scripts
 RUN mkdir -p /home/appl-user/var/log/TER
 
 ENTRYPOINT ["/bin/bash"]
-CMD ["ter.sh"]
+CMD ["start-api.sh"]

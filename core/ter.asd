@@ -68,12 +68,20 @@ This file is a part of ter project.
                                               (:file "relationship2camera")
                                               (:file "base")))
                  ;; er
-                 (:module "er" :components ((:file "column")
-                                            (:file "column-instance")
-                                            (:file "table")
-                                            (:file "port")
-                                            (:file "relationship")
-                                            (:file "er")))
+                 (:module "er"
+                  :components ((:file "column")
+                               (:file "column-instance")
+                               (:file "table")
+                               (:file "port")
+                               (:file "relationship")
+                               (:module "structures"
+                                :components ((:file "common")
+                                             (:file "column_column-instance")
+                                             (:file "table_column-instance")
+                                             (:file "column-instance_port-er")
+                                             (:file "port-er_port-er")
+                                             (:file "table_column-instance_port-er")))
+                               (:file "er")))
                  ;; ter
                  (:module "ter" :components ((:file "predicates")
                                              (:file "identifier")

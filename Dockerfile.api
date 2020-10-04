@@ -8,8 +8,8 @@
 #####
 #####   Run
 #####   ===
-#####     docker run  -it -p 55555:55555 renshi/ter.api
-#####     docker run  -d  -p 55555:55555 renshi/ter.api
+#####     docker run  -it -p 55555:8080 renshi/ter.api
+#####     docker run  -d  -p 55555:8080 renshi/ter.api
 #####     docker exec -it renshi/ter.api /bin/bash
 #####     docker run  -it renshi/ter.api /bin/bash
 #####
@@ -75,5 +75,5 @@ WORKDIR /home/appl-user/prj/TER/docker/scripts
 
 RUN mkdir -p /home/appl-user/var/log/TER
 
-ENTRYPOINT ["/bin/bash"]
-CMD ["start-api.sh"]
+# ENTRYPOINT ["/bin/bash"]
+# CMD ["start-api.sh"]

@@ -30,13 +30,16 @@
 
 (defgeneric tx-make-schema (graph code &key name description)
   (:method (graph code &key name description)
-    (or (progn (warn "SCHEMA: CDOE=~a は既に存在していたので作成しませんでした。" code)
-               (get-schema graph :code code))
-        (shinra:tx-make-vertex graph 'schema
-                               `((code ,code)
-                                 (name ,name )
-                                 (description ,description)
-                                 (store-directory ,(schem-store-directory-pathname code)))))))
+    (let ((schema (get-schema graph :code code)))
+      (if schema
+          (progn (warn "SCHEMA: CDOE=~a は既に存在していたので作成しませんでした。" code)
+                 schema)
+          (shinra:tx-make-vertex graph 'schema
+                                 `((code ,code)
+                                   (name ,name )
+                                   (description ,description)
+                                   (store-directory ,(schem-store-directory-pathname code)))
+                                 )))))
 
 
 ;;;;;

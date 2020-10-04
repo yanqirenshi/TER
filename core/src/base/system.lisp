@@ -42,9 +42,11 @@
   (assert (keywordp code))
   (assert modeler)
   (assert-max-owner-system-count graph modeler)
-  (or (progn (warn "SYSTEM: CDOE=~a は既に存在していたので作成しませんでした。" code)
-             (get-system graph :code code))
-      (shinra:tx-make-vertex graph 'system
-                             `((code ,code)
-                               (name ,name)
-                               (description ,description)))))
+  (let ((system (get-system graph :code code)))
+    (if system
+        (progn (warn "SYSTEM: CDOE=~a は既に存在していたので作成しませんでした。" code)
+               system)
+        (shinra:tx-make-vertex graph 'system
+                               `((code ,code)
+                                 (name ,name)
+                                 (description ,description))))))

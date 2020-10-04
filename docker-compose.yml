@@ -31,14 +31,13 @@ services:
     container_name: ter-api
     restart: always
     ports:
-      - 55555:55555
+      - 55555:8080
     tty: true
     environment:
-      API_PORT : 55555
       API_SESSION_NAME : session.ter
-      DIR_GRAPH_COMMON : /home/cl_user/var/ter/graph/common
-      DIR_GRAPH_CAMPUS : /home/cl_user/var/ter/graph/campus
-      DIR_GRAPH_SCHEMA : /home/cl_user/var/ter/graph/schema
+      DIR_GRAPH_COMMON : /home/cl_user/var/ter/graph/common/
+      DIR_GRAPH_CAMPUS : /home/cl_user/var/ter/graph/campus/
+      DIR_GRAPH_SCHEMA : /home/cl_user/var/ter/graph/schema/
     volumes:
       - ${PWD}/docker/data/graphs/common:/home/cl_user/var/ter/graph/common
       - ${PWD}/docker/data/graphs/campus:/home/cl_user/var/ter/graph/campus

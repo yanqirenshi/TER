@@ -8,13 +8,12 @@
         (%id  (shinra:get-vertex-at graph 'column-instance :%id %id))))
 
 (defun tx-make-column-instance (graph code name data-type &optional (column-type :attribute))
-  (or (get-column-instance graph :code code)
-      (tx-make-vertex graph
-                      'column-instance
-                      `((code ,code)
-                        (name ,name)
-                        (data-type ,data-type)
-                        (column-type ,column-type)))))
+  (tx-make-vertex graph
+                  'column-instance
+                  `((code ,code)
+                    (name ,name)
+                    (data-type ,data-type)
+                    (column-type ,column-type))))
 
 (defmethod tx-update-column-instance (graph column-instance name data-type &optional (column-type :attribute))
   (up:tx-change-object-slots graph

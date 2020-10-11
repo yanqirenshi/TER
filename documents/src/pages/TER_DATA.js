@@ -15,7 +15,7 @@ const TER_DATA = {
             position: { x: 10, y: -100 },
             size: { w: 100, h: 200},
             identifiers: [
-                { id: 1000, name: { physical: '111', logical: '222' }, identifier: 10, position: 270 },
+                { id: 1000, name: { physical: '111', logical: '222' }, identifier: 10 },
             ],
             attributes: [
                 { id: 2000, name: { physical: 'aaa', logical: 'bbb' }, attribute: 20 },
@@ -30,7 +30,7 @@ const TER_DATA = {
             size: { w: 100, h: 200},
             identifiers: [
                 { id: 1100, name: { physical: '555', logical: '666' }, identifier: 11 },
-                { id: 1101, name: { physical: '777', logical: '888' }, identifier: 10, position: 90 },
+                { id: 1101, name: { physical: '777', logical: '888' }, identifier: 10 },
             ],
             attributes: [
                 { id: 2100, name: { physical: 'eee', logical: 'fff' }, attribute: 20 },
@@ -39,7 +39,7 @@ const TER_DATA = {
         },
     ],
     relationships: [
-        { from: 1000, to: 1101 },
+        { from: { id: 1000, position: 270 }, to: { id: 1101, position: 90 } },
     ],
 };
 

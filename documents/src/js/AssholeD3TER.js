@@ -51,17 +51,17 @@ export default class AssholeD3TER extends Asshole {
 
         return classes.indexOf(_class) > -1;
     }
-    buildRelationshipsAndPort (core_list, entities) {
+    buildRelationshipsWithPort (relationships, entities) {
         let out = { list: [], ht: {} };
 
-        for (const core of core_list) {
-            const identifier_from = this.entity.getIdentifier(core.from, entities);
-            const identifier_to   = this.entity.getIdentifier(core.to, entities);
+        for (const core of relationships) {
+            const identifier_from = this.entity.getIdentifier(core.from.id, entities);
+            const identifier_to   = this.entity.getIdentifier(core.to.id, entities);
 
-            const port_from = this.port.build(identifier_from, 'from');
-            const port_to = this.port.build(identifier_to, 'to');
+            const port_from = this.port.build('from', core.from.position, identifier_from);
+            const port_to   = this.port.build('to',   core.to.position,   identifier_to);
 
-            let r = this.relationship.build(core, port_from, port_to);
+            let element = this.relationship.build(core, port_from, port_to);
 
             const entity_from = identifier_from._entity;
             const entity_to   = identifier_to._entity;
@@ -75,8 +75,8 @@ export default class AssholeD3TER extends Asshole {
             entity_to.ports.items.ht[port_to._id] = port_to;
             entity_to.ports.items.list.push(port_to);
 
-            out.list.push(identifier_from);
-            out.ht[r._id] = r;
+            out.list.push(element);
+            out.ht[element._id] = element;
         }
 
         return out;
@@ -100,7 +100,7 @@ export default class AssholeD3TER extends Asshole {
         });
 
         // いちおう応急
-        this._relationships = this.buildRelationshipsAndPort(
+        this._relationships = this.buildRelationshipsWithPort(
             data.relationships, this._entities
         );
 

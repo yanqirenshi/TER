@@ -6,7 +6,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "@yanqirenshi/assh0le": "0.0.3",
+    "@yanqirenshi/assh0le": "0.0.8",
     "bulma": "^0.9.1",
     "d3": "^6.2.0",
     "moment": "^2.29.0",

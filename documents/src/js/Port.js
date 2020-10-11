@@ -14,14 +14,14 @@ export default class Port {
             _id: null,
             _class: null,
             position: { x:0, y:0 },
-            _core: null,
+            _core: null, // ??? 自動で作るからなぁ。
             _entity: null,
         };
     }
     build (idenrifier_instance, type) {
         let element = this.template();
 
-        element._id = idenrifier_instance.id;
+        element._id = idenrifier_instance._id;
         element._class = type==='from' ? 'PORT-FROM' : 'PORT-TO';
 
         element._idenrifier_instance = idenrifier_instance;

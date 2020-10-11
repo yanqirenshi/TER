@@ -62,7 +62,20 @@ export default class AssholeD3TER extends Asshole {
             const port_to = this.port.build(identifier_to, 'to');
 
             let r = this.relationship.build(core, port_from, port_to);
-            out.list.push(r);
+
+            const entity_from = identifier_from._entity;
+            const entity_to   = identifier_to._entity;
+
+            port_from._entity = entity_from;
+            port_to._entity = entity_to;
+
+            entity_from.ports.items.ht[port_from._id] = port_from;
+            entity_from.ports.items.list.push(port_from);
+
+            entity_to.ports.items.ht[port_to._id] = port_to;
+            entity_to.ports.items.list.push(port_to);
+
+            out.list.push(identifier_from);
             out.ht[r._id] = r;
         }
 
@@ -119,6 +132,40 @@ export default class AssholeD3TER extends Asshole {
             });
 
         // this.moveEdges([...]);
+    }
+    movePort (entity_core, port_core) {
+        let entity = this._data.find((d) => {
+            return d._id === entity_core._id;
+        });
+        let port = entity.ports.items.ht[port_core._id];
+
+        this.positioningPort(entity, port);
+
+        // redraw ports
+        let ports = this.getLayerForeground()
+            .selectAll('circle.entity-port')
+            .data([port], (d) => { return d._id; });
+
+        this.drawPortsCore(ports);
+
+
+        // redraw edge
+        let edges     = [];
+        let add_edges = (ht) => {
+            for (let k in ht) {
+                let edge = ht[k];
+                if (edge.from_class==="PORT-TER" && edge.to_class==="PORT-TER")
+                    edges.push(edge);
+            }
+        };
+        add_edges(this._relationships.indexes.from[port._id]);
+        add_edges(this._relationships.indexes.to[port._id]);
+
+        let elements = this.getLayerBackground()
+            .selectAll('line.connector')
+            .data(edges, (d) => { return d._id; });
+
+        this.drawEdgesCore(elements);
     }
     /* **************************************************************** *
      *  Draw
@@ -179,40 +226,6 @@ export default class AssholeD3TER extends Asshole {
     /* **************************************************************** *
      *  move port
      * **************************************************************** */
-    movePort (entity_core, port_core) {
-        let entity = this._data.find((d) => {
-            return d._id === entity_core._id;
-        });
-        let port = entity.ports.items.ht[port_core._id];
-
-        this.positioningPort(entity, port);
-
-        // redraw ports
-        let ports = this.getLayerForeground()
-            .selectAll('circle.entity-port')
-            .data([port], (d) => { return d._id; });
-
-        this.drawPortsCore(ports);
-
-
-        // redraw edge
-        let edges     = [];
-        let add_edges = (ht) => {
-            for (let k in ht) {
-                let edge = ht[k];
-                if (edge.from_class==="PORT-TER" && edge.to_class==="PORT-TER")
-                    edges.push(edge);
-            }
-        };
-        add_edges(this._relationships.indexes.from[port._id]);
-        add_edges(this._relationships.indexes.to[port._id]);
-
-        let elements = this.getLayerBackground()
-            .selectAll('line.connector')
-            .data(edges, (d) => { return d._id; });
-
-        this.drawEdgesCore(elements);
-    }
     /* **************************************************************** *
      *  to Json
      * **************************************************************** */

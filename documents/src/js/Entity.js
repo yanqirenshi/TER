@@ -327,10 +327,10 @@ export default class Entity extends EntityTailor {
             .attr('stroke', '#000')
             .attr('stroke-width', 0.5)
             .attr('degree', (d) => {
-                return d._core.position;
+                return d._idenrifier_instance._core.position || 0;
             })
             .attr('port-id', (d) => {
-                return d._core._id;
+                return d._id;
             });
     }
     drawPorts (groups) {

@@ -348,8 +348,7 @@ export default class EntityTailor extends Builder {
 
         let x = 0;
         let y = this.getPortLineLength(entity);
-
-        let degree = port._core.position % 360;
+        let degree = (port._idenrifier_instance._core.position || 0) % 360;
 
         let radian = this.deg2rad(degree);
         let cos = Math.cos(radian);
